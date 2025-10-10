@@ -686,6 +686,12 @@ pub mod tests {
         grid
     }
 
+    fn grid_with_single_element<T: Default>(size: usize, coordinate: Coordinate) -> Grid<T> {
+        let mut grid: Grid<T> = Grid::new(size, size);
+        check_store(&mut grid, coordinate, T::default(), StoreValidity::Valid);
+        grid
+    }
+
     #[track_caller]
     fn check_element<T: PartialEq + std::fmt::Debug>(
         grid: &Grid<T>,
@@ -1223,12 +1229,6 @@ pub mod tests {
 
         use super::*;
 
-        fn create_single_element_grid<T: Default>(size: usize, coordinate: Coordinate) -> Grid<T> {
-            let mut grid: Grid<T> = Grid::new(size, size);
-            check_store(&mut grid, coordinate, T::default(), StoreValidity::Valid);
-            grid
-        }
-
         #[test]
         fn add_row_test() {
             let mut grid: Grid<Coordinate> = Grid::new(3, 3);
@@ -1255,7 +1255,7 @@ pub mod tests {
         #[test]
         fn basic_upward_row_expansion_above_element() {
             let c = Coordinate { x: 0, y: 0 };
-            let mut grid: Grid<usize> = create_single_element_grid(3, c);
+            let mut grid: Grid<usize> = grid_with_single_element(3, c);
 
             assert_eq!(grid.y_count(), 3);
             grid.expand_at_row(1);
@@ -1268,7 +1268,7 @@ pub mod tests {
         #[test]
         fn basic_upward_row_expansion_below_element() {
             let c = Coordinate { x: 0, y: 0 };
-            let mut grid: Grid<usize> = create_single_element_grid(3, c);
+            let mut grid: Grid<usize> = grid_with_single_element(3, c);
             grid.expand_at_row(-1);
 
             // expansion happens upwards below the element so the object should move.
@@ -1279,7 +1279,7 @@ pub mod tests {
         #[test]
         fn basic_upward_row_expansion_on_element_row() {
             let c = Coordinate { x: 0, y: 0 };
-            let mut grid: Grid<usize> = create_single_element_grid(3, c);
+            let mut grid: Grid<usize> = grid_with_single_element(3, c);
             grid.expand_at_row(0);
 
             // expansion happens on the element row so the object should move upwards.
@@ -1290,7 +1290,7 @@ pub mod tests {
         #[test]
         fn basic_downward_row_expansion_below_element() {
             let c = Coordinate { x: 0, y: 0 };
-            let mut grid: Grid<usize> = create_single_element_grid(4, c);
+            let mut grid: Grid<usize> = grid_with_single_element(4, c);
             grid.expand_at_row(-1);
             check_element(&grid, c, &0);
         }
@@ -1298,7 +1298,7 @@ pub mod tests {
         #[test]
         fn basic_downward_row_expansion_above_element() {
             let c = Coordinate { x: 0, y: 0 };
-            let mut grid: Grid<usize> = create_single_element_grid(4, c);
+            let mut grid: Grid<usize> = grid_with_single_element(4, c);
             grid.expand_at_row(1);
             check_empty(&grid, c);
         }
@@ -1306,7 +1306,7 @@ pub mod tests {
         #[test]
         fn basic_downward_row_expansion_on_element_row() {
             let c = Coordinate { x: 0, y: 0 };
-            let mut grid: Grid<usize> = create_single_element_grid(4, c);
+            let mut grid: Grid<usize> = grid_with_single_element(4, c);
             grid.expand_at_row(0);
             check_empty(&grid, c);
         }
