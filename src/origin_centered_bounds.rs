@@ -10,7 +10,6 @@ use thiserror::Error;
 #[derive(Debug, Clone, Copy)]
 pub struct OriginCenteredBounds(Bounds);
 
-// TODO this should probably be copy...
 impl OriginCenteredBounds {
     pub fn new(x_count: u64, y_count: u64) -> Self {
         let x_min = -(x_count as i32 - ((x_count + 1) % 2) as i32) / 2;
@@ -25,6 +24,8 @@ impl OriginCenteredBounds {
         Self::try_from(bounds).unwrap()
     }
 
+    /// Expand the bounds. Returns true if the bounds are expanded westwards and false if expanded
+    /// eastwards.
     pub fn expand_bounds_horizontally(&mut self) -> bool {
         if OriginBounded::x_count(&self) % 2 == 0 {
             self.0.expand_in_direction(AbsoluteDirection::West);
@@ -35,7 +36,8 @@ impl OriginCenteredBounds {
         }
     }
 
-    /// Expands bounds while maintaining the center origin. The bounds are expanded by one.
+    /// Expand the bounds. Returns true if the bounds are expanded westwards and false if expanded
+    /// eastwards.
     pub fn expand_bounds_vertically(&mut self) -> bool {
         if OriginBounded::y_count(&self) % 2 == 0 {
             self.0.expand_in_direction(AbsoluteDirection::South);
