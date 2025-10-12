@@ -337,7 +337,9 @@ impl<T> Grid<T> {
             self.store_element(marker.position(), element)?;
             Ok(*marker.position())
         } else {
-            Err(GridError::UnoccupiedError(*coordinate))
+            Err(GridError::OutOfBoundsError(OutOfBoundsError::new(
+                marker.coordinate_in_direction(direction, 1),
+            )))
         }
     }
 
