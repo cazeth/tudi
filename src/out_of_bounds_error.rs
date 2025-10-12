@@ -2,7 +2,7 @@ use crate::Coordinate;
 use crate::Positioned;
 use thiserror::Error;
 
-#[derive(Error, Debug)]
+#[derive(Error, Debug, Clone)]
 #[error("{:?} is out of bounds", .position)]
 pub struct OutOfBoundsError {
     position: Coordinate,
