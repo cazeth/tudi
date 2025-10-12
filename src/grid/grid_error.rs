@@ -5,7 +5,7 @@ use crate::OutOfBoundsError;
 
 /// The main error type for a Grid.
 ///
-#[derive(Error, Debug)]
+#[derive(Error, Debug, Clone)]
 #[non_exhaustive]
 pub enum GridError {
     #[error("Out of Bounds")]
