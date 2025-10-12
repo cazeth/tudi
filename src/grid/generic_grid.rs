@@ -659,6 +659,7 @@ pub mod tests {
     }
 
     fn grid_with_occupied_corners_and_origin<T: Copy>(size: usize, element: T) -> Grid<T> {
+        assert!(size > 0);
         let mut grid: Grid<T> = Grid::new(size, size);
         let (nw, sw, ne, se) = (
             grid.northwest_corner(),
@@ -668,10 +669,15 @@ pub mod tests {
         );
         let origin = Coordinate::default();
         check_store(&mut grid, origin, element, StoreValidity::Valid);
-        check_store(&mut grid, nw, element, StoreValidity::Valid);
-        check_store(&mut grid, sw, element, StoreValidity::Valid);
-        check_store(&mut grid, ne, element, StoreValidity::Valid);
-        check_store(&mut grid, se, element, StoreValidity::Valid);
+        if size > 1 {
+            check_store(&mut grid, nw, element, StoreValidity::Valid);
+            if size > 2 {
+                // should be origin if size <= 2
+                check_store(&mut grid, sw, element, StoreValidity::Valid);
+            }
+            check_store(&mut grid, ne, element, StoreValidity::Valid);
+            check_store(&mut grid, se, element, StoreValidity::Valid);
+        }
         grid
     }
 
