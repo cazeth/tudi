@@ -778,12 +778,10 @@ pub mod tests {
         }
     }
 
-    // TODO write tests to cover collisions and out of bounds...
+    #[derive(Debug, Clone, Copy)]
     enum ExpectedMoveResponse {
         Valid,
-        #[allow(unused)]
         Collision,
-        #[allow(unused)]
         OutOfBounds,
     }
 
@@ -795,18 +793,22 @@ pub mod tests {
     ) {
         let res = grid.move_element_in_direction(&c, direction);
 
-        match (expected, res) {
+        match (expected, res.clone()) {
             (ExpectedMoveResponse::Valid, Ok(_)) => {}
-            (ExpectedMoveResponse::Collision, Err(GridError::CollisionError)) => {
-                todo!();
-            }
+            (ExpectedMoveResponse::Collision, Err(GridError::CollisionError)) => {}
             (
                 ExpectedMoveResponse::OutOfBounds,
                 Err(GridError::OutOfBoundsError(out_of_bounds_error)),
             ) => {
-                assert_eq!(out_of_bounds_error.position(), c);
+                assert_eq!(
+                    out_of_bounds_error.position(),
+                    c.coordinate_in_direction(direction, 1)
+                );
             }
             _ => {
+                println!("unexpected result in move:");
+                println!("expected {expected:?}");
+                println!("got {res:?}");
                 panic!();
             }
         }
@@ -893,6 +895,47 @@ pub mod tests {
 
         check_element(&grid, Coordinate { y: 1, x: 0 }, &1);
         check_empty(&grid, Coordinate::default());
+    }
+
+    #[test]
+    pub fn move_should_collide() {
+        let mut grid = grid_with_occupied_corners_and_origin(3, 1);
+        check_move(
+            &mut grid,
+            Coordinate { x: 1, y: 1 },
+            AbsoluteDirection::South,
+            ExpectedMoveResponse::Valid,
+        );
+        check_move(
+            &mut grid,
+            Coordinate { x: 1, y: 0 },
+            AbsoluteDirection::South,
+            ExpectedMoveResponse::Collision,
+        );
+    }
+
+    #[test]
+    pub fn move_should_collide_two() {
+        let mut grid = grid_with_occupied_corners_and_origin(2, 1);
+        grid.print_element_status();
+        check_move(
+            &mut grid,
+            Coordinate { x: 1, y: 1 },
+            AbsoluteDirection::South,
+            ExpectedMoveResponse::Collision,
+        );
+    }
+
+    #[test]
+    pub fn move_should_be_out_of_bounds() {
+        let mut grid = grid_with_occupied_corners_and_origin(1, 1);
+        grid.print_element_status();
+        check_move(
+            &mut grid,
+            Coordinate { x: 0, y: 0 },
+            AbsoluteDirection::South,
+            ExpectedMoveResponse::OutOfBounds,
+        );
     }
 
     #[test]
