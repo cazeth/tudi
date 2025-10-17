@@ -17,7 +17,7 @@ pub trait Positioned {
         self.x_coordinate().unsigned_abs() as usize + self.y_coordinate().unsigned_abs() as usize
     }
 
-    /// Returns the manhattan distance to another OnGrid Object.
+    /// Returns the manhattan distance to another [`Positioned`].
     /// # Examples
     /// ```
     /// use tudi::Coordinate;
@@ -58,8 +58,7 @@ pub trait Positioned {
         result
     }
 
-    /// Return a vec of the immediately surrounding coordinates to the current coordinate, not considering
-    /// diagonals.
+    /// Return a vec of the immediately surrounding coordinates to the current coordinate, including diagonals.
     /// # Examples
     /// ```
     /// use tudi::MovingObject;
