@@ -1,3 +1,4 @@
+#![allow(clippy::enum_glob_use)]
 use crate::AbsoluteDirection;
 use crate::Coordinate;
 
