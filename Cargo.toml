@@ -2,6 +2,12 @@
 name = "tudi"
 version = "0.1.0"
 edition = "2024"
+license = "MIT"
+authors = ["caz.eth"]
+repository = "https://github.com/cazeth/tudi"
+keywords = ["grid", "2D", "matrix", "data-structure"]
+categories = ["data-structures", "game-development", "games"]
+description = "There, inside the game's two-dimensional universe, life was simple."
 
 [dependencies]
 itertools = "0.14.0"
