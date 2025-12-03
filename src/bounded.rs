@@ -210,10 +210,10 @@ pub trait Bounded: BoundSeal {
         }
     }
 
-    /// Similarly to GridObject::get_neighbors, this function returns the immediately adjacent
+    /// Similar to [`Positioned::manhattan_neighbors`], this function returns the immediately adjacent
     /// coordinate to the current coordinate. It also considers boundaries and filters out
     /// coordinates that aren't within on or them.
-    fn get_bounded_neighbors(&self) -> Vec<Coordinate>
+    fn bounded_neighbors(&self) -> Vec<Coordinate>
     where
         Self: Positioned,
     {

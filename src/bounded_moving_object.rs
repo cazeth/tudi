@@ -480,7 +480,7 @@ mod tests {
     #[test]
     pub fn neighbors_test() {
         let pos = BoundedMovingObject::new(0, 0, 0, 0);
-        assert!(pos.get_bounded_neighbors().is_empty());
+        assert!(pos.bounded_neighbors().is_empty());
     }
 
     #[test]
