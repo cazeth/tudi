@@ -3,14 +3,28 @@ use crate::bounded::{OriginBounded, OriginCentered, OriginCenteredness};
 use crate::{Bounds, bounded::Bounded};
 use thiserror::Error;
 
-/// This struct represents a region that is centered around the origin. If the coordinate count
-/// along an axis is odd, such as for x_min = -1 and x_max = 1, the center must be zero. The
-/// coordinate count may also be even, in which region must be biased toward the positive. For
-/// instance, x_min = -1 , x_max = 2 is valid whereas x_min = -2 , x_max = 1 is not.
+/// A region that is centered around the origin.
+///
+/// This struct represents a region that is guaranteed to withold the property of origin-centeredness, which is defined as:
+///
+/// for both x,y-axes:
+///
+/// - For an axis with an odd or zero count, `max=-min`
+/// - For an axis with a non-zero even count, `max=-min+1`
+///
+/// , the count being the number of integer points inclusively contained on the axis.
+///
+/// For example:
+/// - `(x_min = -2, x_max = 2)` is valid since it has an odd count (5) and `x_max=-x_min`.
+/// - `(x_min = -1, x_max = 2)` is valid since it has an even count (4) and `x_max=-x_min+1`.
+///
 #[derive(Debug, Clone, Copy)]
 pub struct OriginCenteredBounds(Bounds);
 
 impl OriginCenteredBounds {
+    /// The main constructor for this struct.
+    ///
+    /// The method creates a origin-centered region from a x- and y-count pair.
     pub fn new(x_count: u64, y_count: u64) -> Self {
         let x_min = -(x_count as i32 - ((x_count + 1) % 2) as i32) / 2;
         let x_max = (x_count as i32 + ((x_count + 1) % 2) as i32) / 2;
@@ -24,7 +38,7 @@ impl OriginCenteredBounds {
         Self::try_from(bounds).unwrap()
     }
 
-    /// Expand the bounds. Returns true if the bounds are expanded westwards and false if expanded
+    /// Expand the bounds by one. Returns true if the bounds are expanded westwards and false if expanded
     /// eastwards.
     pub fn expand_bounds_horizontally(&mut self) -> bool {
         if OriginBounded::x_count(&self) % 2 == 0 {
@@ -36,8 +50,8 @@ impl OriginCenteredBounds {
         }
     }
 
-    /// Expand the bounds. Returns true if the bounds are expanded westwards and false if expanded
-    /// eastwards.
+    /// Expand the bounds by one. Returns true if the bounds are expanded northwards and false if expanded
+    /// southwards.
     pub fn expand_bounds_vertically(&mut self) -> bool {
         if OriginBounded::y_count(&self) % 2 == 0 {
             self.0.expand_in_direction(AbsoluteDirection::South);
@@ -93,6 +107,7 @@ impl TryFrom<Bounds> for OriginCenteredBounds {
         }
     }
 }
+
 impl OriginCenteredness for OriginCenteredBounds {
     type Distinguisher = OriginCentered;
 }
