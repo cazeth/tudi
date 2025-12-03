@@ -226,7 +226,7 @@ pub trait Bounded: BoundSeal {
 
     /// Returns true if the coordinate actually moved and false if not, if there is
     /// an attempt to move outside of the border.
-    fn move_in_absolute_direction(&mut self, direction: AbsoluteDirection, magnitude: usize) -> bool
+    fn move_in_absolute_direction(&mut self, direction: AbsoluteDirection, magnitude: u32) -> bool
     where
         Self: Mover,
     {

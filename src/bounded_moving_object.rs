@@ -98,7 +98,7 @@ impl BoundedMovingObject {
 
     /// same as move_in_current_direction but reports the new position of the object, which makes
     /// it possible to keep track of what happenend.
-    pub fn move_in_current_direction_and_return_new_pos(&mut self, magnitude: usize) -> Coordinate {
+    pub fn move_in_current_direction_and_return_new_pos(&mut self, magnitude: u32) -> Coordinate {
         let dir = self.direction();
         self.move_in_absolute_direction(*dir, magnitude);
         self.current_pos

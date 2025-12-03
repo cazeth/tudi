@@ -28,10 +28,11 @@ impl MovingObject {
         }
     }
 
-    pub fn move_in_current_direction(&mut self, magnitude: usize) {
+    pub fn move_in_current_direction(&mut self, magnitude: u32) {
         self.current_pos = self.coordinate_in_direction(*self.get_current_direction(), magnitude);
     }
-    pub fn move_in_direction(&mut self, direction: &AbsoluteDirection, magnitude: usize) {
+
+    pub fn move_in_direction(&mut self, direction: &AbsoluteDirection, magnitude: u32) {
         self.current_pos = self.coordinate_in_direction(*direction, magnitude);
     }
 
@@ -121,7 +122,7 @@ mod tests {
         assert_eq!(pos.position().y, 6);
     }
 
-    pub fn neighbor_test(x_diff: usize, y_diff: usize) {
+    pub fn neighbor_test(x_diff: u32, y_diff: u32) {
         let mut pos = MovingObject::default();
         pos.move_in_direction(&AbsoluteDirection::East, x_diff);
         pos.move_in_direction(&AbsoluteDirection::North, y_diff);

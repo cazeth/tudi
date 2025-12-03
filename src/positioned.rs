@@ -151,30 +151,29 @@ pub trait Positioned {
             || (&cord.x_coordinate() > row && row > &self.x_coordinate())
     }
 
-    fn coordinate_in_direction(
-        &self,
-        direction: AbsoluteDirection,
-        magnitude: usize,
-    ) -> Coordinate {
+    /// Max allowed magnitude is 2^31. Numbers larger than this yield undefined behavior.
+    /// If the current coordinate + magnitude is larger than 2^32, that will also trigger
+    /// undefined behavior.
+    fn coordinate_in_direction(&self, direction: AbsoluteDirection, magnitude: u32) -> Coordinate {
         use AbsoluteDirection::*;
         match direction {
             North => Coordinate {
                 x: self.x_coordinate(),
-                y: self.y_coordinate() + magnitude as i32,
+                y: self.y_coordinate() + i32::try_from(magnitude).unwrap_or(i32::MAX),
             },
 
             South => Coordinate {
                 x: self.x_coordinate(),
-                y: self.y_coordinate() - magnitude as i32,
+                y: self.y_coordinate() - i32::try_from(magnitude).unwrap_or(i32::MAX),
             },
 
             East => Coordinate {
-                x: self.x_coordinate() + magnitude as i32,
+                x: self.x_coordinate() + i32::try_from(magnitude).unwrap_or(i32::MAX),
                 y: self.y_coordinate(),
             },
 
             West => Coordinate {
-                x: self.x_coordinate() - magnitude as i32,
+                x: self.x_coordinate() - i32::try_from(magnitude).unwrap_or(i32::MAX),
                 y: self.y_coordinate(),
             },
         }
