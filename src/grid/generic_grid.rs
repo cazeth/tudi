@@ -658,6 +658,10 @@ pub mod tests {
         Grid::<T>::new(size, size)
     }
 
+    fn rectangular_empty_grid(x_count: usize, y_count: usize) -> Grid<()> {
+        Grid::new(x_count, y_count)
+    }
+
     fn grid_with_occupied_corners_and_origin<T: Copy>(size: usize, element: T) -> Grid<T> {
         assert!(size > 0);
         let mut grid: Grid<T> = Grid::new(size, size);
@@ -975,6 +979,92 @@ pub mod tests {
                 grid.coordinate_to_index(&grid.southeast_corner()).unwrap(),
                 grid.grid_data.len() - 1
             );
+        }
+    }
+
+    mod test_bounded_neighbors_to {
+
+        use super::*;
+
+        #[track_caller]
+        fn check_bounded_neighbors_to_count<T>(
+            grid: &Grid<T>,
+            coordinate: impl Positioned,
+            count: usize,
+        ) {
+            let iter = grid.bounded_neighbors_to(coordinate);
+            assert_eq!(iter.count(), count);
+        }
+
+        #[track_caller]
+        fn check_contains_corner<T>(grid: &Grid<T>, coordinate: impl Positioned) {
+            assert!(
+                grid.bounded_neighbors_to(coordinate.position())
+                    .contains(&coordinate.coordinate_in_direction(AbsoluteDirection::North, 1))
+            );
+            assert!(
+                grid.bounded_neighbors_to(coordinate.position())
+                    .contains(&coordinate.coordinate_in_direction(AbsoluteDirection::South, 1))
+            );
+            assert!(
+                grid.bounded_neighbors_to(coordinate.position())
+                    .contains(&coordinate.coordinate_in_direction(AbsoluteDirection::East, 1))
+            );
+            assert!(
+                grid.bounded_neighbors_to(coordinate.position())
+                    .contains(&coordinate.coordinate_in_direction(AbsoluteDirection::West, 1))
+            )
+        }
+
+        #[test]
+        fn test_origin_only_grid() {
+            let grid: Grid<()> = empty_grid(1);
+            check_bounded_neighbors_to_count(&grid, Coordinate::default(), 0);
+        }
+
+        #[test]
+        #[should_panic]
+        fn test_origin_only_should_not_contain_corners() {
+            let grid: Grid<()> = empty_grid(1);
+            check_contains_corner(&grid, Coordinate::default());
+        }
+
+        #[test]
+        #[should_panic]
+        fn test_two_by_two_should_not_contain_corners() {
+            let grid: Grid<()> = empty_grid(2);
+            check_contains_corner(&grid, Coordinate::default());
+        }
+
+        #[test]
+        fn test_three_by_three() {
+            let grid: Grid<()> = empty_grid(3);
+            check_bounded_neighbors_to_count(&grid, Coordinate::default(), 8);
+            check_contains_corner(&grid, Coordinate::default());
+        }
+
+        #[test]
+        fn test_five_by_five() {
+            let grid: Grid<()> = empty_grid(5);
+            check_bounded_neighbors_to_count(&grid, Coordinate::default(), 8);
+        }
+
+        #[test]
+        fn test_three_by_one() {
+            let grid: Grid<()> = rectangular_empty_grid(3, 1);
+            check_bounded_neighbors_to_count(&grid, Coordinate::default(), 2);
+        }
+
+        #[test]
+        fn test_two_by_one() {
+            let grid: Grid<()> = rectangular_empty_grid(2, 1);
+            check_bounded_neighbors_to_count(&grid, Coordinate::default(), 1);
+        }
+
+        #[test]
+        fn empty_iterator_on_point_outside_bounds() {
+            let grid: Grid<()> = empty_grid(2);
+            check_bounded_neighbors_to_count(&grid, Coordinate { x: 5, y: 0 }, 0);
         }
     }
 

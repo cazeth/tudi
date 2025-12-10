@@ -224,6 +224,22 @@ pub trait Bounded: BoundSeal {
             .collect::<Vec<Coordinate>>()
     }
 
+    /// Get the within-bounds euclid neighbors of a point.
+    ///
+    /// The iterator only returns coordinates that are within bounds. Thus an input coordinate on the border would typically yield an iterator with a smaller count than an element in the
+    /// center.
+    /// If the input point is outside the bounds, the iterator returns empty.
+    /// See also [Bounded::bounded_neighbors]
+    fn bounded_neighbors_to<C: Positioned>(
+        &self,
+        coordinate: C,
+    ) -> impl Iterator<Item = Coordinate> {
+        coordinate
+            .euclid_neighbors()
+            .into_iter()
+            .filter(|x| self.is_within_bounds(x))
+    }
+
     /// Returns true if the coordinate actually moved and false if not, if there is
     /// an attempt to move outside of the border.
     fn move_in_absolute_direction(&mut self, direction: AbsoluteDirection, magnitude: u32) -> bool
