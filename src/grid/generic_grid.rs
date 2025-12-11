@@ -28,7 +28,7 @@ impl<T> Grid<T> {
     /// use tudi::bounded::Bounded;
     /// let x_count = 3;
     /// let y_count = 3;
-    /// let grid: Grid<usize> = Grid::new(x_count,y_count);
+    /// let grid : Grid<()> = Grid::new(x_count,y_count);
     /// assert_eq!(grid.x_count(), x_count);
     /// assert_eq!(grid.y_count(), y_count);
     /// assert_eq!(grid.iter_new().count(), x_count*y_count); // There are nine coordinates
@@ -39,7 +39,7 @@ impl<T> Grid<T> {
     /// use tudi::Coordinate;
     /// use tudi::bounded::Bounded;
     /// let grid : Grid<()> = Grid::new(6, 6);  // Returns an empty 6x6 grid.
-    /// // A Grid<()> cannot contain anything, so you will likely want to replace the type
+    /// // A Grid<()> cannot contain anything (because of the unit type parameter), so you will likely want to replace the type
     /// // with something more useful.
     ///
     /// assert_eq!(grid.iter_elements_new().count(), 0); // The grid contains no elements
@@ -110,7 +110,7 @@ impl<T> Grid<T> {
     /// use tudi::Grid;
     /// use tudi::bounded::Bounded;
     /// use tudi::Coordinate;
-    /// let mut grid : Grid<usize> = Grid::new(3, 3); // create a new 3x3 grid.
+    /// let mut grid = Grid::new(3, 3); // create a new 3x3 grid.
     /// grid.store_element(&Coordinate::default(), 1); // store 1 at the origin.
     /// assert!(grid.element(&Coordinate::default()).is_ok()); // This method returns a borrowed
     /// // version of the element.
@@ -199,17 +199,6 @@ impl<T> Grid<T> {
 
     fn iter_new_speed(&self) -> GridIter<T> {
         GridIter::new(self)
-        /*
-        self.grid_data
-            .iter()
-            .enumerate()
-            .map(|(index, grid_coordinate)| match grid_coordinate {
-                GridCoordinate::Object(val) => {
-                    (self.index_to_coordinate(index).unwrap(), Some(val))
-                }
-                GridCoordinate::Empty(_) => (self.index_to_coordinate(index).unwrap(), None),
-            })
-        */
     }
 
     pub fn iter_mut_new(&mut self) -> impl Iterator<Item = (Coordinate, Option<&mut T>)> {
@@ -467,7 +456,7 @@ impl<T> Grid<T> {
     /// ```
     /// use tudi::Grid;
     /// use tudi::Coordinate;
-    /// let mut grid : Grid<()> = Grid::new(3,2);
+    /// let mut grid = Grid::new(3,2);
     /// grid.store_element(&Coordinate{x: 1, y : 0}, () ); // [2][1] in matrix-like coordinates.
     /// grid.transpose_new();
     /// assert!(grid.element(&Coordinate{y : -1, x: 1}).is_ok()); // [1][2] in matrix-like
