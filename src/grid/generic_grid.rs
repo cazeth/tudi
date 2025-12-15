@@ -500,20 +500,25 @@ impl<T> Grid<T> {
         println!("-----");
     }
 
-    /// Prints the grid with elements marked as '#' and empties marked as '.'.
+    /// A string where '#' marks a occupied element and '.' marks an empty element. with one line for
+    /// each row in the grid.
     /// A simple way to quickly see what is going on in a small grid.
-    pub fn print_element_status(&self) {
+    pub fn element_statuses(&self) -> String {
+        let mut result = String::with_capacity((self.x_count() + 1) * self.y_count());
         for (index, element) in self.iter_new() {
             if element.is_some() {
-                print!("#");
+                result.push('#');
             } else {
-                print!(".");
+                result.push('.')
             };
 
-            if index.x_coordinate() == self.x_max_boundary() {
-                println!();
+            if index.x_coordinate() == self.x_max_boundary()
+                && index.y_coordinate() != self.y_min_boundary()
+            {
+                result.push('\n');
             }
         }
+        result
     }
 }
 
@@ -910,7 +915,6 @@ pub mod tests {
     #[test]
     pub fn move_should_collide_two() {
         let mut grid = grid_with_occupied_corners_and_origin(2, 1);
-        grid.print_element_status();
         check_move(
             &mut grid,
             Coordinate { x: 1, y: 1 },
@@ -922,7 +926,6 @@ pub mod tests {
     #[test]
     pub fn move_should_be_out_of_bounds() {
         let mut grid = grid_with_occupied_corners_and_origin(1, 1);
-        grid.print_element_status();
         check_move(
             &mut grid,
             Coordinate { x: 0, y: 0 },
@@ -968,6 +971,51 @@ pub mod tests {
                 grid.coordinate_to_index(&grid.southeast_corner()).unwrap(),
                 grid.grid_data.len() - 1
             );
+        }
+    }
+
+    mod test_status_string {
+
+        use super::*;
+
+        fn check_string<T>(grid: &Grid<T>, expected: &str) {
+            assert_eq!(grid.element_statuses(), expected.to_string())
+        }
+
+        #[test]
+        fn empty_one_by_one() {
+            let grid: Grid<()> = Grid::new(1, 1);
+            check_string(&grid, ".");
+        }
+
+        #[test]
+        fn occupied_one_by_one() {
+            let mut grid: Grid<()> = Grid::new(1, 1);
+            let _ = grid.store_element(&Coordinate::default(), ());
+            check_string(&grid, "#");
+        }
+
+        #[test]
+        fn partially_occupied_one_by_two() {
+            let mut grid: Grid<()> = Grid::new(1, 2);
+            let _ = grid.store_element(&Coordinate::default(), ());
+            check_string(&grid, ".\n#");
+        }
+
+        #[test]
+        fn empty_two_by_two() {
+            let grid: Grid<()> = Grid::new(2, 2);
+            check_string(&grid, "..\n..");
+        }
+
+        #[test]
+        fn corner_occupied_three_by_three() {
+            let mut grid: Grid<()> = Grid::new(3, 3);
+            let _ = grid.store_element(&grid.northwest_corner(), ());
+            let _ = grid.store_element(&grid.northeast_corner(), ());
+            let _ = grid.store_element(&grid.southwest_corner(), ());
+            let _ = grid.store_element(&grid.southeast_corner(), ());
+            check_string(&grid, "#.#\n...\n#.#");
         }
     }
 

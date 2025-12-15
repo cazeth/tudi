@@ -22,9 +22,9 @@ use grid_creation_error::GridCreationError;
 /// use tudi::Coordinate;
 ///
 /// let mut grid = Grid::new(3, 3); // A 3x3 grid.
-/// grid.print_element_status(); // all elements are empty
+/// grid.element_statuses(); // all elements are empty
 /// grid.store_element(&Coordinate::default(),()); // store an element at the origin.
-/// grid.print_element_status(); // the grid now contains an element at the origin.
+/// grid.element_statuses(); // the grid now contains an element at the origin.
 ///
 /// assert!(grid.element(&Coordinate::default()).is_ok()); // the grid now contains an element at
 /// // the origin.
