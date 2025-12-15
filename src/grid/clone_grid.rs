@@ -75,6 +75,16 @@ pub mod tests {
         }
     }
 
+    #[track_caller]
+    fn check_x_count<T>(grid: &Grid<T>, count: usize) {
+        assert_eq!(grid.x_count(), count);
+    }
+
+    #[track_caller]
+    fn check_y_count<T>(grid: &Grid<T>, count: usize) {
+        assert_eq!(grid.y_count(), count);
+    }
+
     pub mod constructor_tests {
         use super::*;
 
@@ -83,8 +93,8 @@ pub mod tests {
             let input = "...";
             let map: HashMap<char, usize> = HashMap::new();
             let data = Grid::<usize>::from_str_by_map(input, &map).unwrap();
-            assert_eq!(data.x_count(), 3);
-            assert_eq!(data.y_count(), 1);
+            check_x_count(&data, 3);
+            check_y_count(&data, 1);
             assert_eq!(data.iter_elements_new().count(), 0);
             assert_coordinate_coverage(&data);
             assert_centered_around_origin(&data);
@@ -96,8 +106,8 @@ pub mod tests {
             let mut map: HashMap<char, usize> = HashMap::new();
             map.insert('x', 1);
             let data = Grid::<usize>::from_str_by_map(input, &map).unwrap();
-            assert_eq!(data.x_count(), 3);
-            assert_eq!(data.y_count(), 1);
+            check_x_count(&data, 3);
+            check_y_count(&data, 1);
             assert_eq!(data.iter_elements_new().count(), 1);
             assert_eq!(*data.element(&Coordinate::default()).unwrap(), 1);
         }
@@ -107,8 +117,8 @@ pub mod tests {
             let input = "...";
             let map: HashMap<char, usize> = HashMap::new();
             let data = Grid::<usize>::from_str_by_map(input, &map).unwrap();
-            assert_eq!(data.x_count(), 3);
-            assert_eq!(data.y_count(), 1);
+            check_x_count(&data, 3);
+            check_y_count(&data, 1);
             assert_eq!(data.iter_elements_new().count(), 0);
             assert_coordinate_coverage(&data);
             assert_centered_around_origin(&data);
