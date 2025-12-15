@@ -4,14 +4,16 @@ use std::collections::HashMap;
 impl<T: Clone> Grid<T> {
     /// Creates a grid from a str where each lines represents a row. Each character in the string
     /// is mapped to a grid element or an empty coordinate according to the provided hashmap.
+    /// If a character is not in the map, the character is set to empty.
+    ///
+    /// The method creates a new cloned T at each occupied point in the Grid.
     ///
     /// # Panics
-    /// This method panics if the row in the input str are of different lengths.
-    /// This method panics if there is a char in the string that is not represented in the map.
+    /// This method panics if any rows in the input str are of different lengths.
     ///
-    pub fn from_str_to_unwrapped_with_borrowed_map(
+    pub fn from_str_by_map(
         input: &str,
-        map: &HashMap<char, Option<T>>,
+        map: &HashMap<char, T>,
     ) -> Result<Grid<T>, GridCreationError> {
         let mut char_data = input
             .lines()
@@ -22,7 +24,7 @@ impl<T: Clone> Grid<T> {
             .iter_mut()
             .map(|row| {
                 row.iter_mut()
-                    .map(|c| map.get(c).unwrap().clone())
+                    .map(|c| map.get(c).cloned())
                     .collect::<Vec<Option<T>>>()
             })
             .collect::<Vec<Vec<Option<T>>>>();
@@ -79,9 +81,8 @@ pub mod tests {
         #[test]
         fn new_from_str_test() {
             let input = "...";
-            let mut map: HashMap<char, Option<usize>> = HashMap::new();
-            map.insert('.', None);
-            let data = Grid::<usize>::from_str_to_unwrapped_with_borrowed_map(input, &map).unwrap();
+            let map: HashMap<char, usize> = HashMap::new();
+            let data = Grid::<usize>::from_str_by_map(input, &map).unwrap();
             assert_eq!(data.x_count(), 3);
             assert_eq!(data.y_count(), 1);
             assert_eq!(data.iter_elements_new().count(), 0);
@@ -92,10 +93,9 @@ pub mod tests {
         #[test]
         fn new_from_str_test_two() {
             let input = ".x.";
-            let mut map: HashMap<char, Option<usize>> = HashMap::new();
-            map.insert('.', None);
-            map.insert('x', Some(1));
-            let data = Grid::<usize>::from_str_to_unwrapped_with_borrowed_map(input, &map).unwrap();
+            let mut map: HashMap<char, usize> = HashMap::new();
+            map.insert('x', 1);
+            let data = Grid::<usize>::from_str_by_map(input, &map).unwrap();
             assert_eq!(data.x_count(), 3);
             assert_eq!(data.y_count(), 1);
             assert_eq!(data.iter_elements_new().count(), 1);
@@ -105,9 +105,8 @@ pub mod tests {
         #[test]
         fn test_new_from_str_unwrapped_with_empty() {
             let input = "...";
-            let mut map: HashMap<char, Option<usize>> = HashMap::new();
-            map.insert('.', None);
-            let data = Grid::<usize>::from_str_to_unwrapped_with_borrowed_map(input, &map).unwrap();
+            let map: HashMap<char, usize> = HashMap::new();
+            let data = Grid::<usize>::from_str_by_map(input, &map).unwrap();
             assert_eq!(data.x_count(), 3);
             assert_eq!(data.y_count(), 1);
             assert_eq!(data.iter_elements_new().count(), 0);
@@ -118,29 +117,26 @@ pub mod tests {
         #[test]
         fn new_from_str_unwrapped_should_panic_when_rows_are_different_sizes() {
             let input = "...\n....";
-            let mut map: HashMap<char, Option<usize>> = HashMap::new();
-            map.insert('.', None);
-            let res = Grid::<usize>::from_str_to_unwrapped_with_borrowed_map(input, &map);
+            let map: HashMap<char, usize> = HashMap::new();
+            let res = Grid::<usize>::from_str_by_map(input, &map);
             assert!(res.is_err())
         }
 
         #[test]
         fn empty_rows_one() {
             let input = ".#.\n...";
-            let mut map: HashMap<char, Option<()>> = HashMap::new();
-            map.insert('.', None);
-            map.insert('#', Some(()));
-            let data = Grid::<()>::from_str_to_unwrapped_with_borrowed_map(input, &map).unwrap();
+            let mut map: HashMap<char, ()> = HashMap::new();
+            map.insert('#', ());
+            let data = Grid::<()>::from_str_by_map(input, &map).unwrap();
             assert_eq!(data.empty_rows(), vec![0]);
         }
 
         #[test]
         fn empty_rows_two() {
             let input = "...\n.x.\n...";
-            let mut map: HashMap<char, Option<()>> = HashMap::new();
-            map.insert('.', None);
-            map.insert('x', Some(()));
-            let data = Grid::<()>::from_str_to_unwrapped_with_borrowed_map(input, &map).unwrap();
+            let mut map: HashMap<char, ()> = HashMap::new();
+            map.insert('x', ());
+            let data = Grid::<()>::from_str_by_map(input, &map).unwrap();
             assert_eq!(data.empty_rows(), vec![-1, 1]);
             assert_coordinate_coverage(&data);
             assert_centered_around_origin(&data);

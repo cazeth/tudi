@@ -1183,22 +1183,19 @@ pub mod tests {
         }
     }
 
-    fn hashtag_occupied_map() -> HashMap<char, Option<()>> {
+    fn hashtag_occupied_map() -> HashMap<char, ()> {
         let mut map = HashMap::new();
-        map.insert('.', Some(()));
-        map.insert('#', None);
+        map.insert('.', ());
         map
     }
 
     fn symmetric_shape_should_transpose_to_itself(path: &str) {
         let map = hashtag_occupied_map();
         let original_grid: Grid<()> =
-            Grid::from_str_to_unwrapped_with_borrowed_map(&read_to_string(path).unwrap(), &map)
-                .unwrap();
+            Grid::from_str_by_map(&read_to_string(path).unwrap(), &map).unwrap();
 
         let mut changed_grid: Grid<()> =
-            Grid::from_str_to_unwrapped_with_borrowed_map(&read_to_string(path).unwrap(), &map)
-                .unwrap();
+            Grid::from_str_by_map(&read_to_string(path).unwrap(), &map).unwrap();
 
         changed_grid.transpose_new();
         assert_eq!(original_grid, changed_grid);
@@ -1255,9 +1252,8 @@ pub mod tests {
         #[test]
         fn new_from_str_test() {
             let input = "...";
-            let mut map: HashMap<char, Option<usize>> = HashMap::new();
-            map.insert('.', None);
-            let data = Grid::<usize>::from_str_to_unwrapped_with_borrowed_map(input, &map).unwrap();
+            let map: HashMap<char, usize> = HashMap::new();
+            let data = Grid::<usize>::from_str_by_map(input, &map).unwrap();
             check_grid_counts(&data, 3, 1);
             assert_eq!(data.iter_elements_new().count(), 0);
             assert_coordinate_coverage(&data);
@@ -1267,9 +1263,8 @@ pub mod tests {
         #[test]
         fn test_new_from_str_unwrapped_with_empty_with_deprecated_fns() {
             let input = "...";
-            let mut map: HashMap<char, Option<usize>> = HashMap::new();
-            map.insert('.', None);
-            let data = Grid::<usize>::from_str_to_unwrapped_with_borrowed_map(input, &map).unwrap();
+            let map: HashMap<char, usize> = HashMap::new();
+            let data = Grid::<usize>::from_str_by_map(input, &map).unwrap();
             check_grid_counts(&data, 3, 1);
             assert_eq!(data.iter_elements_new().count(), 0);
             assert_coordinate_coverage(&data);
@@ -1280,9 +1275,8 @@ pub mod tests {
         #[should_panic]
         fn new_from_str_unwrapped_should_panic_when_rows_are_different_sizes() {
             let input = "...\n....";
-            let mut map: HashMap<char, Option<usize>> = HashMap::new();
-            map.insert('.', None);
-            Grid::<usize>::from_str_to_unwrapped_with_borrowed_map(input, &map).unwrap();
+            let map: HashMap<char, usize> = HashMap::new();
+            Grid::<usize>::from_str_by_map(input, &map).unwrap();
         }
     }
 
@@ -1331,15 +1325,12 @@ pub mod tests {
         #[test]
         fn double_transpose_test() {
             let input_data = read_to_string("tests/data/row_expansion_test_1.txt").unwrap();
-            let mut map: HashMap<char, Option<()>> = HashMap::new();
+            let mut map: HashMap<char, ()> = HashMap::new();
 
-            map.insert('.', None);
-            map.insert('#', Some(()));
+            map.insert('#', ());
 
-            let mut grid: Grid<()> =
-                Grid::from_str_to_unwrapped_with_borrowed_map(&input_data, &map).unwrap();
-            let expected_result_grid: Grid<()> =
-                Grid::from_str_to_unwrapped_with_borrowed_map(&input_data, &map).unwrap();
+            let mut grid: Grid<()> = Grid::from_str_by_map(&input_data, &map).unwrap();
+            let expected_result_grid: Grid<()> = Grid::from_str_by_map(&input_data, &map).unwrap();
 
             grid.transpose_new();
 
@@ -1356,14 +1347,11 @@ pub mod tests {
         #[test]
         fn double_transpose_test_two() {
             let input_data = read_to_string("tests/data/row_expansion_test_3.txt").unwrap();
-            let mut map: HashMap<char, Option<()>> = HashMap::new();
-            map.insert('.', None);
-            map.insert('#', Some(()));
+            let mut map: HashMap<char, ()> = HashMap::new();
+            map.insert('#', ());
 
-            let mut grid: Grid<()> =
-                Grid::from_str_to_unwrapped_with_borrowed_map(&input_data, &map).unwrap();
-            let expected_result_grid: Grid<()> =
-                Grid::from_str_to_unwrapped_with_borrowed_map(&input_data, &map).unwrap();
+            let mut grid: Grid<()> = Grid::from_str_by_map(&input_data, &map).unwrap();
+            let expected_result_grid: Grid<()> = Grid::from_str_by_map(&input_data, &map).unwrap();
 
             grid.transpose_new();
             assert_coordinate_coverage(&grid);
@@ -1378,14 +1366,11 @@ pub mod tests {
         fn double_transpose_test_three() {
             let input_data =
                 read_to_string("tests/data/row_expansion_test_3_expected_result.txt").unwrap();
-            let mut map: HashMap<char, Option<()>> = HashMap::new();
-            map.insert('.', None);
-            map.insert('#', Some(()));
+            let mut map: HashMap<char, ()> = HashMap::new();
+            map.insert('#', ());
 
-            let mut grid: Grid<()> =
-                Grid::from_str_to_unwrapped_with_borrowed_map(&input_data, &map).unwrap();
-            let expected_result_grid: Grid<()> =
-                Grid::from_str_to_unwrapped_with_borrowed_map(&input_data, &map).unwrap();
+            let mut grid: Grid<()> = Grid::from_str_by_map(&input_data, &map).unwrap();
+            let expected_result_grid: Grid<()> = Grid::from_str_by_map(&input_data, &map).unwrap();
 
             grid.transpose_new();
             grid.transpose_new();
