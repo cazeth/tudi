@@ -733,6 +733,38 @@ pub mod tests {
         }
     }
 
+    mod bounded_neighbors_to {
+
+        use super::*;
+
+        #[track_caller]
+        fn check_bounded_neighbors_count<T>(
+            grid: &Grid<T>,
+            coordinate: Coordinate,
+            expected: usize,
+        ) {
+            assert_eq!(grid.bounded_neighbors_to(coordinate).count(), expected)
+        }
+
+        #[test]
+        fn three_by_three() {
+            let grid: Grid<()> = empty_grid(3);
+            check_bounded_neighbors_count(&grid, Coordinate::default(), 8);
+        }
+
+        #[test]
+        fn two_by_two() {
+            let grid: Grid<()> = empty_grid(2);
+            check_bounded_neighbors_count(&grid, Coordinate::default(), 3);
+        }
+
+        #[test]
+        fn one_by_one() {
+            let grid: Grid<()> = empty_grid(1);
+            check_bounded_neighbors_count(&grid, Coordinate::default(), 0);
+        }
+    }
+
     #[track_caller]
     fn check_out_of_bounds<T: std::panic::RefUnwindSafe>(grid: &Grid<T>, c: Coordinate) {
         let result = std::panic::catch_unwind(|| {
