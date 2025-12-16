@@ -38,15 +38,15 @@ impl OriginCenteredBounds {
         Self::try_from(bounds).unwrap()
     }
 
-    /// Expand the bounds by one. Returns true if the bounds are expanded westwards and false if expanded
-    /// eastwards.
+    /// Expand the bounds by one. Returns true if the bounds are expanded eastwards and false if expanded
+    /// westwards.
     pub fn expand_bounds_horizontally(&mut self) -> bool {
         if OriginBounded::x_count(&self) % 2 == 0 {
             self.0.expand_in_direction(AbsoluteDirection::West);
-            true
+            false
         } else {
             self.0.expand_in_direction(AbsoluteDirection::East);
-            false
+            true
         }
     }
 

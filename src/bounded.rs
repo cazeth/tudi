@@ -210,9 +210,10 @@ pub trait Bounded: BoundSeal {
         }
     }
 
-    /// Similar to [`Positioned::manhattan_neighbors`], this function returns the immediately adjacent
-    /// coordinate to the current coordinate. It also considers boundaries and filters out
-    /// coordinates that aren't within on or them.
+    /// Similar to [`Positioned::euclid_neighbors`], this function returns adjacent
+    /// coordinate (including diagonal neighbors) to the current coordinate. It also considers boundaries and filters out
+    /// coordinates that aren't within or on them.
+    /// See also [Bounded::bounded_neighbors_to]
     fn bounded_neighbors(&self) -> Vec<Coordinate>
     where
         Self: Positioned,
