@@ -1447,13 +1447,19 @@ pub mod tests {
             assert_eq!(grid.y_count(), 4);
         }
 
+        #[track_caller]
+        pub fn check_expand_at_row<T>(grid: &mut Grid<T>, y_coord: i32, up: bool) {
+            let actual = grid.expand_at_row(y_coord);
+            assert_eq!(actual, up);
+        }
+
         #[test]
         fn basic_upward_row_expansion_above_element() {
             let c = Coordinate { x: 0, y: 0 };
             let mut grid: Grid<usize> = grid_with_single_element(3, c);
 
             assert_eq!(grid.y_count(), 3);
-            grid.expand_at_row(1);
+            check_expand_at_row(&mut grid, 1, true);
             assert_eq!(grid.y_count(), 4);
 
             // expansion happens upwards above the element so the object should not move.
@@ -1464,8 +1470,7 @@ pub mod tests {
         fn basic_upward_row_expansion_below_element() {
             let c = Coordinate { x: 0, y: 0 };
             let mut grid: Grid<usize> = grid_with_single_element(3, c);
-            grid.expand_at_row(-1);
-
+            check_expand_at_row(&mut grid, -1, true);
             // expansion happens upwards below the element so the object should move.
             check_empty(&grid, c);
             check_element(&grid, Coordinate { y: 1, x: 0 }, &0);
@@ -1475,7 +1480,7 @@ pub mod tests {
         fn basic_upward_row_expansion_on_element_row() {
             let c = Coordinate { x: 0, y: 0 };
             let mut grid: Grid<usize> = grid_with_single_element(3, c);
-            grid.expand_at_row(0);
+            check_expand_at_row(&mut grid, 0, true);
 
             // expansion happens on the element row so the object should move upwards.
             check_empty(&grid, c);
@@ -1486,7 +1491,7 @@ pub mod tests {
         fn basic_downward_row_expansion_below_element() {
             let c = Coordinate { x: 0, y: 0 };
             let mut grid: Grid<usize> = grid_with_single_element(4, c);
-            grid.expand_at_row(-1);
+            check_expand_at_row(&mut grid, -1, false);
             check_element(&grid, c, &0);
         }
 
@@ -1494,7 +1499,7 @@ pub mod tests {
         fn basic_downward_row_expansion_above_element() {
             let c = Coordinate { x: 0, y: 0 };
             let mut grid: Grid<usize> = grid_with_single_element(4, c);
-            grid.expand_at_row(1);
+            check_expand_at_row(&mut grid, 1, false);
             check_empty(&grid, c);
         }
 
@@ -1502,7 +1507,7 @@ pub mod tests {
         fn basic_downward_row_expansion_on_element_row() {
             let c = Coordinate { x: 0, y: 0 };
             let mut grid: Grid<usize> = grid_with_single_element(4, c);
-            grid.expand_at_row(0);
+            check_expand_at_row(&mut grid, 0, false);
             check_empty(&grid, c);
         }
     }
