@@ -380,7 +380,7 @@ impl<T> Grid<T> {
     ///
     /// ```
     pub fn add_row(&mut self) -> bool {
-        if OriginBounded::y_count(&self) % 2 == 0 {
+        if OriginBounded::y_count(&self).is_multiple_of(2) {
             self.add_bottom_row();
             false
         } else {
