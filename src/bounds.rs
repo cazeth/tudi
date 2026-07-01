@@ -20,7 +20,7 @@ pub struct Bounds {
 
 impl Bounds {
     /// This is the preferred constructor for bounds because it cannot fail.
-    /// It is important to note that x_distance is not the number of coordinates on the x-axis but
+    /// It is important to note that x_len is not the number of coordinates on the x-axis but
     /// rather the distance between the coordinates on the axes farthest from each other. Thus, if
     /// the bounds only contains the origin (or any single point), x_len and y_len should be zero.
     pub fn new(x_min: i32, x_len: usize, y_min: i32, y_len: usize) -> Self {
