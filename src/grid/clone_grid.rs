@@ -50,8 +50,8 @@ impl<T: Clone> PartialEq for Grid<T> {
 #[cfg(test)]
 pub mod tests {
     use super::*;
+    use crate::Bounded;
     use crate::Coordinate;
-    use crate::bounded::Bounded;
     use itertools::Itertools;
 
     /// Checks that the boundaries of the grid are centered around the origin.
