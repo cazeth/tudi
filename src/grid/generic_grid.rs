@@ -110,7 +110,7 @@ impl<T> Grid<T> {
     /// use tudi::Grid;
     /// use tudi::bounded::Bounded;
     /// use tudi::Coordinate;
-    /// let mut grid = Grid::new(3, 3); // create a new 3x3 grid.
+    /// let mut grid = Grid::new(3, 3);
     /// grid.store_element(&Coordinate::default(), 1); // store 1 at the origin.
     /// assert!(grid.element(&Coordinate::default()).is_ok()); // This method returns a borrowed
     /// // version of the element.
@@ -279,7 +279,7 @@ impl<T> Grid<T> {
         self.row_filter_move_elements_in_direction(Coordinate::is_below_row, y_coord, direction)
     }
 
-    /// The count along the x-dimension.
+    /// The coordinate count along the x-dimension.
     /// # Examples
     /// ```
     /// use tudi::Grid;
@@ -292,7 +292,7 @@ impl<T> Grid<T> {
         OriginBounded::x_count(self)
     }
 
-    /// The count along the y-dimension.
+    /// The coordinate count along the y-dimension.
     /// # Examples
     /// ```
     /// use tudi::Grid;
@@ -332,10 +332,10 @@ impl<T> Grid<T> {
         }
     }
 
-    /// Expand the grid at a row. The Grid remains OriginCentered.
-    /// You can think of the y_coord of an indicator of which elements are pushed.
+    /// Expand the grid at a row while keeping it origin-centered.
+    /// You can think of `y_coord` as an indicator of which elements are pushed.
     /// This, along with if the grid is odd or even numbered, determines which elements are moved.
-    /// The movement of each element can be summarized as follows:
+    /// The movement of each element are as follows:
     ///
     /// |Element pos | Even #rows | Odd #rows |
     /// |------------|------------|-----------|
