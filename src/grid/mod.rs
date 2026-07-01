@@ -30,7 +30,6 @@ use grid_creation_error::GridCreationError;
 /// // the origin.
 /// ```
 #[derive(Debug)]
-#[allow(unused)]
 pub struct Grid<T> {
     grid_data: Vec<GridCoordinate<T>>,
     bounds: OriginCenteredBounds,
