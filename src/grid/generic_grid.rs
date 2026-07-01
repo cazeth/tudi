@@ -500,7 +500,7 @@ impl<T> Grid<T> {
         println!("-----");
     }
 
-    /// A string where '#' marks a occupied element and '.' marks an empty element. with one line for
+    /// A string where '#' marks a occupied element and '.' marks an empty element with one line for
     /// each row in the grid.
     /// A simple way to quickly see what is going on in a small grid.
     pub fn element_statuses(&self) -> String {
