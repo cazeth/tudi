@@ -116,6 +116,38 @@ impl AbsoluteDirection {
     }
 }
 
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default)]
+pub enum VerticalDirection {
+    #[default]
+    North,
+    South,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default)]
+pub enum HorizontalDirection {
+    #[default]
+    East,
+    West,
+}
+
+impl From<VerticalDirection> for AbsoluteDirection {
+    fn from(value: VerticalDirection) -> Self {
+        match value {
+            VerticalDirection::North => AbsoluteDirection::North,
+            VerticalDirection::South => AbsoluteDirection::South,
+        }
+    }
+}
+
+impl From<HorizontalDirection> for AbsoluteDirection {
+    fn from(value: HorizontalDirection) -> Self {
+        match value {
+            HorizontalDirection::East => AbsoluteDirection::East,
+            HorizontalDirection::West => AbsoluteDirection::West,
+        }
+    }
+}
+
 #[derive(PartialEq, Debug, Clone, Copy)]
 pub enum RelativeDirection {
     Left,
