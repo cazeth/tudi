@@ -911,7 +911,7 @@ pub mod tests {
 
     #[test]
     pub fn should_move_element() {
-        let mut grid: Grid<usize> = Grid::new(3, 3);
+        let mut grid = empty_grid(3);
         let coordinate = Coordinate::default();
         let val: usize = 1;
 
