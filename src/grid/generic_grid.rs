@@ -153,6 +153,17 @@ impl<T> Grid<T> {
         }
     }
 
+    /// Store an element at a coordinate.
+    ///
+    /// If the coordinate was previously empty, `Ok(none)` is returned.
+    ///
+    /// If the coordinate previously contained an element, the value is updated, and `Ok(Some(old value))`
+    /// is returned.
+    ///
+    /// # Error
+    ///
+    /// Returns an error if the coordinate argument is out of bounds.
+    ///
     pub fn store_element<C: Positioned>(
         &mut self,
         coordinate: &C,
