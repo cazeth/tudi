@@ -10,6 +10,7 @@ use crate::GridError;
 use crate::OriginCenteredBounds;
 use crate::OutOfBoundsError;
 use crate::Positioned;
+use crate::VerticalDirection;
 use crate::bounded::Bounded;
 use crate::bounded::OriginBounded;
 use crate::bounded::OriginCentered;
@@ -383,17 +384,26 @@ impl<T> Grid<T> {
     /// |    **at y**    | moved down | moved up  |
     /// | **below y**    | moved down | no change |
     ///
-    pub fn expand_at_row(&mut self, y_coord: i32) -> bool {
+    /// # Errors
+    ///
+    /// This method returns an error if the provided y-coordinate is out of bounds.
+    pub fn expand_at_row(&mut self, y_coord: i32) -> Result<VerticalDirection, GridError> {
+        if y_coord > self.y_max_boundary() || y_coord < self.y_min_boundary() {
+            return Err(GridError::OutOfBoundsError(OutOfBoundsError::new(
+                Coordinate { x: 0, y: y_coord },
+            )));
+        };
+
         let top_add = self.add_row();
 
         if top_add {
             self.move_elements_above_row_in_direction(y_coord, AbsoluteDirection::North)
                 .unwrap();
-            true
+            Ok(VerticalDirection::North)
         } else {
             self.move_elements_below_row_in_direction(y_coord, AbsoluteDirection::South)
                 .unwrap();
-            false
+            Ok(VerticalDirection::South)
         }
     }
 
@@ -1498,7 +1508,22 @@ pub mod tests {
         #[track_caller]
         pub fn check_expand_at_row<T>(grid: &mut Grid<T>, y_coord: i32, up: bool) {
             let actual = grid.expand_at_row(y_coord);
-            assert_eq!(actual, up);
+            if up {
+                assert_eq!(actual, Ok(VerticalDirection::North));
+            } else {
+                assert_eq!(actual, Ok(VerticalDirection::South));
+            }
+        }
+
+        #[track_caller]
+        pub fn check_expand_at_row_err<T>(grid: &mut Grid<T>, y_coord: i32) {
+            let result = grid.expand_at_row(y_coord);
+            assert_eq!(
+                Err(GridError::OutOfBoundsError(OutOfBoundsError::new(
+                    Coordinate { x: 0, y: y_coord }
+                ))),
+                result
+            );
         }
 
         #[test]
@@ -1557,6 +1582,22 @@ pub mod tests {
             let mut grid: Grid<usize> = grid_with_single_element(4, c);
             check_expand_at_row(&mut grid, 0, false);
             check_empty(&grid, c);
+        }
+
+        #[test]
+        fn out_of_bounds_should_err() {
+            check_expand_at_row_err(
+                &mut grid_with_single_element::<()>(4, Coordinate::default()),
+                -5,
+            );
+            check_expand_at_row_err(
+                &mut grid_with_single_element::<()>(1, Coordinate::default()),
+                -2,
+            );
+            check_expand_at_row_err(
+                &mut grid_with_single_element::<()>(1, Coordinate::default()),
+                -1,
+            );
         }
     }
 }
