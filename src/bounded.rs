@@ -115,6 +115,9 @@ pub trait Bounded: BoundSeal {
 
     /// Returns the index of a coordinate in a region if it were counted from west to east, north to
     /// south.
+    /// # Errors
+    ///
+    /// Returns an error if the coordinate is out of bounds.
     /// # Examples
     /// ```
     /// use tudi::Grid;
@@ -179,9 +182,11 @@ pub trait Bounded: BoundSeal {
         ]
     }
 
-    /// inverse of count from min: Given a distance from the northwest corner, the function returns the coordinates.
-    /// array is of form \[x,y\]
-    /// panics if the coordinate is out of bounds.
+    /// The coordinate that results from adding the provided distance to the northwest corner.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the resulting coordinate is out of bounds.
     fn to_grid_like(&self, distance: [usize; 2]) -> Result<Coordinate, OutOfBoundsError> {
         let coordinate = Coordinate {
             x: self.x_min_boundary() + distance[0] as i32,
