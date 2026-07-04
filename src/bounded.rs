@@ -42,15 +42,28 @@ pub trait Bounded: BoundSeal {
         }
     }
 
+    /// The coordinate count along the x-dimension.
+    ///
+    /// See also [`Bounded::x_geometric_len()`]
+    ///
     fn x_count(&self) -> usize {
         (self.x_max_boundary() - self.x_min_boundary()).unsigned_abs() as usize + 1
     }
 
+    /// The coordinate count along the y-dimension.
+    ///
+    /// See also [`Bounded::y_geometric_len()`]
+    ///
     fn y_count(&self) -> usize {
         (self.y_max_boundary() - self.y_min_boundary()).unsigned_abs() as usize + 1
     }
 
-    /// Returns the euclidian length between the extremes of the bound.
+    /// The length between `x_min` and `x_max`, i.e `x_max - x_min`.
+    ///
+    /// Note that this different to the *count* along the dimension. See also [`Bounded::x_count()`]
+    ///
+    /// # Examples
+    ///
     /// ```
     /// use tudi::Grid;
     /// use tudi::Bounded;
@@ -62,7 +75,12 @@ pub trait Bounded: BoundSeal {
         (self.x_max_boundary() - self.x_min_boundary()).unsigned_abs() as usize
     }
 
-    /// Returns the euclidian length between the extremes of the bound.
+    /// The length between `y_min` and `y_max`, i.e `y_max - y_min`.
+    ///
+    /// Note that this different to the *count* along the dimension. See also [`Bounded::y_count()`]
+    ///
+    /// # Examples
+    ///
     /// ```
     /// use tudi::Grid;
     /// use tudi::Bounded;
@@ -113,20 +131,27 @@ pub trait Bounded: BoundSeal {
         result
     }
 
-    /// Returns the index of a coordinate in a region if it were counted from west to east, north to
+    /// Returns the position of a coordinate when all the integer coordinates in a bounded region are ordered from west to east, north to
     /// south.
+    ///
     /// # Errors
     ///
     /// Returns an error if the coordinate is out of bounds.
+    ///
     /// # Examples
+    ///
     /// ```
     /// use tudi::Grid;
     /// use tudi::Coordinate;
     /// use tudi::Bounded;
-    /// let n = 5;
-    /// let grid : Grid<Coordinate> = Grid::new(n, n);
+    /// let grid : Grid<Coordinate> = Grid::new(5, 5);
+    ///
+    /// // The northwest corner always returns 0 since that is where the count begins.
     /// assert_eq!( grid.coordinate_to_index(&grid.northwest_corner()).unwrap(), 0);
-    /// assert_eq!( grid.coordinate_to_index(&grid.southeast_corner()).unwrap(), n*n-1);
+    ///
+    /// // the southeast corner always returns NxM-1 (the coordinate count minus one, since the count
+    /// // begins at zero)
+    /// assert_eq!( grid.coordinate_to_index(&grid.southeast_corner()).unwrap(), 5*5-1);
     /// ```
     fn coordinate_to_index<C: Positioned>(
         &self,
@@ -165,7 +190,9 @@ pub trait Bounded: BoundSeal {
     /// = 0, x_max = 4)
     /// 0,0 means the northwest corner, as with standard matrix indices.
     /// panics if the coordinate is out of bounds.
+    ///
     /// # Examples
+    ///
     /// ```
     /// use tudi::Grid;
     /// use tudi::Coordinate;
