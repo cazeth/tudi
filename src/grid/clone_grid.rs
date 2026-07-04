@@ -181,5 +181,17 @@ pub mod tests {
             assert_coordinate_coverage(&data);
             assert_centered_around_origin(&data);
         }
+
+        #[test]
+        fn char_not_in_map() {
+            let input = ".x.\nA#.";
+            let map: HashMap<char, usize> = HashMap::from_iter([('x', 1), ('#', 2)]);
+            let grid: Grid<usize> = Grid::<usize>::from_str_by_map(input, &map).unwrap();
+            assert_eq!(grid.iter_elements_new().count(), 2);
+            check_x_count(&grid, 3);
+            check_y_count(&grid, 2);
+            assert_coordinate_coverage(&grid);
+            assert_centered_around_origin(&grid);
+        }
     }
 }
