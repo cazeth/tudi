@@ -89,7 +89,7 @@ pub mod tests {
         use super::*;
 
         #[test]
-        fn new_from_str_test() {
+        fn no_elements() {
             let input = "...";
             let map: HashMap<char, usize> = HashMap::new();
             let data = Grid::<usize>::from_str_by_map(input, &map).unwrap();
@@ -101,7 +101,7 @@ pub mod tests {
         }
 
         #[test]
-        fn new_from_str_test_two() {
+        fn single_element() {
             let input = ".x.";
             let mut map: HashMap<char, usize> = HashMap::new();
             map.insert('x', 1);
