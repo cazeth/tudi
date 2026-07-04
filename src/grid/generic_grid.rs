@@ -16,6 +16,7 @@ use crate::bounded::OriginCentered;
 use crate::bounded::OriginCenteredness;
 use crate::grid::GridCreationError;
 use itertools::iproduct;
+use std::num::NonZeroUsize;
 
 impl<T> Grid<T> {
     ///Create a rectangular grid with empty elements.
@@ -68,6 +69,34 @@ impl<T> Grid<T> {
                 .push(GridCoordinate::Empty(Coordinate { x, y }));
         }
         result
+    }
+
+    /// Create an empty grid with a given x- and y-count.
+    ///
+    /// A Grid cannot have count zero along any dimension, therefore arguments are NonZeroUsize.
+    ///
+    /// # Examples
+    ///
+    ///```
+    /// use tudi::Grid;
+    /// use tudi::Bounded;
+    /// use std::num::NonZeroUsize;
+    ///
+    /// let grid: Grid<()> = Grid::with_count(
+    /// NonZeroUsize::new(1).unwrap(),
+    /// NonZeroUsize::new(1).unwrap());
+    ///
+    /// assert_eq!(grid.x_count(),1);
+    /// assert_eq!(grid.y_count(),1);
+    /// assert_eq!(grid.x_min_boundary(), 0);
+    /// assert_eq!(grid.x_max_boundary(), 0);
+    /// assert_eq!(grid.y_min_boundary(), 0);
+    /// assert_eq!(grid.y_max_boundary(), 0);
+    ///
+    ///```
+    pub fn with_count(x_count: NonZeroUsize, y_count: NonZeroUsize) -> Self {
+        #[allow(deprecated)]
+        Self::new(usize::from(x_count), usize::from(y_count))
     }
 
     /// Create a new empty grid with the same bounds as another OriginCenteredBounded.
