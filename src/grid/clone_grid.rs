@@ -141,6 +141,36 @@ pub mod tests {
             assert_eq!(data.empty_rows(), vec![0]);
         }
 
+        #[track_caller]
+        fn check_different_row_len(
+            input: &str,
+            first_row_index: usize,
+            first_row_count: usize,
+            second_row_index: usize,
+            second_row_count: usize,
+        ) {
+            let map: HashMap<char, usize> = HashMap::new();
+            let err = Grid::<usize>::from_str_by_map(input, &map);
+            assert_eq!(
+                err,
+                Err(GridCreationError::DifferentRowLengths {
+                    first_row_index,
+                    first_row_count,
+                    second_row_index,
+                    second_row_count,
+                })
+            );
+        }
+
+        #[test]
+        fn different_row_len() {
+            check_different_row_len("...\n....", 0, 3, 1, 4);
+            check_different_row_len(".#.\n..", 0, 3, 1, 2);
+            check_different_row_len(".x.\n..", 0, 3, 1, 2);
+            check_different_row_len("...\n...\n..", 0, 3, 2, 2);
+            check_different_row_len(".\n..\n.", 0, 1, 1, 2);
+        }
+
         #[test]
         fn empty_rows_two() {
             let input = "...\n.x.\n...";

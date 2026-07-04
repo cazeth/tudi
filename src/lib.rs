@@ -18,6 +18,7 @@ pub use crate::direction::AbsoluteDirection;
 pub use crate::direction::RelativeDirection;
 pub use crate::dynamically_bounded::DynamicallyBounded;
 pub use crate::grid::Grid;
+pub use crate::grid::GridCreationError;
 pub use crate::grid::GridError;
 pub use crate::mover::Mover;
 pub use crate::moving_object::MovingObject;

@@ -9,7 +9,7 @@ pub use self::grid_error::GridError;
 use self::performance_tuning::PerformanceTuning;
 use crate::OriginCenteredBounds;
 use grid_coordinate::GridCoordinate;
-use grid_creation_error::GridCreationError;
+pub use grid_creation_error::GridCreationError;
 
 /// A bounded two-dimensional grid that either contains an element of type T or is empty at each
 /// point.

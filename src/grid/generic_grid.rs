@@ -568,10 +568,18 @@ impl<T> TryFrom<Vec<Vec<Option<T>>>> for Grid<T> {
         // check that all the inner vecs are the same length
         let first_row_len = value.first().unwrap().len();
 
-        if !value.iter().all(|row| row.len() == first_row_len) {
-            // this is the wrong type of error
-            return Err(GridCreationError {});
-        };
+        if let Some((invalid_row_index, invalid_row_count)) = value
+            .iter()
+            .enumerate()
+            .find(|(_, row)| row.len() != first_row_len)
+        {
+            return Err(GridCreationError::DifferentRowLengths {
+                first_row_index: 0,
+                first_row_count: first_row_len,
+                second_row_index: invalid_row_index,
+                second_row_count: invalid_row_count.len(),
+            });
+        }
 
         let y_size = value.len();
         let x_size = value.first().unwrap().iter().count();
