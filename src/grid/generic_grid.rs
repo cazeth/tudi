@@ -453,7 +453,7 @@ impl<T> Grid<T> {
                 self.move_element_in_direction(c, direction)?;
             }
         } else if direction == AbsoluteDirection::North || direction == AbsoluteDirection::West {
-            for c in element_coordinates.iter() {
+            for c in &element_coordinates {
                 self.move_element_in_direction(c, direction)?;
             }
         }
