@@ -664,6 +664,8 @@ pub mod tests {
     use itertools::Itertools;
     use std::collections::HashMap;
     use std::fs::read_to_string;
+    pub use x_count::check_x_count;
+    pub use y_count::check_y_count;
 
     /// Checks that the boundaries of the grid are centered around the origin.
     fn assert_centered_around_origin<T>(input: &Grid<T>) {
@@ -788,6 +790,38 @@ pub mod tests {
     ) {
         for (coordinate, element) in coordinates.iter().zip(elements) {
             check_element(grid, *coordinate, element);
+        }
+    }
+
+    pub mod x_count {
+        use super::*;
+
+        #[track_caller]
+        pub fn check_x_count<T>(grid: &Grid<T>, count: usize) {
+            assert_eq!(grid.x_count(), count);
+        }
+
+        #[test]
+        fn basic_x_count() {
+            check_x_count(&empty_grid::<()>(1), 1);
+            check_x_count(&empty_grid::<()>(2), 2);
+            check_x_count(&empty_grid::<()>(5), 5);
+        }
+    }
+
+    pub mod y_count {
+        use super::*;
+
+        #[track_caller]
+        pub fn check_y_count<T>(grid: &Grid<T>, count: usize) {
+            assert_eq!(grid.y_count(), count);
+        }
+
+        #[test]
+        fn basic_y_count() {
+            check_y_count(&empty_grid::<()>(1), 1);
+            check_y_count(&empty_grid::<()>(2), 2);
+            check_y_count(&empty_grid::<()>(5), 5);
         }
     }
 

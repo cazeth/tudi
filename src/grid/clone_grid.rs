@@ -58,6 +58,7 @@ impl<T: Clone> PartialEq for Grid<T> {
 
 #[cfg(test)]
 pub mod tests {
+    use super::super::generic_grid::tests::*;
     use super::*;
     use crate::Bounded;
     use crate::Coordinate;
@@ -82,16 +83,6 @@ pub mod tests {
         {
             input.element_unchecked(&Coordinate { x, y });
         }
-    }
-
-    #[track_caller]
-    fn check_x_count<T>(grid: &Grid<T>, count: usize) {
-        assert_eq!(grid.x_count(), count);
-    }
-
-    #[track_caller]
-    fn check_y_count<T>(grid: &Grid<T>, count: usize) {
-        assert_eq!(grid.y_count(), count);
     }
 
     pub mod constructor_tests {
