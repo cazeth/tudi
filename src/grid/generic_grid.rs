@@ -598,15 +598,30 @@ impl<T> IntoIterator for Grid<T> {
     }
 }
 
-/// Create a grid from data - two vecs that represent the rows and columns that are Some(T)
-/// (represents an empty element) or None (an empty coordinate).
 impl<T> TryFrom<Vec<Vec<Option<T>>>> for Grid<T> {
     type Error = GridCreationError;
 
+    /// Create a grid from a Vec<Vec<Option<T>>> that represents the coordinates and elements of the grid.
+    ///
+    /// Some(T) represents an element and None represents an empty coordinate.
+    ///
+    /// The outer vec contains a row of coordinates and each inner vec contains the coordinates of a row.
+    ///
+    /// # Error
+    ///
+    /// Returns an error if the inner vecs are not all of the same length.
+    ///
+    /// Returns an error if any vec is empty.
     fn try_from(value: Vec<Vec<Option<T>>>) -> Result<Self, Self::Error> {
-        // check that all the inner vecs are the same length
-        let first_row_len = value.first().unwrap().len();
+        let first_row_len = if let Some(first) = value.first()
+            && !first.is_empty()
+        {
+            first.len()
+        } else {
+            return Err(GridCreationError::Empty);
+        };
 
+        // Check that all rows have the same length - if not, return an error.
         if let Some((invalid_row_index, invalid_row_count)) = value
             .iter()
             .enumerate()
@@ -621,9 +636,10 @@ impl<T> TryFrom<Vec<Vec<Option<T>>>> for Grid<T> {
         }
 
         let y_size = value.len();
-        let x_size = value.first().unwrap().iter().count();
+
         let mut grid_data: Vec<GridCoordinate<T>> = Vec::new();
-        let mut result = Grid::new(x_size, y_size);
+        let mut result = Grid::new(first_row_len, y_size);
+
         for (y_count, line) in value.into_iter().enumerate() {
             for (x_count, element) in line.into_iter().enumerate() {
                 let coordinate = result.to_grid_like([x_count, y_count]).unwrap();
@@ -943,6 +959,51 @@ pub mod tests {
             grid.northeast_corner(),
             grid.southeast_corner(),
         ]
+    }
+
+    mod try_from_vec_vec {
+        use super::*;
+
+        #[test]
+        fn empty_inner_should_err() {
+            assert_eq!(
+                Grid::<()>::try_from(vec![vec![]]),
+                Err(GridCreationError::Empty)
+            )
+        }
+
+        #[test]
+        fn empty_outer_should_err() {
+            assert_eq!(Grid::<()>::try_from(vec![]), Err(GridCreationError::Empty))
+        }
+
+        #[test]
+        fn empty_inner_vecs() {
+            assert_eq!(
+                Grid::<()>::try_from(vec![vec![], vec![]]),
+                Err(GridCreationError::Empty)
+            );
+        }
+
+        #[test]
+        fn valid_case() {
+            let grid = Grid::<usize>::try_from(vec![vec![Some(1), Some(2), None]]).unwrap();
+            check_x_count(&grid, 3);
+            check_y_count(&grid, 1);
+        }
+
+        #[test]
+        fn different_len_vecs_should_err() {
+            assert_eq!(
+                Grid::<()>::try_from(vec![vec![Some(())], vec![Some(()), Some(())]]),
+                Err(GridCreationError::DifferentRowLengths {
+                    first_row_index: 0,
+                    first_row_count: 1,
+                    second_row_index: 1,
+                    second_row_count: 2,
+                })
+            );
+        }
     }
 
     pub mod test_get {
