@@ -22,7 +22,7 @@ impl AbsoluteDirection {
         }
     }
 
-    /// turn in counter-clockwise direction.
+    /// Turn in counter-clockwise direction.
     pub fn increment(self) -> Self {
         use AbsoluteDirection::*;
         match self {
@@ -33,7 +33,7 @@ impl AbsoluteDirection {
         }
     }
 
-    /// turn in clockwise directions
+    /// Turn in clockwise direction.
     pub fn decrement(self) -> Self {
         use AbsoluteDirection::*;
         match self {
@@ -79,7 +79,7 @@ impl AbsoluteDirection {
         }
     }
 
-    /// Returns the relative direction between two directions when possible, otherwise return None..
+    /// Returns the relative direction between two directions when possible, otherwise return None.
     /// ```
     /// # use tudi::AbsoluteDirection;
     /// # use tudi::RelativeDirection::*;
