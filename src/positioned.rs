@@ -17,7 +17,8 @@ pub trait Positioned {
         self.x_coordinate().unsigned_abs() as usize + self.y_coordinate().unsigned_abs() as usize
     }
 
-    /// Returns the manhattan distance to another [`Positioned`].
+    /// The Manhattan distance to another [`Positioned`].
+    ///
     /// # Examples
     /// ```
     /// use tudi::Coordinate;
@@ -34,8 +35,11 @@ pub trait Positioned {
             + (self.y_coordinate() - cord.y_coordinate()).unsigned_abs() as usize
     }
 
-    /// Return a vec of the immediately surrounding coordinates to the current coordinate, not considering
+    /// The immediately surrounding coordinates to self, not including
     /// diagonals.
+    ///
+    /// See also [`Positioned::euclid_neighbors()`]
+    ///
     /// # Examples
     /// ```
     /// use tudi::MovingObject;
@@ -58,7 +62,10 @@ pub trait Positioned {
         result
     }
 
-    /// Return a vec of the immediately surrounding coordinates to the current coordinate, including diagonals.
+    /// The immediately surrounding coordinates to self, including diagonals.
+    ///
+    /// See also [`Positioned::manhattan_neighbors()`]
+    ///
     /// # Examples
     /// ```
     /// use tudi::MovingObject;
@@ -90,7 +97,8 @@ pub trait Positioned {
         result
     }
 
-    /// subtract the coordinates.
+    /// Subtract a coordinate from self.
+    ///
     /// Note that this method returns the signed difference rather than the absolute x/y distances.
     fn difference(&self, other: &Self) -> Coordinate
     where
@@ -101,8 +109,8 @@ pub trait Positioned {
         Coordinate { x, y }
     }
 
-    /// returns the absolute directions from self to another coordinate. If the direction in an
-    /// exact direction (for instance , straight north) it returns that direction twice.
+    /// The [`AbsoluteDirection`] from self to another coordinate. If the direction is an
+    /// exact direction (for instance, straight north) it returns that direction twice.
     fn direction_toward(&self, target: &Coordinate) -> (AbsoluteDirection, AbsoluteDirection) {
         //handles when there is an exact direction to target (eactly north, south, east, west)
         if self.position() == target.position() {
