@@ -112,7 +112,7 @@ pub trait Positioned {
     /// The [`AbsoluteDirection`] from self to another coordinate. If the direction is an
     /// exact direction (for instance, straight north) it returns that direction twice.
     fn direction_toward(&self, target: &Coordinate) -> (AbsoluteDirection, AbsoluteDirection) {
-        //handles when there is an exact direction to target (eactly north, south, east, west)
+        // Handles when there is an exact direction to target (exactly north, south, east, west).
         if self.position() == target.position() {
             panic!();
         } else if target.x_coordinate() == self.x_coordinate() {
@@ -129,7 +129,7 @@ pub trait Positioned {
             }
         };
 
-        // handles when there is two direction, northeast, southwest ....
+        // Handles when there is a direction combination, such as northeast or southwest.
         let first_direction = if target.y_coordinate() > self.y_coordinate() {
             AbsoluteDirection::North
         } else {
