@@ -5,11 +5,11 @@ mod grid_creation_error;
 mod grid_error;
 mod grid_iter;
 mod performance_tuning;
-pub use self::grid_error::GridError;
-use self::performance_tuning::PerformanceTuning;
 use crate::OriginCenteredBounds;
 use grid_coordinate::GridCoordinate;
 pub use grid_creation_error::GridCreationError;
+pub use grid_error::GridError;
+use performance_tuning::PerformanceTuning;
 
 /// A bounded two-dimensional grid that either contains an element of type T or is empty at each
 /// point.
