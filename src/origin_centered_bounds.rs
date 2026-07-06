@@ -5,7 +5,7 @@ use thiserror::Error;
 
 /// A region that is centered around the origin.
 ///
-/// This struct represents a region that is guaranteed to withold the property of origin-centeredness, which is defined as:
+/// This struct represents a region that is guaranteed to be origin-centered, which is defined as:
 ///
 /// for both x,y-axes:
 ///
