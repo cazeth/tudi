@@ -2,19 +2,28 @@ use super::{Grid, GridCreationError};
 use std::collections::HashMap;
 
 impl<T: Clone> Grid<T> {
-    /// Creates a grid from a str where each lines represents a row. Each character in the string
-    /// is mapped to a grid element or an empty coordinate according to the provided hashmap.
-    /// If a character is not in the map, the character is set to empty.
+    /// Create a grid from a `&str` where each line represents a row.
+    ///
+    /// Each character is looked up in the provided map; matched characters become grid elements and
+    /// unmatched characters become empty coordinates.
     ///
     /// The method creates a new cloned T at each occupied point in the Grid.
     ///
-    /// # Panics
-    /// This method panics if any rows in the input str are of different lengths.
+    /// This method inherits its definition of a line break from the [lines](str::lines) method.
     ///
+    /// # Errors
+    ///
+    /// This method returns an error if input rows have different lengths.
+    ///
+    /// This method returns an error if the input is empty.
     pub fn from_str_by_map(
         input: &str,
         map: &HashMap<char, T>,
     ) -> Result<Grid<T>, GridCreationError> {
+        if input.is_empty() {
+            return Err(GridCreationError::Empty);
+        };
+
         let mut char_data = input
             .lines()
             .map(|line| line.chars().collect::<Vec<char>>())
@@ -192,6 +201,14 @@ pub mod tests {
             check_y_count(&grid, 2);
             assert_coordinate_coverage(&grid);
             assert_centered_around_origin(&grid);
+        }
+
+        #[test]
+        fn empty_str() {
+            let input = "";
+            let map: HashMap<char, usize> = HashMap::new();
+            let data = Grid::<usize>::from_str_by_map(input, &map);
+            assert_eq!(data, Err(GridCreationError::Empty));
         }
     }
 }
