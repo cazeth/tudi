@@ -1142,15 +1142,14 @@ pub mod tests {
     #[test]
     fn test_boundaries() {
         for i in 1..=100 {
-            let len = i;
-            let grid: Grid<usize> = Grid::new(len, len);
+            let grid: Grid<usize> = empty_grid(i);
             assert_eq!(
                 grid.y_max_boundary() - grid.y_min_boundary(),
-                (len - 1) as i32
+                (i - 1) as i32
             );
             assert_eq!(
                 grid.x_max_boundary() - grid.x_min_boundary(),
-                (len - 1) as i32
+                (i - 1) as i32
             );
             assert_centered_around_origin(&grid);
         }
@@ -1159,7 +1158,7 @@ pub mod tests {
     #[test]
     fn coordinate_to_index() {
         for n in 1..100 {
-            let grid: Grid<()> = Grid::new(n, n);
+            let grid: Grid<()> = empty_grid(n);
             assert_eq!(
                 grid.coordinate_to_index(&grid.northwest_corner()).unwrap(),
                 0
@@ -1189,33 +1188,33 @@ pub mod tests {
 
         #[test]
         fn empty_one_by_one() {
-            let grid: Grid<()> = Grid::new(1, 1);
+            let grid: Grid<()> = empty_grid(1);
             check_string(&grid, ".");
         }
 
         #[test]
         fn occupied_one_by_one() {
-            let mut grid: Grid<()> = Grid::new(1, 1);
+            let mut grid: Grid<()> = empty_grid(1);
             let _ = grid.store_element(&Coordinate::default(), ());
             check_string(&grid, "#");
         }
 
         #[test]
         fn partially_occupied_one_by_two() {
-            let mut grid: Grid<()> = Grid::new(1, 2);
+            let mut grid: Grid<()> = rectangular_empty_grid(1, 2);
             let _ = grid.store_element(&Coordinate::default(), ());
             check_string(&grid, ".\n#");
         }
 
         #[test]
         fn empty_two_by_two() {
-            let grid: Grid<()> = Grid::new(2, 2);
+            let grid: Grid<()> = empty_grid(2);
             check_string(&grid, "..\n..");
         }
 
         #[test]
         fn corner_occupied_three_by_three() {
-            let mut grid: Grid<()> = Grid::new(3, 3);
+            let mut grid: Grid<()> = empty_grid(3);
             let _ = grid.store_element(&grid.northwest_corner(), ());
             let _ = grid.store_element(&grid.northeast_corner(), ());
             let _ = grid.store_element(&grid.southwest_corner(), ());
@@ -1316,7 +1315,7 @@ pub mod tests {
         #[test]
         fn iter_new_len() {
             for i in 1..100 {
-                let grid: Grid<()> = Grid::new(i, i);
+                let grid: Grid<()> = empty_grid(i);
                 assert!(
                     grid.iter_new()
                         .map(|(_, element)| element)
@@ -1381,7 +1380,7 @@ pub mod tests {
         fn iter_mut_count() {
             for i in 1..=100 {
                 let len = i;
-                let mut grid: Grid<()> = Grid::new(len, len);
+                let mut grid: Grid<()> = empty_grid(len);
                 assert_eq!(grid.iter_mut_new().count(), len * len);
                 assert_eq!(grid.iter_new().count(), len * len);
             }
@@ -1409,7 +1408,7 @@ pub mod tests {
     #[test]
     fn coordinates_in_direction() {
         let len = 5;
-        let grid: Grid<()> = Grid::new(len, len);
+        let grid: Grid<()> = empty_grid(len);
         let marker = BoundedMovingObject::try_from((&grid, Coordinate::default())).unwrap();
         let result = marker.coordinates_in_direction(AbsoluteDirection::South);
         assert!(result.contains(&Coordinate { y: -1, x: 0 }));
@@ -1419,7 +1418,7 @@ pub mod tests {
 
     #[test]
     fn coordinate_to_index_and_index_to_coordinate_inverse_functions() {
-        let grid: Grid<Coordinate> = Grid::new(100, 100);
+        let grid: Grid<Coordinate> = empty_grid(100);
         for (grid_coordinate, _) in grid.iter_new() {
             println!(
                 "check index for coordinate {:?}",
@@ -1435,7 +1434,7 @@ pub mod tests {
     #[test]
     fn neighbor_in_direction_from() {
         use AbsoluteDirection::*;
-        let grid: Grid<Coordinate> = Grid::new(20, 20);
+        let grid: Grid<Coordinate> = empty_grid(20);
 
         let directions = [North, East, South, West];
         for (coord, _) in grid.iter_new() {
@@ -1492,15 +1491,15 @@ pub mod tests {
 
         #[test]
         fn test_transpose() {
-            let mut grid: Grid<usize> = Grid::new(3, 1);
+            let mut grid: Grid<()> = rectangular_empty_grid(3, 1);
             grid.transpose_new();
             check_grid_counts(&grid, 1, 3);
 
-            let mut grid: Grid<usize> = Grid::new(1, 1);
+            let mut grid: Grid<()> = empty_grid(1);
             grid.transpose_new();
             check_grid_counts(&grid, 1, 1);
 
-            let mut grid: Grid<usize> = Grid::new(3, 3);
+            let mut grid = empty_grid(3);
             check_store(
                 &mut grid,
                 Coordinate { x: -1, y: -1 },
@@ -1518,7 +1517,7 @@ pub mod tests {
         fn transpose_new_trivial() {
             let n = 3;
             let element = 1;
-            let mut grid: Grid<usize> = Grid::new(n, n);
+            let mut grid: Grid<usize> = empty_grid(n);
             let [_, ne, sw, _] = corners(&grid);
             check_store(&mut grid, ne, element, StoreValidity::Valid);
             grid.transpose_new();
@@ -1599,7 +1598,7 @@ pub mod tests {
 
         #[test]
         fn add_row_test() {
-            let mut grid: Grid<Coordinate> = Grid::new(3, 3);
+            let mut grid: Grid<Coordinate> = empty_grid(3);
             for _ in 1..10 {
                 grid.add_row();
                 assert_coordinate_coverage(&grid);
@@ -1609,8 +1608,7 @@ pub mod tests {
 
         #[test]
         fn row_expansion_test() {
-            let old_len = 3;
-            let mut grid: Grid<Coordinate> = Grid::new(old_len, old_len);
+            let mut grid: Grid<Coordinate> = empty_grid(3);
             assert_eq!(grid.y_count(), 3);
             assert_coordinate_coverage(&grid);
             assert_centered_around_origin(&grid);
