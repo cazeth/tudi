@@ -3,7 +3,7 @@ use crate::Coordinate;
 use crate::Positioned;
 use crate::RelativeDirection;
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct MovingObject {
     current_pos: Coordinate,
     current_direction: AbsoluteDirection,

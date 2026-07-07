@@ -5,6 +5,7 @@ use crate::Coordinate;
 use crate::Positioned;
 use crate::bounded::Bounded;
 
+#[derive(Debug)]
 pub struct GridIter<'a, T> {
     current: BoundedMovingObject,
     grid: &'a Grid<T>,

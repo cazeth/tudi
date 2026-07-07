@@ -375,7 +375,9 @@ impl<T: MaybeOriginBounded> MaybeOriginBounded for &mut T {
 }
 
 //pub struct NotOriginCentered;
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct OriginCentered;
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct MaybeOriginCentered;
 
 trait BoundsHelper<ObjType>: OriginCenteredness {
