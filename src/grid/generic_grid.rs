@@ -991,6 +991,26 @@ pub mod tests {
         }
     }
 
+    mod test_is_within_bounds {
+
+        use super::*;
+        use crate::Bounded;
+
+        #[track_caller]
+        pub fn check_is_within_bounds<T>(grid: &Grid<T>, coordinate: Coordinate) {
+            assert!(grid.is_within_bounds(&coordinate));
+        }
+
+        #[test]
+        fn is_within_bounds_basic() {
+            check_is_within_bounds(&empty_grid::<()>(1), Coordinate::default());
+            check_is_within_bounds(&empty_grid::<()>(2), Coordinate { x: 1, y: 1 });
+            check_is_within_bounds(&empty_grid::<()>(2), Coordinate { x: 1, y: 0 });
+            check_is_within_bounds(&empty_grid::<()>(2), Coordinate { x: 0, y: 1 });
+            check_is_within_bounds(&empty_grid::<()>(2), Coordinate::default());
+        }
+    }
+
     mod test_remove {
         use super::*;
 
