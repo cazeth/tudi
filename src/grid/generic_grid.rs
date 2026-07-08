@@ -224,7 +224,7 @@ impl<T> Grid<T> {
         }
     }
 
-    pub fn iter_new(&self) -> GridIter<T> {
+    pub fn iter_new(&self) -> GridIter<'_, T> {
         match self.performance_tuning {
             PerformanceTuning::Auto => self.iter_new_memory(),
 
@@ -234,11 +234,11 @@ impl<T> Grid<T> {
         }
     }
 
-    fn iter_new_memory(&self) -> GridIter<T> {
+    fn iter_new_memory(&self) -> GridIter<'_, T> {
         GridIter::new(self)
     }
 
-    fn iter_new_speed(&self) -> GridIter<T> {
+    fn iter_new_speed(&self) -> GridIter<'_, T> {
         GridIter::new(self)
     }
 
