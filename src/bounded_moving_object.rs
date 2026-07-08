@@ -1,5 +1,4 @@
 use crate::AbsoluteDirection;
-#[allow(deprecated)]
 use crate::Coordinate;
 use crate::DynamicallyBounded;
 use crate::Mover;
