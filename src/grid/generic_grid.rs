@@ -1047,7 +1047,7 @@ pub mod tests {
 
         #[test]
         pub fn out_of_bounds_two() {
-            let grid: Grid<()> = empty_grid(0);
+            let grid: Grid<()> = empty_grid(1);
             check_out_of_bounds(&grid, Coordinate { x: -1, y: -1 });
         }
     }
