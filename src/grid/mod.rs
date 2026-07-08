@@ -25,10 +25,9 @@ use performance_tuning::PerformanceTuning;
 ///
 /// - A grid has an x- and y-count. This is the number of coordinates across each dimension.
 ///
-/// - A grid has an x- and y-length. This is the distance between the greatest and smallest coordinate
-/// along each axis. For each dimension, `length = count - 1`.
+/// - A grid has an x- and y-length. This is the distance between the greatest and smallest coordinate along each axis. For each dimension, `length = count - 1`.
 ///
-/// - A grid is origin-centered; the finite space that it occupies has the origin as its center. The grid always upholds this property, exactly or as closely as possible. If it is not exactly possible, because of an even coordinate count along either the x- or y-dimension, a grid is biased toward the positive side. For instance, a grid with a 4x4 count has the boundaries `x_min = -1, x_max = 2, y_min = -1, y_max = 2`. See also [OriginCenteredBounds].
+/// - A grid is origin-centered; the finite space that it occupies has the origin as its center. The grid always upholds this property, exactly or as closely as possible. If it is not exactly possible, because of an even coordinate count along either the x- or y-dimension, a grid is biased toward the positive side. For instance, a grid with a 4x4 count has the boundaries `x_min = -1, x_max = 2, y_min = -1, y_max = 2`. See also [`OriginCenteredBounds`].
 ///
 /// - A grid is either empty or contains a single element T at each coordinate.
 ///

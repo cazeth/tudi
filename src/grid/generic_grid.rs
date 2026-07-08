@@ -22,8 +22,8 @@ use std::num::NonZeroUsize;
 impl<T> Grid<T> {
     ///Create a rectangular grid with empty elements.
     ///The x and y-variables represent the number of coordinates along an axis, rather than the
-    ///length between the extremes along the axis. For instance, x_count = 3 creates a grid that
-    ///contains the coordinates with x= -1, x = 0, and x = 1.
+    ///length between the extremes along the axis. For instance, `x_count = 3` creates a grid that
+    ///contains the coordinates with `x = -1`, `x = 0`, and `x = 1`.
     ///# Examples
     /// ```
     /// use tudi::Grid;
@@ -74,7 +74,7 @@ impl<T> Grid<T> {
 
     /// Create an empty grid with a given x- and y-count.
     ///
-    /// A Grid cannot have count zero along any dimension, therefore arguments are NonZeroUsize.
+    /// A grid cannot have count zero along any dimension, therefore arguments are `NonZeroUsize`.
     ///
     /// # Examples
     ///
@@ -100,7 +100,7 @@ impl<T> Grid<T> {
         Self::new(usize::from(x_count), usize::from(y_count))
     }
 
-    /// Create a new empty grid with the same bounds as another OriginCenteredBounded.
+    /// Create a new empty grid with the same bounds as another [`OriginBounded`].
     ///
     /// # Examples
     ///
@@ -127,13 +127,13 @@ impl<T> Grid<T> {
         self.bounds
     }
 
-    /// Get a reference to an element in the Grid.
+    /// A reference to an element in the grid.
     ///
+    /// See also [`element`](Grid::element()).
     ///
     /// # Panics
-    /// This method panics if the coordinate is out of bounds.
     ///
-    /// See also [`checked_element`](Grid::checked_element())
+    /// This method panics if the coordinate is out of bounds.
     ///
     /// # Examples
     /// ```
@@ -159,6 +159,14 @@ impl<T> Grid<T> {
         }
     }
 
+    /// A reference to an element in the grid.
+    ///
+    /// # Errors
+    ///
+    /// This method returns an error if the coordinate is out of bounds.
+    ///
+    /// This method returns an error if the provided position does not contain an element.
+    ///
     pub fn element<C: Positioned>(&self, coordinate: &C) -> Result<&T, GridError> {
         if !self.is_within_bounds(coordinate) {
             Err(GridError::OutOfBoundsError(OutOfBoundsError::new(
@@ -190,7 +198,7 @@ impl<T> Grid<T> {
     /// If the coordinate previously contained an element, the value is updated, and `Ok(Some(old value))`
     /// is returned.
     ///
-    /// # Error
+    /// # Errors
     ///
     /// Returns an error if the coordinate argument is out of bounds.
     ///
@@ -268,7 +276,8 @@ impl<T> Grid<T> {
             .map(|(coord, element)| (coord, element.unwrap()))
     }
 
-    /// returns a vec of all empty rows.
+    /// A vec of all empty rows.
+    ///
     /// It starts at the bottom (with negative indices).
     pub fn empty_rows(&self) -> Vec<i32> {
         let mut result: Vec<i32> = Vec::new();
@@ -285,7 +294,7 @@ impl<T> Grid<T> {
         result
     }
 
-    /// returns a vec of all empty columns
+    /// A vec of all empty columns.
     pub fn empty_columns(&self) -> Vec<i32> {
         let mut result: Vec<i32> = Vec::new();
         for x in self.x_min_boundary()..=self.x_max_boundary() {
@@ -346,11 +355,15 @@ impl<T> Grid<T> {
         OriginBounded::y_count(self)
     }
 
-    /// move an element within the grid by a direction.
-    /// Return an error if:
-    /// the resulting move would be out of bounds.
-    /// the resulting move would result in a collision.
-    /// the coordinate does not contain an element
+    /// Move an element within the grid in a direction.
+    ///
+    /// # Errors
+    ///
+    /// This method returns an error if the resulting move would be out of bounds.
+    ///
+    /// This method returns an error if the resulting move would result in a collision.
+    ///
+    /// This method returns an error if the coordinate argument does not contain an element.
     pub fn move_element_in_direction(
         &mut self,
         coordinate: &Coordinate,
@@ -407,10 +420,9 @@ impl<T> Grid<T> {
         }
     }
 
-    /// Adds an empty row to the grid. If the grid has an even number of rows it always has one
-    /// more positive row than negative row, and if the grid has an odd number of rows the positive
-    /// and negative number of rows are equal. This function preserves this property.
-    /// If the row is added to the top it returns true otherwise it returns false.
+    /// Add an empty row to the grid.
+    ///
+    /// If the grid has an even number of rows it always has one more positive row than negative row, and if the grid has an odd number of rows the positive and negative number of rows are equal. This method preserves this property. If the row is added to the top it returns true otherwise it returns false.
     /// # Examples
     /// ```
     /// use tudi::Grid;
@@ -474,6 +486,8 @@ impl<T> Grid<T> {
     ///
     /// II: It moves all the coordinates in the provided direction.
     ///
+    /// # Errors
+    ///
     /// The method returns an error in case of out of bounds or collision.
     fn row_filter_move_elements_in_direction(
         &mut self,
@@ -500,8 +514,11 @@ impl<T> Grid<T> {
         Ok(())
     }
 
-    /// Transpose a grid. Changes the size of an NxM grid to MxN and moves all elements from [i][j]
-    /// to [j][i] (defined as matrix-like coordinates rather than grid-like).
+    /// Transpose the grid.
+    ///
+    /// Changes the size of an `NxM` grid to `MxN` and moves all elements from \[i\]\[j\]
+    /// to \[j\]\[i\] (defined as matrix-like coordinates rather than grid-like).
+    ///
     /// # Examples
     /// ```
     /// use tudi::Grid;
@@ -601,13 +618,13 @@ impl<T> IntoIterator for Grid<T> {
 impl<T> TryFrom<Vec<Vec<Option<T>>>> for Grid<T> {
     type Error = GridCreationError;
 
-    /// Create a grid from a Vec<Vec<Option<T>>> that represents the coordinates and elements of the grid.
+    /// Create a grid from a `Vec<Vec<Option<T>>>` that represents the coordinates and elements of the grid.
     ///
     /// Some(T) represents an element and None represents an empty coordinate.
     ///
     /// The outer vec contains a row of coordinates and each inner vec contains the coordinates of a row.
     ///
-    /// # Error
+    /// # Errors
     ///
     /// Returns an error if the inner vecs are not all of the same length.
     ///
