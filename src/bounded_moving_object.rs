@@ -345,7 +345,6 @@ impl DynamicallyBounded for BoundedMovingObject {
 mod tests {
 
     use super::*;
-    use crate::Grid;
 
     fn create_at_origin() -> BoundedMovingObject {
         let x_min = 0;
@@ -407,8 +406,8 @@ mod tests {
 
     #[test]
     pub fn new_from_bounded() {
-        let grid: Grid<BoundedMovingObject> = Grid::new(9, 9);
-        let pos = BoundedMovingObject::try_from((&grid, &Coordinate::default())).unwrap();
+        let bounds = Bounds::new(-4, 8, -4, 8);
+        let pos = BoundedMovingObject::try_from((&bounds, &Coordinate::default())).unwrap();
         check_boundary(&pos, Axis::X, MinMax::Min, -4);
         check_boundary(&pos, Axis::X, MinMax::Max, 4);
         check_boundary(&pos, Axis::Y, MinMax::Min, -4);
