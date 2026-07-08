@@ -137,6 +137,15 @@ pub struct InvalidRegionError {
 pub mod tests {
 
     use super::*;
+
+    /// The smallest possible origin centered bounds.
+    ///
+    /// This should be count 1 across both dimensions and length zero.
+    #[track_caller]
+    fn create_smallest() -> OriginCenteredBounds {
+        OriginCenteredBounds::new(0, 0)
+    }
+
     #[test]
     fn valid_create_test_from_bounds() {
         assert_create_from_valid_bounds(Bounds::new(-1, 2, -1, 2));
@@ -148,6 +157,13 @@ pub mod tests {
     }
 
     #[test]
+    fn empty() {
+        let bounds = create_smallest();
+        assert_eq!(bounds.x_count(), 1);
+        assert_eq!(bounds.y_count(), 1);
+    }
+
+    #[test]
     fn test_err_from_invalid_bounds() {
         assert_err_from_invalid_bounds(Bounds::new(0, 3, 0, 3));
         assert_err_from_invalid_bounds(Bounds::new(-5, 12, 0, 3));
@@ -156,7 +172,7 @@ pub mod tests {
 
     #[test]
     fn basic_row_expansion() {
-        let mut bounds = OriginCenteredBounds::new(0, 0);
+        let mut bounds = create_smallest();
         bounds.expand_bounds_vertically();
         assert_eq!(bounds.y_max_boundary(), 1);
         assert_eq!(bounds.y_min_boundary(), 0);
@@ -174,7 +190,7 @@ pub mod tests {
 
     #[test]
     fn test_row_expansion() {
-        let mut bounds = OriginCenteredBounds::try_from(Bounds::new(0, 0, 0, 0)).unwrap();
+        let mut bounds = create_smallest();
         for _ in 0..10 {
             bounds.expand_bounds_vertically();
         }
