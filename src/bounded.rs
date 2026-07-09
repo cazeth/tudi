@@ -65,10 +65,10 @@ pub trait Bounded: BoundSeal {
     /// # Examples
     ///
     /// ```
-    /// use tudi::Grid;
     /// use tudi::Bounded;
-    /// let grid: Grid<()> = Grid::new(3,3); // a three by three grid.
-    /// assert_eq!(grid.x_geometric_len(), 2); // the distance between -1 and 1 is 2
+    /// use tudi::Bounds;
+    /// let bounds = Bounds::new(-1,2,-1,2);
+    /// assert_eq!(bounds.x_geometric_len(), 2); // the distance between -1 and 1 is 2
     ///
     /// ```
     fn x_geometric_len(&self) -> usize {
@@ -82,10 +82,11 @@ pub trait Bounded: BoundSeal {
     /// # Examples
     ///
     /// ```
-    /// use tudi::Grid;
+    /// use tudi::Bounds;
     /// use tudi::Bounded;
-    /// let grid: Grid<()> = Grid::new(3, 3); // a three by three grid.
-    /// assert_eq!(grid.y_geometric_len(), 2); // the distance between -1 and 1 is 2
+    /// use std::num::NonZeroUsize;
+    /// let bounds= Bounds::new(-1,2,-1,2);
+    /// assert_eq!(bounds.y_geometric_len(), 2); // the distance between -1 and 1 is 2
     ///
     /// ```
     fn y_geometric_len(&self) -> usize {
@@ -141,17 +142,18 @@ pub trait Bounded: BoundSeal {
     /// # Examples
     ///
     /// ```
-    /// use tudi::Grid;
     /// use tudi::Coordinate;
     /// use tudi::Bounded;
-    /// let grid : Grid<Coordinate> = Grid::new(5, 5);
+    /// use tudi::Bounds;
+    ///
+    /// let bounds = Bounds::new(0,4,0,4);
     ///
     /// // The northwest corner always returns 0 since that is where the count begins.
-    /// assert_eq!( grid.coordinate_to_index(&grid.northwest_corner()).unwrap(), 0);
+    /// assert_eq!(bounds.coordinate_to_index(&bounds.northwest_corner()).unwrap(), 0);
     ///
     /// // the southeast corner always returns NxM-1 (the coordinate count minus one, since the count
     /// // begins at zero)
-    /// assert_eq!( grid.coordinate_to_index(&grid.southeast_corner()).unwrap(), 5*5-1);
+    /// assert_eq!(bounds.coordinate_to_index(&bounds.southeast_corner()).unwrap(), 5*5-1);
     /// ```
     fn coordinate_to_index<C: Positioned>(
         &self,
@@ -194,12 +196,12 @@ pub trait Bounded: BoundSeal {
     /// # Examples
     ///
     /// ```
-    /// use tudi::Grid;
     /// use tudi::Coordinate;
     /// use tudi::Bounded;
-    /// let grid : Grid<Coordinate> = Grid::new(3, 3);
+    /// use tudi::Bounds;
+    /// let bounds : Bounds = Bounds::new(-1,2,-1,2);
     /// let origin = Coordinate{x: 0, y : 0};
-    /// assert_eq!(grid.to_matrix_like(&origin), [1,1]);
+    /// assert_eq!(bounds.to_matrix_like(&origin), [1,1]);
     /// ```
     fn to_matrix_like<C: Positioned>(&self, coord: &C) -> [usize; 2] {
         assert!(self.is_within_bounds(coord));
