@@ -1474,18 +1474,6 @@ pub mod tests {
         }
     }
 
-    pub mod constructor_tests {
-        use super::*;
-
-        #[test]
-        #[should_panic]
-        fn new_from_str_unwrapped_should_panic_when_rows_are_different_sizes() {
-            let input = "...\n....";
-            let map: HashMap<char, usize> = HashMap::new();
-            Grid::<usize>::from_str_by_map(input, &map).unwrap();
-        }
-    }
-
     pub mod transpose_tests {
 
         use super::*;

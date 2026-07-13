@@ -62,6 +62,7 @@ pub mod tests {
     use super::*;
     use crate::Bounded;
     use crate::Coordinate;
+    use crate::GridCreationError;
     use itertools::Itertools;
 
     /// Checks that the boundaries of the grid are centered around the origin.
@@ -113,11 +114,19 @@ pub mod tests {
         }
 
         #[test]
-        fn new_from_str_unwrapped_should_panic_when_rows_are_different_sizes() {
+        fn different_row_counts_should_err() {
             let input = "...\n....";
             let map: HashMap<char, usize> = HashMap::new();
             let res = Grid::<usize>::from_str_by_map(input, &map);
-            assert!(res.is_err())
+            assert_eq!(
+                res,
+                Err(GridCreationError::DifferentRowLengths {
+                    first_row_index: 0,
+                    first_row_count: 3,
+                    second_row_index: 1,
+                    second_row_count: 4
+                })
+            )
         }
 
         #[test]
