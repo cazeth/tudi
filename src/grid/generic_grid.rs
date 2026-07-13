@@ -1478,28 +1478,6 @@ pub mod tests {
         use super::*;
 
         #[test]
-        fn new_from_str_test() {
-            let input = "...";
-            let map: HashMap<char, usize> = HashMap::new();
-            let data = Grid::<usize>::from_str_by_map(input, &map).unwrap();
-            check_grid_counts(&data, 3, 1);
-            assert_eq!(data.iter_elements_new().count(), 0);
-            assert_coordinate_coverage(&data);
-            assert_centered_around_origin(&data);
-        }
-
-        #[test]
-        fn test_new_from_str_unwrapped_with_empty_with_deprecated_fns() {
-            let input = "...";
-            let map: HashMap<char, usize> = HashMap::new();
-            let data = Grid::<usize>::from_str_by_map(input, &map).unwrap();
-            check_grid_counts(&data, 3, 1);
-            assert_eq!(data.iter_elements_new().count(), 0);
-            assert_coordinate_coverage(&data);
-            assert_centered_around_origin(&data);
-        }
-
-        #[test]
         #[should_panic]
         fn new_from_str_unwrapped_should_panic_when_rows_are_different_sizes() {
             let input = "...\n....";

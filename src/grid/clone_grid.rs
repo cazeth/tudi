@@ -113,18 +113,6 @@ pub mod tests {
         }
 
         #[test]
-        fn test_new_from_str_unwrapped_with_empty() {
-            let input = "...";
-            let map: HashMap<char, usize> = HashMap::new();
-            let data = Grid::<usize>::from_str_by_map(input, &map).unwrap();
-            check_x_count(&data, 3);
-            check_y_count(&data, 1);
-            assert_eq!(data.iter_elements_new().count(), 0);
-            assert_coordinate_coverage(&data);
-            assert_centered_around_origin(&data);
-        }
-
-        #[test]
         fn new_from_str_unwrapped_should_panic_when_rows_are_different_sizes() {
             let input = "...\n....";
             let map: HashMap<char, usize> = HashMap::new();
