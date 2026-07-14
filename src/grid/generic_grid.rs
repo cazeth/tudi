@@ -102,6 +102,10 @@ impl<T> Grid<T> {
 
     /// Create a new empty grid with the same bounds as another [`OriginBounded`].
     ///
+    /// # Errors
+    ///
+    /// This method returns an error if [`OriginBounded`] has count zero along any dimension.
+    ///
     /// # Examples
     ///
     /// ```
@@ -109,7 +113,7 @@ impl<T> Grid<T> {
     /// use tudi::OriginCenteredBounds;
     /// use tudi::Bounded;
     /// let bounds = OriginCenteredBounds::new(4,4);
-    /// let grid : Grid<()> = Grid::from_bounds(&bounds);
+    /// let grid : Grid<()> = Grid::from_bounds(&bounds).unwrap();
     /// assert_eq!(grid.x_max_boundary(), 2);
     /// assert_eq!(grid.x_min_boundary(), -1);
     /// assert_eq!(grid.y_max_boundary(), 2);
@@ -119,8 +123,17 @@ impl<T> Grid<T> {
     // note : We could also implement the From trait here, but the Grid itself implements
     // OriginBounded, so this implement is not allowed since it conflicts with an already existing
     // blanket implementation.
-    pub fn from_bounds<B: OriginBounded>(other: &B) -> Self {
-        Self::new(other.x_count(), other.y_count())
+    pub fn from_bounds<B: OriginBounded>(other: &B) -> Result<Self, GridCreationError> {
+        Ok(Self::with_count(
+            other
+                .x_count()
+                .try_into()
+                .map_err(|_| GridCreationError::Empty)?,
+            other
+                .y_count()
+                .try_into()
+                .map_err(|_| GridCreationError::Empty)?,
+        ))
     }
 
     pub fn bounds(&self) -> OriginCenteredBounds {
