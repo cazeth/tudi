@@ -3,7 +3,7 @@ use thiserror::Error;
 use crate::Coordinate;
 use crate::OutOfBoundsError;
 
-/// The main error type for a Grid.
+/// The main error type for a [Grid](crate::Grid).
 ///
 #[derive(Error, Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
