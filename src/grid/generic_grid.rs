@@ -1208,6 +1208,7 @@ pub mod tests {
                 (i - 1) as i32
             );
             assert_centered_around_origin(&grid);
+            assert_coordinate_coverage(&grid);
         }
     }
 
@@ -1533,6 +1534,7 @@ pub mod tests {
             check_element(&grid, Coordinate { x: 1, y: 1 }, &1);
             check_empty(&grid, Coordinate { x: -1, y: -1 });
             assert_centered_around_origin(&grid);
+            assert_coordinate_coverage(&grid);
         }
 
         #[test]
