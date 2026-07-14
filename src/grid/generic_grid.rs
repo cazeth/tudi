@@ -316,11 +316,8 @@ impl<T> Grid<T> {
     pub fn empty_columns(&self) -> Vec<i32> {
         let mut result: Vec<i32> = Vec::new();
         for x in self.x_min_boundary()..=self.x_max_boundary() {
-            //println!("y: {}", y);
             'inner: for y in self.y_min_boundary()..=self.y_max_boundary() {
-                //println!("x: {}", x);
                 if self.element_unchecked(&Coordinate { x, y }).is_some() {
-                    //println!("Coordinate x: {x}, y : {y} is some!");
                     break 'inner;
                 } else if y == self.y_max_boundary() {
                     result.push(x);
