@@ -775,10 +775,14 @@ pub mod tests {
         assert_eq!(grid.y_count(), y)
     }
 
+    /// # Panics
+    /// This method panics when `count = 0`.
     fn empty_grid<T>(count: usize) -> Grid<T> {
         Grid::<T>::with_count(count.try_into().unwrap(), count.try_into().unwrap())
     }
 
+    /// # Panics
+    /// This method panics when `x_count = 0` or `y_count = 0`.
     fn rectangular_empty_grid(x_count: usize, y_count: usize) -> Grid<()> {
         Grid::with_count(x_count.try_into().unwrap(), y_count.try_into().unwrap())
     }
