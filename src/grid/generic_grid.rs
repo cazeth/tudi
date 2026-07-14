@@ -572,7 +572,7 @@ impl<T> Grid<T> {
             old_grid.y_geometric_len(),
         );
 
-        for (coordinate, element) in old_grid.into_iter() {
+        for (coordinate, element) in old_grid {
             let matrix_coordinates = previous_bounds.to_matrix_like(&coordinate);
             let new_coordinate = self
                 .to_grid_like([matrix_coordinates[1], matrix_coordinates[0]])
