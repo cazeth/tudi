@@ -822,6 +822,60 @@ pub mod tests {
         grid
     }
 
+    mod from_bounds {
+        use super::*;
+
+        struct TestBounds {
+            x_count: usize,
+            y_count: usize,
+        }
+
+        impl OriginCenteredness for TestBounds {
+            type Distinguisher = OriginCentered;
+        }
+
+        impl OriginBounded for TestBounds {
+            fn x_count(&self) -> usize {
+                self.x_count
+            }
+
+            fn y_count(&self) -> usize {
+                self.y_count
+            }
+        }
+
+        #[track_caller]
+        fn create_from_bounds<T: OriginBounded, S>(origin_bounded: &T) -> Grid<S> {
+            Grid::from_bounds(&origin_bounded).unwrap()
+        }
+
+        #[test]
+        fn test_create_from_bounds() {
+            let bounds = TestBounds {
+                x_count: 3,
+                y_count: 2,
+            };
+
+            let grid: Grid<()> = create_from_bounds(&bounds);
+
+            check_x_count(&grid, 3);
+            check_y_count(&grid, 2);
+        }
+
+        #[test]
+        fn zero_count_should_err() {
+            let bounds = TestBounds {
+                x_count: 0,
+                y_count: 1,
+            };
+
+            assert_eq!(
+                Grid::<()>::from_bounds(&bounds),
+                Err(GridCreationError::Empty)
+            );
+        }
+    }
+
     fn grid_with_single_element<T: Default>(size: usize, coordinate: Coordinate) -> Grid<T> {
         let mut grid: Grid<T> = Grid::with_count(
             NonZeroUsize::new(size).unwrap(),
