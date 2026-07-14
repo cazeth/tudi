@@ -747,7 +747,6 @@ pub mod tests {
         );
     }
 
-    #[allow(unused)]
     enum StoreValidity {
         Valid,
         Collision,
@@ -1105,6 +1104,32 @@ pub mod tests {
         pub fn out_of_bounds_two() {
             let grid: Grid<()> = empty_grid(1);
             check_out_of_bounds(&grid, Coordinate { x: -1, y: -1 });
+        }
+    }
+
+    mod store {
+        use super::*;
+
+        #[test]
+        fn is_occupied() {
+            let mut grid: Grid<()> = grid_with_occupied_corners_and_origin(1, ());
+            check_store(
+                &mut grid,
+                Coordinate::default(),
+                (),
+                StoreValidity::Collision,
+            );
+        }
+
+        #[test]
+        fn is_out_of_bounds() {
+            let mut grid: Grid<()> = empty_grid(1);
+            check_store(
+                &mut grid,
+                Coordinate { x: 1, y: 1 },
+                (),
+                StoreValidity::OutOfBounds,
+            );
         }
     }
 
