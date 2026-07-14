@@ -429,12 +429,14 @@ impl<T> Grid<T> {
         let top_add = self.add_row();
 
         if top_add {
+            #[expect(clippy::missing_panics_doc)]
             self.move_elements_above_row_in_direction(y_coord, AbsoluteDirection::North)
-                .unwrap();
+                .expect("Adding a top row provides space to move elements north");
             Ok(VerticalDirection::North)
         } else {
+            #[expect(clippy::missing_panics_doc)]
             self.move_elements_below_row_in_direction(y_coord, AbsoluteDirection::South)
-                .unwrap();
+                .expect("Adding a bottom row provides space to move elements south");
             Ok(VerticalDirection::South)
         }
     }
@@ -556,9 +558,11 @@ impl<T> Grid<T> {
         let old_grid = std::mem::replace(
             self,
             Self::with_count(
+                #[expect(clippy::missing_panics_doc)]
                 OriginBounded::y_count(&self)
                     .try_into()
                     .expect("Cannot be zero since it is a Grid count"),
+                #[expect(clippy::missing_panics_doc)]
                 OriginBounded::x_count(&self)
                     .try_into()
                     .expect("Cannot be zero since it is a Grid count"),
@@ -574,13 +578,15 @@ impl<T> Grid<T> {
 
         for (coordinate, element) in old_grid {
             let matrix_coordinates = previous_bounds.to_matrix_like(&coordinate);
+            #[expect(clippy::missing_panics_doc)]
             let new_coordinate = self
                 .to_grid_like([matrix_coordinates[1], matrix_coordinates[0]])
-                .unwrap();
+                .expect("Transposed coordinates cannot be out of bounds");
 
             if let Some(e) = element {
+                #[expect(clippy::missing_panics_doc)]
                 self.store_element(&new_coordinate, e)
-                    .expect("should never fail");
+                    .expect("Transpose shouldn't be able to collide or be out of bounds");
             }
         }
     }
