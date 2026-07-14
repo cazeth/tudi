@@ -100,8 +100,7 @@ pub trait Bounded: BoundSeal {
             && self.y_max_boundary() >= coordinate.y_coordinate()
     }
 
-    ///Checks if the an external GridObject is on the border of the bounded region. The function
-    ///panics if the coordinate is out of bounds.
+    /// Checks whether an external [`Positioned`] is on the border of the bounded region.
     fn other_is_on_border<C: Positioned>(&self, coordinate: &C) -> bool {
         coordinate.x_coordinate() == self.x_min_boundary()
             || coordinate.x_coordinate() == self.x_max_boundary()
