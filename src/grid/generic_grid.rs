@@ -1501,7 +1501,7 @@ pub mod tests {
 
     #[test]
     fn coordinate_to_index_and_index_to_coordinate_inverse_functions() {
-        let grid: Grid<Coordinate> = empty_grid(100);
+        let grid: Grid<()> = empty_grid(100);
         for (grid_coordinate, _) in grid.iter_new() {
             println!(
                 "check index for coordinate {:?}",
@@ -1517,7 +1517,7 @@ pub mod tests {
     #[test]
     fn neighbor_in_direction_from() {
         use AbsoluteDirection::*;
-        let grid: Grid<Coordinate> = empty_grid(20);
+        let grid: Grid<()> = empty_grid(20);
 
         let directions = [North, East, South, West];
         for (coord, _) in grid.iter_new() {
@@ -1648,7 +1648,7 @@ pub mod tests {
 
         #[test]
         fn add_row_test() {
-            let mut grid: Grid<Coordinate> = empty_grid(3);
+            let mut grid: Grid<()> = empty_grid(3);
             for _ in 1..10 {
                 grid.add_row();
                 assert_coordinate_coverage(&grid);
@@ -1658,7 +1658,7 @@ pub mod tests {
 
         #[test]
         fn row_expansion_test() {
-            let mut grid: Grid<Coordinate> = empty_grid(3);
+            let mut grid: Grid<()> = empty_grid(3);
             assert_eq!(grid.y_count(), 3);
             assert_coordinate_coverage(&grid);
             assert_centered_around_origin(&grid);
