@@ -726,6 +726,7 @@ pub mod tests {
     use crate::AbsoluteDirection;
     use crate::BoundedMovingObject;
     use crate::Coordinate;
+    use crate::positioned::test::check_direction;
     use itertools::Itertools;
     use std::collections::HashMap;
     use std::fs::read_to_string;
@@ -1524,8 +1525,7 @@ pub mod tests {
             for direction in directions.iter() {
                 if let Some(neighbor) = grid.neighbor_in_direction_from(&coord, *direction) {
                     assert_eq!(coord.manhattan_distance_to(&neighbor), 1);
-                    assert_eq!(coord.direction_toward(neighbor.position()).0, *direction);
-                    assert_eq!(coord.direction_toward(neighbor.position()).1, *direction);
+                    check_direction![from coord to neighbor => *direction];
                 } else {
                     assert!(grid.other_is_on_border(&coord));
                 }

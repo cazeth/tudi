@@ -109,36 +109,39 @@ pub trait Positioned {
         Coordinate { x, y }
     }
 
-    /// The [`AbsoluteDirection`] from self to another coordinate. If the direction is an
-    /// exact direction (for instance, straight north) it returns that direction twice.
-    fn direction_toward(&self, target: &Coordinate) -> (AbsoluteDirection, AbsoluteDirection) {
+    /// The [`AbsoluteDirection`] from self to another coordinate.
+    ///
+    /// If the direction is an exact absolute direction (for instance, straight north), the method returns `(Some(AbsoluteDirection), None)`. If the direction is a combination of directions, such as northwest, the method returns `(Some(North), Some(West))`. If the target is at the same position as the source, the method returns `(None, None)`.
+    fn direction_toward(
+        &self,
+        target: &Coordinate,
+    ) -> (Option<AbsoluteDirection>, Option<AbsoluteDirection>) {
         // Handles when there is an exact direction to target (exactly north, south, east, west).
         if self.position() == target.position() {
-            panic!();
+            return (None, None);
         } else if target.x_coordinate() == self.x_coordinate() {
             if target.y_coordinate() > self.y_coordinate() {
-                return (AbsoluteDirection::North, AbsoluteDirection::North);
+                return (Some(AbsoluteDirection::North), None);
             } else {
-                return (AbsoluteDirection::South, AbsoluteDirection::South);
+                return (Some(AbsoluteDirection::South), None);
             }
         } else if target.y_coordinate() == self.y_coordinate() {
             if target.x_coordinate() > self.x_coordinate() {
-                return (AbsoluteDirection::East, AbsoluteDirection::East);
+                return (Some(AbsoluteDirection::East), None);
             } else {
-                return (AbsoluteDirection::West, AbsoluteDirection::West);
+                return (Some(AbsoluteDirection::West), None);
             }
         };
 
-        // Handles when there is a direction combination, such as northeast or southwest.
         let first_direction = if target.y_coordinate() > self.y_coordinate() {
-            AbsoluteDirection::North
+            Some(AbsoluteDirection::North)
         } else {
-            AbsoluteDirection::South
+            Some(AbsoluteDirection::South)
         };
         let second_direction = if target.x_coordinate() > self.x_coordinate() {
-            AbsoluteDirection::East
+            Some(AbsoluteDirection::East)
         } else {
-            AbsoluteDirection::West
+            Some(AbsoluteDirection::West)
         };
         (first_direction, second_direction)
     }
@@ -192,4 +195,28 @@ impl<T: Positioned> Positioned for &T {
     fn position(&self) -> &Coordinate {
         T::position(self)
     }
+}
+
+#[cfg(test)]
+pub mod test {
+    macro_rules! check_direction {
+        (from $source:ident to $target:expr => none) => {{
+            let direction = $source.direction_toward(&$target);
+            assert_eq!(direction, (None, None));
+        }};
+        (from $source:ident to $target:expr => $first:expr, $second:expr) => {{
+            #[allow(unused_imports)]
+            use $crate::AbsoluteDirection::*;
+            let direction = $source.direction_toward(&$target);
+            assert_eq!(direction, (Some($first), Some($second)));
+        }};
+        (from $source:ident to $target:expr => $first:expr) => {{
+            #[allow(unused_imports)]
+            use $crate::AbsoluteDirection::*;
+            let direction = $source.direction_toward(&$target);
+            assert_eq!(direction, (Some($first), None));
+        }};
+    }
+
+    pub(crate) use check_direction;
 }

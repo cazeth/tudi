@@ -76,12 +76,13 @@ impl BoundedMovingObject {
     }
 
     pub fn turn_toward<C: Positioned>(&mut self, target: &C) -> Result<&AbsoluteDirection, String> {
-        let directions = self.direction_toward(target.position());
-        if directions.0 == directions.1 {
-            self.current_direction = directions.0;
-            Ok(&self.current_direction)
-        } else {
-            Err("no clean turn.".to_string())
+        match self.direction_toward(target.position()) {
+            (None, _) => Err("Target and source have the same position".to_string()),
+            (Some(_), Some(_)) => Err("No clean turn".to_string()),
+            (Some(first), None) => {
+                self.current_direction = first;
+                Ok(&self.current_direction)
+            }
         }
     }
 
@@ -552,6 +553,27 @@ mod tests {
             let _ = set(&mut pos, Axis::X, MinMax::Min, -1);
             check_count_and_len(&pos, Axis::X, 2);
             check_boundary(&pos, Axis::X, MinMax::Min, -1);
+        }
+    }
+
+    mod direction_toward {
+
+        use super::*;
+        use crate::positioned::test::check_direction;
+
+        #[test]
+        fn test_basic_directions() {
+            let source = create_at_origin();
+
+            check_direction![from source to Coordinate{x:0,y:1} => North];
+            check_direction![from source to Coordinate{x:1,y:1} => North, East];
+            check_direction![from source to Coordinate{x:1,y:0} => East];
+            check_direction![from source to Coordinate{x:1,y:-1} => South, East];
+            check_direction![from source to Coordinate{x:0,y:-1} => South];
+            check_direction![from source to Coordinate{x:-1,y:-1} => South, West];
+            check_direction![from source to Coordinate{x:-1,y:0} => West];
+            check_direction![from source to Coordinate{x:-1,y:1} => North, West];
+            check_direction![from source to Coordinate::default() => none];
         }
     }
 }
