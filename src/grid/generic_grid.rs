@@ -1475,10 +1475,10 @@ pub mod tests {
             let origin = Coordinate::default();
 
             for (coordinate, element) in grid.iter_mut_new() {
-                if corners.contains(&coordinate) || coordinate == origin {
-                    if let Some(value) = element {
-                        *value += 1;
-                    }
+                if (corners.contains(&coordinate) || coordinate == origin)
+                    && let Some(value) = element
+                {
+                    *value += 1;
                 }
             }
 
