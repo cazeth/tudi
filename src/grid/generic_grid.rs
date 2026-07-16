@@ -1333,14 +1333,14 @@ pub mod tests {
         #[test]
         fn occupied_one_by_one() {
             let mut grid: Grid<()> = empty_grid(1);
-            let _ = grid.store_element(&Coordinate::default(), ());
+            check_store(&mut grid, Coordinate::default(), (), StoreValidity::Valid);
             check_string(&grid, "#");
         }
 
         #[test]
         fn partially_occupied_one_by_two() {
             let mut grid: Grid<()> = rectangular_empty_grid(1, 2);
-            let _ = grid.store_element(&Coordinate::default(), ());
+            check_store(&mut grid, Coordinate::default(), (), StoreValidity::Valid);
             check_string(&grid, ".\n#");
         }
 
@@ -1353,10 +1353,14 @@ pub mod tests {
         #[test]
         fn corner_occupied_three_by_three() {
             let mut grid: Grid<()> = empty_grid(3);
-            let _ = grid.store_element(&grid.northwest_corner(), ());
-            let _ = grid.store_element(&grid.northeast_corner(), ());
-            let _ = grid.store_element(&grid.southwest_corner(), ());
-            let _ = grid.store_element(&grid.southeast_corner(), ());
+            for corner in [
+                grid.northwest_corner(),
+                grid.northeast_corner(),
+                grid.southwest_corner(),
+                grid.southeast_corner(),
+            ] {
+                check_store(&mut grid, corner, (), StoreValidity::Valid);
+            }
             check_string(&grid, "#.#\n...\n#.#");
         }
     }
