@@ -205,6 +205,17 @@ pub mod tests {
         let origin_centered_bounds = OriginCenteredBounds::try_from(bounds)
             .inspect_err(|x| println!("{x}"))
             .unwrap();
+
+        assert_eq!(origin_centered_bounds.x_count(), bounds.x_count());
+        assert_eq!(origin_centered_bounds.y_count(), bounds.y_count());
+        assert_eq!(
+            origin_centered_bounds.x_geometric_len(),
+            bounds.x_geometric_len()
+        );
+        assert_eq!(
+            origin_centered_bounds.y_geometric_len(),
+            bounds.y_geometric_len()
+        );
         assert_eq!(origin_centered_bounds.0, bounds);
     }
 
