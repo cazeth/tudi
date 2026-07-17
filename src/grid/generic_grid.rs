@@ -270,7 +270,7 @@ impl<T> Grid<T> {
 
     pub fn iter_mut_new(&mut self) -> impl Iterator<Item = (Coordinate, Option<&mut T>)> {
         let coordinates = (0..OriginBounded::x_count(&self) * OriginBounded::y_count(&self))
-            .map(|x| self.index_to_coordinate(x).unwrap())
+            .flat_map(|x| self.index_to_coordinate(x))
             .collect::<Vec<Coordinate>>();
 
         self.grid_data
@@ -283,15 +283,12 @@ impl<T> Grid<T> {
     }
 
     pub fn iter_mut_elements_new(&mut self) -> impl Iterator<Item = (Coordinate, &mut T)> {
-        self.iter_mut_new()
-            .filter(|(_, grid_coordinate)| grid_coordinate.is_some())
-            .map(|(coord, element)| (coord, element.unwrap()))
+        self.iter_mut_new().filter_map(|(c, x)| x.map(|x| (c, x)))
     }
 
     pub fn iter_elements_new(&self) -> impl Iterator<Item = (Coordinate, &T)> {
         self.iter_new()
-            .filter(|(_, grid_coordinate)| grid_coordinate.is_some())
-            .map(|(coord, element)| (coord, element.unwrap()))
+            .filter_map(|(coordinate, element)| element.map(|element| (coordinate, element)))
     }
 
     /// A vec of all empty rows.
