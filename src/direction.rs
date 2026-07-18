@@ -1,3 +1,5 @@
+use std::fmt;
+
 #[derive(Debug, PartialEq, Eq, Clone, Default, Copy)]
 pub enum AbsoluteDirection {
     East,
@@ -5,6 +7,19 @@ pub enum AbsoluteDirection {
     North,
     West,
     South,
+}
+
+impl fmt::Display for AbsoluteDirection {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let direction = match self {
+            Self::East => "East",
+            Self::North => "North",
+            Self::West => "West",
+            Self::South => "South",
+        };
+
+        formatter.write_str(direction)
+    }
 }
 
 impl AbsoluteDirection {
@@ -123,11 +138,33 @@ pub enum VerticalDirection {
     South,
 }
 
+impl fmt::Display for VerticalDirection {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let direction = match self {
+            Self::North => "North",
+            Self::South => "South",
+        };
+
+        formatter.write_str(direction)
+    }
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Default)]
 pub enum HorizontalDirection {
     #[default]
     East,
     West,
+}
+
+impl fmt::Display for HorizontalDirection {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let direction = match self {
+            Self::East => "East",
+            Self::West => "West",
+        };
+
+        formatter.write_str(direction)
+    }
 }
 
 impl From<VerticalDirection> for AbsoluteDirection {
@@ -154,9 +191,46 @@ pub enum RelativeDirection {
     Right,
 }
 
+impl fmt::Display for RelativeDirection {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let direction = match self {
+            Self::Left => "Left",
+            Self::Right => "Right",
+        };
+
+        formatter.write_str(direction)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn display() {
+        assert_eq!(AbsoluteDirection::North.to_string(), "North");
+        assert_eq!(AbsoluteDirection::South.to_string(), "South");
+        assert_eq!(AbsoluteDirection::East.to_string(), "East");
+        assert_eq!(AbsoluteDirection::West.to_string(), "West");
+    }
+
+    #[test]
+    fn display_horizontal_direction() {
+        assert_eq!(HorizontalDirection::East.to_string(), "East");
+        assert_eq!(HorizontalDirection::West.to_string(), "West");
+    }
+
+    #[test]
+    fn display_vertical_direction() {
+        assert_eq!(VerticalDirection::North.to_string(), "North");
+        assert_eq!(VerticalDirection::South.to_string(), "South");
+    }
+
+    #[test]
+    fn display_relative_direction() {
+        assert_eq!(RelativeDirection::Left.to_string(), "Left");
+        assert_eq!(RelativeDirection::Right.to_string(), "Right");
+    }
 
     #[test]
     pub fn increment_test() {
