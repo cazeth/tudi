@@ -100,6 +100,40 @@ pub trait Bounded: BoundSeal {
             && self.y_max_boundary() >= coordinate.y_coordinate()
     }
 
+    /// The directions in which a coordinate is outside these bounds.
+    ///
+    /// Returns `None` when the coordinate is within bounds. Otherwise, returns
+    /// `Some((first_direction, second_direction))`, where `first_direction` identifies one
+    /// boundary crossed. `second_direction` is `Some` only when the coordinate is outside
+    /// both the horizontal and vertical bounds; it is `None` when the coordinate is outside
+    /// in exactly one direction. When both directions are present, the vertical direction
+    /// is first and the horizontal direction is second.
+    fn out_of_bounds_directions<C: Positioned>(
+        &self,
+        coordinate: &C,
+    ) -> Option<(AbsoluteDirection, Option<AbsoluteDirection>)> {
+        let horizontal = if coordinate.x_coordinate() < self.x_min_boundary() {
+            Some(AbsoluteDirection::West)
+        } else if coordinate.x_coordinate() > self.x_max_boundary() {
+            Some(AbsoluteDirection::East)
+        } else {
+            None
+        };
+        let vertical = if coordinate.y_coordinate() < self.y_min_boundary() {
+            Some(AbsoluteDirection::South)
+        } else if coordinate.y_coordinate() > self.y_max_boundary() {
+            Some(AbsoluteDirection::North)
+        } else {
+            None
+        };
+
+        match (vertical, horizontal) {
+            (Some(first), second) => Some((first, second)),
+            (None, Some(first)) => Some((first, None)),
+            (None, None) => None,
+        }
+    }
+
     /// Checks whether an external [`Positioned`] is on the border of the bounded region.
     fn other_is_on_border<C: Positioned>(&self, coordinate: &C) -> bool {
         coordinate.x_coordinate() == self.x_min_boundary()
