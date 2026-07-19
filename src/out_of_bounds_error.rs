@@ -45,3 +45,22 @@ impl OutOfBoundsError {
 fn second_direction_suffix(direction: Option<AbsoluteDirection>) -> String {
     direction.map_or_else(String::new, |direction| format!(" and {direction}"))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn display() {
+        let error = OutOfBoundsError::new(
+            Coordinate { x: 1, y: -2 },
+            AbsoluteDirection::North,
+            Some(AbsoluteDirection::East),
+        );
+
+        assert_eq!(
+            error.to_string(),
+            "(1, -2) is out of bounds to the North and East"
+        );
+    }
+}

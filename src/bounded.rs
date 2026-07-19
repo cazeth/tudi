@@ -548,3 +548,36 @@ impl<T: BoundSeal> Bounded for T {
         self.y_max_seal()
     }
 }
+
+#[cfg(test)]
+pub mod test {
+    macro_rules! check_out_of_bounds {
+        ($bounded:expr, $coordinate:expr => in bounds) => {{
+            let coordinate = $coordinate;
+            assert_eq!(
+                $crate::Bounded::out_of_bounds_directions(&$bounded, &coordinate),
+                None,
+                "{coordinate} should be in bounds"
+            );
+        }};
+        ($bounded:expr, $coordinate:expr => out of bounds to $direction:ident) => {{
+            let coordinate = $coordinate;
+            assert_eq!(
+                $crate::Bounded::out_of_bounds_directions(&$bounded, &coordinate),
+                Some(($crate::AbsoluteDirection::$direction, None))
+            );
+        }};
+        ($bounded:expr, $coordinate:expr => out of bounds to $first:ident $second:ident) => {{
+            let coordinate = $coordinate;
+            assert_eq!(
+                $crate::Bounded::out_of_bounds_directions(&$bounded, &coordinate),
+                Some((
+                    $crate::AbsoluteDirection::$first,
+                    Some($crate::AbsoluteDirection::$second),
+                ))
+            );
+        }};
+    }
+
+    pub(crate) use check_out_of_bounds;
+}

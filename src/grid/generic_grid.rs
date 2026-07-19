@@ -741,6 +741,7 @@ pub mod tests {
     use crate::AbsoluteDirection;
     use crate::BoundedMovingObject;
     use crate::Coordinate;
+    use crate::bounded::test::check_out_of_bounds;
     use crate::positioned::test::check_direction;
     use itertools::Itertools;
     use std::collections::HashMap;
@@ -1000,14 +1001,6 @@ pub mod tests {
     }
 
     #[track_caller]
-    fn check_out_of_bounds<T: std::panic::RefUnwindSafe>(grid: &Grid<T>, c: Coordinate) {
-        let result = std::panic::catch_unwind(|| {
-            grid.element_unchecked(&c);
-        });
-        assert!(result.is_err())
-    }
-
-    #[track_caller]
     fn check_valid_remove<T: PartialEq + std::fmt::Debug>(
         grid: &mut Grid<T>,
         c: Coordinate,
@@ -1168,13 +1161,31 @@ pub mod tests {
         #[test]
         pub fn out_of_bounds() {
             let grid: Grid<()> = empty_grid(5);
-            check_out_of_bounds(&grid, Coordinate { x: 10, y: 10 });
+            check_out_of_bounds!(grid, Coordinate { x: 10, y: 10 } => out of bounds to North East);
+            check_out_of_bounds!(grid, Coordinate::default() => in bounds);
         }
 
         #[test]
         pub fn out_of_bounds_two() {
             let grid: Grid<()> = empty_grid(1);
-            check_out_of_bounds(&grid, Coordinate { x: -1, y: -1 });
+            check_out_of_bounds!(grid, Coordinate { x: -1, y: -1 } => out of bounds to South West);
+            check_out_of_bounds!(grid, Coordinate::default() => in bounds);
+        }
+
+        #[test]
+        fn element_reports_both_out_of_bounds_directions() {
+            let grid: Grid<()> = empty_grid(5);
+            let coordinate = Coordinate { x: 10, y: 10 };
+            check_out_of_bounds!(grid, coordinate => out of bounds to North East);
+            assert_eq!(
+                grid.element(&coordinate),
+                Err(GridError::OutOfBoundsError(OutOfBoundsError::new(
+                    coordinate,
+                    AbsoluteDirection::North,
+                    Some(AbsoluteDirection::East),
+                )))
+            );
+            check_out_of_bounds!(grid, Coordinate { x: 0, y: 10 } => out of bounds to North);
         }
     }
 
@@ -1756,7 +1767,13 @@ pub mod tests {
             let result = grid.expand_at_row(y_coord);
             assert_eq!(
                 Err(GridError::OutOfBoundsError(OutOfBoundsError::new(
-                    Coordinate { x: 0, y: y_coord }
+                    Coordinate { x: 0, y: y_coord },
+                    if y_coord > grid.y_max_boundary() {
+                        AbsoluteDirection::North
+                    } else {
+                        AbsoluteDirection::South
+                    },
+                    None,
                 ))),
                 result
             );
