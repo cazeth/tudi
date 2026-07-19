@@ -1,12 +1,25 @@
 use crate::AbsoluteDirection;
 use crate::Positioned;
+use std::fmt;
 use std::ops::Add;
+use std::ops::AddAssign;
+use std::ops::Mul;
+use std::ops::MulAssign;
+use std::ops::Neg;
+use std::ops::Sub;
+use std::ops::SubAssign;
 
 /// A two-dimensional point.
 #[derive(Debug, PartialEq, Eq, Copy, Clone, Default, Hash)]
 pub struct Coordinate {
     pub x: i32,
     pub y: i32,
+}
+
+impl fmt::Display for Coordinate {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(formatter, "({}, {})", self.x, self.y)
+    }
 }
 
 impl Coordinate {
@@ -58,10 +71,64 @@ impl Positioned for Coordinate {
     }
 }
 
+impl AddAssign for Coordinate {
+    fn add_assign(&mut self, other: Self) {
+        self.x += other.x;
+        self.y += other.y;
+    }
+}
+
+impl Mul<i32> for Coordinate {
+    type Output = Self;
+
+    fn mul(mut self, scalar: i32) -> Self {
+        self *= scalar;
+        self
+    }
+}
+
+impl MulAssign<i32> for Coordinate {
+    fn mul_assign(&mut self, scalar: i32) {
+        self.x *= scalar;
+        self.y *= scalar;
+    }
+}
+
+impl Neg for Coordinate {
+    type Output = Self;
+
+    fn neg(self) -> Self {
+        Self {
+            x: -self.x,
+            y: -self.y,
+        }
+    }
+}
+
+impl Sub for Coordinate {
+    type Output = Self;
+    fn sub(mut self, other: Self) -> Self {
+        self -= other;
+        self
+    }
+}
+
+impl SubAssign for Coordinate {
+    fn sub_assign(&mut self, other: Self) {
+        self.x -= other.x;
+        self.y -= other.y;
+    }
+}
+
 #[cfg(test)]
 mod tests {
 
     use super::*;
+
+    #[test]
+    fn display() {
+        assert_eq!(Coordinate { x: 3, y: -2 }.to_string(), "(3, -2)");
+    }
 
     #[test]
     pub fn simple_manhattan_distance() {
@@ -99,6 +166,51 @@ mod tests {
             (Coordinate { x: 5, y: 5 } + Coordinate { x: 1, y: 0 }).manhattan_distance_to_origin(),
             11
         );
+    }
+
+    #[test]
+    fn add_assign_coordinates() {
+        let mut coordinate = Coordinate { x: 5, y: -2 };
+        coordinate += Coordinate { x: 3, y: 4 };
+        assert_eq!(coordinate, Coordinate { x: 8, y: 2 });
+    }
+
+    #[test]
+    fn multiply_coordinate_by_scalar() {
+        assert_eq!(
+            Coordinate { x: 5, y: -2 } * 3,
+            Coordinate { x: 15, y: -6 }
+        );
+    }
+
+    #[test]
+    fn multiply_assign_coordinate_by_scalar() {
+        let mut coordinate = Coordinate { x: 5, y: -2 };
+        coordinate *= 3;
+        assert_eq!(coordinate, Coordinate { x: 15, y: -6 });
+    }
+
+    #[test]
+    fn negate_coordinate() {
+        assert_eq!(
+            -Coordinate { x: 5, y: -2 },
+            Coordinate { x: -5, y: 2 }
+        );
+    }
+
+    #[test]
+    fn subtract_coordinates() {
+        assert_eq!(
+            Coordinate { x: 5, y: -2 } - Coordinate { x: 3, y: 4 },
+            Coordinate { x: 2, y: -6 }
+        );
+    }
+
+    #[test]
+    fn sub_assign_coordinates() {
+        let mut coordinate = Coordinate { x: 5, y: -2 };
+        coordinate -= Coordinate { x: 3, y: 4 };
+        assert_eq!(coordinate, Coordinate { x: 2, y: -6 });
     }
 
     #[test]
