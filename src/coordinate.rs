@@ -57,11 +57,9 @@ impl Coordinate {
 
 impl Add for Coordinate {
     type Output = Self;
-    fn add(self, other: Self) -> Self {
-        Self {
-            x: self.x + other.x,
-            y: self.y + other.y,
-        }
+    fn add(mut self, other: Self) -> Self {
+        self += other;
+        self
     }
 }
 
