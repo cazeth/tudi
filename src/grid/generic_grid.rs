@@ -186,9 +186,13 @@ impl<T> Grid<T> {
     /// This method returns an error if the provided position does not contain an element.
     ///
     pub fn element<C: Positioned>(&self, coordinate: &C) -> Result<&T, GridError> {
-        if !self.is_within_bounds(coordinate) {
+        if let Some((first_direction, second_direction)) =
+            self.out_of_bounds_directions(coordinate)
+        {
             Err(GridError::OutOfBoundsError(OutOfBoundsError::new(
                 *coordinate.position(),
+                first_direction,
+                second_direction,
             )))
         } else {
             self.element_unchecked(coordinate)
@@ -398,6 +402,8 @@ impl<T> Grid<T> {
         } else {
             Err(GridError::OutOfBoundsError(OutOfBoundsError::new(
                 marker.coordinate_in_direction(direction, 1),
+                direction,
+                None,
             )))
         }
     }
@@ -420,6 +426,12 @@ impl<T> Grid<T> {
         if y_coord > self.y_max_boundary() || y_coord < self.y_min_boundary() {
             return Err(GridError::OutOfBoundsError(OutOfBoundsError::new(
                 Coordinate { x: 0, y: y_coord },
+                if y_coord > self.y_max_boundary() {
+                    AbsoluteDirection::North
+                } else {
+                    AbsoluteDirection::South
+                },
+                None,
             )));
         };
 

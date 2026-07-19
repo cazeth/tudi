@@ -259,11 +259,17 @@ where
             value.0.y_max_boundary(),
         );
 
-        if result.is_within_bounds(value.1.position()) {
+        if let Some((first_direction, second_direction)) =
+            result.out_of_bounds_directions(&value.1)
+        {
+            Err(OutOfBoundsError::new(
+                value.1.position(),
+                first_direction,
+                second_direction,
+            ))
+        } else {
             result.set_coordinate(value.1.position());
             Ok(result)
-        } else {
-            Err(OutOfBoundsError::new(value.1.position()))
         }
     }
 }

@@ -192,8 +192,14 @@ pub trait Bounded: BoundSeal {
         &self,
         coordinate: &C,
     ) -> Result<usize, OutOfBoundsError> {
-        if !self.is_within_bounds(coordinate) {
-            Err(OutOfBoundsError::new(*coordinate.position()))
+        if let Some((first_direction, second_direction)) =
+            self.out_of_bounds_directions(coordinate)
+        {
+            Err(OutOfBoundsError::new(
+                *coordinate.position(),
+                first_direction,
+                second_direction,
+            ))
         } else {
             let [x_matrix_like, y_matrix_like] = self.to_matrix_like(coordinate.position());
             Ok(y_matrix_like * self.x_count() + x_matrix_like)
@@ -255,10 +261,16 @@ pub trait Bounded: BoundSeal {
             y: self.y_max_boundary() - distance[1] as i32,
         };
 
-        if self.is_within_bounds(&coordinate) {
-            Ok(coordinate)
+        if let Some((first_direction, second_direction)) =
+            self.out_of_bounds_directions(&coordinate)
+        {
+            Err(OutOfBoundsError::new(
+                coordinate,
+                first_direction,
+                second_direction,
+            ))
         } else {
-            Err(OutOfBoundsError::new(coordinate))
+            Ok(coordinate)
         }
     }
 
