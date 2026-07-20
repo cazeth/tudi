@@ -578,11 +578,11 @@ impl<T> Grid<T> {
             ),
         );
 
-        let previous_bounds = Bounds::new(
+        let previous_bounds = Bounds::from_boundaries(
             old_grid.x_min_boundary(),
-            old_grid.x_geometric_len(),
+            old_grid.x_max_boundary(),
             old_grid.y_min_boundary(),
-            old_grid.y_geometric_len(),
+            old_grid.y_max_boundary(),
         );
 
         for (coordinate, element) in old_grid {
@@ -637,11 +637,11 @@ impl<T> IntoIterator for Grid<T> {
     type IntoIter = std::vec::IntoIter<Self::Item>;
 
     fn into_iter(self) -> std::vec::IntoIter<Self::Item> {
-        let bounds = Bounds::new(
+        let bounds = Bounds::from_boundaries(
             self.x_min_boundary(),
-            self.x_geometric_len(),
+            self.x_max_boundary(),
             self.y_min_boundary(),
-            self.y_geometric_len(),
+            self.y_max_boundary(),
         );
 
         self.grid_data
