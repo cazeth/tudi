@@ -48,6 +48,28 @@ impl Bounds {
         }
     }
 
+    /// Creates bounds from two boundaries along each axis.
+    ///
+    /// The boundary arguments may be provided in either order.
+    pub fn from_boundaries(
+        first_x_boundary: i32,
+        second_x_boundary: i32,
+        first_y_boundary: i32,
+        second_y_boundary: i32,
+    ) -> Self {
+        let x_min = first_x_boundary.min(second_x_boundary);
+        let x_max = first_x_boundary.max(second_x_boundary);
+        let y_min = first_y_boundary.min(second_y_boundary);
+        let y_max = first_y_boundary.max(second_y_boundary);
+
+        Self {
+            northwest: Coordinate { x: x_min, y: y_max },
+            southwest: Coordinate { x: x_min, y: y_min },
+            northeast: Coordinate { x: x_max, y: y_max },
+            southeast: Coordinate { x: x_max, y: y_min },
+        }
+    }
+
     pub fn expand_in_direction(&mut self, dir: AbsoluteDirection) {
         for c in self.mut_coordinates_facing_direction(&dir) {
             c.move_in_direction(&dir, 1);
@@ -130,6 +152,26 @@ mod tests {
         assert_eq!(bounds.southeast_corner(), Coordinate::default());
         assert_eq!(bounds.x_count(), 1);
         assert_eq!(bounds.y_count(), 1);
+    }
+
+    #[test]
+    fn from_boundaries_normalizes_boundary_order() {
+        let bounds = Bounds::from_boundaries(3, -2, 7, -5);
+
+        assert_eq!(bounds.x_min_boundary(), -2);
+        assert_eq!(bounds.x_max_boundary(), 3);
+        assert_eq!(bounds.y_min_boundary(), -5);
+        assert_eq!(bounds.y_max_boundary(), 7);
+    }
+
+    #[test]
+    fn from_boundaries_accepts_full_i32_span() {
+        let bounds = Bounds::from_boundaries(i32::MIN, i32::MAX, i32::MAX, i32::MIN);
+
+        assert_eq!(bounds.x_min_boundary(), i32::MIN);
+        assert_eq!(bounds.x_max_boundary(), i32::MAX);
+        assert_eq!(bounds.y_min_boundary(), i32::MIN);
+        assert_eq!(bounds.y_max_boundary(), i32::MAX);
     }
 
     #[test]
