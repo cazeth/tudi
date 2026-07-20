@@ -259,8 +259,7 @@ where
             value.0.y_max_boundary(),
         );
 
-        if let Some((first_direction, second_direction)) =
-            result.out_of_bounds_directions(&value.1)
+        if let Some((first_direction, second_direction)) = result.out_of_bounds_directions(&value.1)
         {
             Err(OutOfBoundsError::new(
                 value.1.position(),
