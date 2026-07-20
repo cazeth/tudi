@@ -186,8 +186,7 @@ impl<T> Grid<T> {
     /// This method returns an error if the provided position does not contain an element.
     ///
     pub fn element<C: Positioned>(&self, coordinate: &C) -> Result<&T, GridError> {
-        if let Some((first_direction, second_direction)) =
-            self.out_of_bounds_directions(coordinate)
+        if let Some((first_direction, second_direction)) = self.out_of_bounds_directions(coordinate)
         {
             Err(GridError::OutOfBoundsError(OutOfBoundsError::new(
                 *coordinate.position(),

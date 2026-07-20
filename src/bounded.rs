@@ -192,8 +192,7 @@ pub trait Bounded: BoundSeal {
         &self,
         coordinate: &C,
     ) -> Result<usize, OutOfBoundsError> {
-        if let Some((first_direction, second_direction)) =
-            self.out_of_bounds_directions(coordinate)
+        if let Some((first_direction, second_direction)) = self.out_of_bounds_directions(coordinate)
         {
             Err(OutOfBoundsError::new(
                 *coordinate.position(),

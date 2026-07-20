@@ -175,10 +175,7 @@ mod tests {
 
     #[test]
     fn multiply_coordinate_by_scalar() {
-        assert_eq!(
-            Coordinate { x: 5, y: -2 } * 3,
-            Coordinate { x: 15, y: -6 }
-        );
+        assert_eq!(Coordinate { x: 5, y: -2 } * 3, Coordinate { x: 15, y: -6 });
     }
 
     #[test]
@@ -190,10 +187,7 @@ mod tests {
 
     #[test]
     fn negate_coordinate() {
-        assert_eq!(
-            -Coordinate { x: 5, y: -2 },
-            Coordinate { x: -5, y: 2 }
-        );
+        assert_eq!(-Coordinate { x: 5, y: -2 }, Coordinate { x: -5, y: 2 });
     }
 
     #[test]
