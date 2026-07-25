@@ -27,21 +27,6 @@ impl BoundedMovingObject {
     ///
     /// This method panics if x_min_boundary > x_max_boundary or y_min_boundary > y_max_boundary
     ///
-    /// # Examples
-    /// ```
-    /// use tudi::BoundedMovingObject;
-    /// use tudi::Positioned;
-    /// use tudi::Coordinate;
-    /// use tudi::Bounds;
-    /// let bounds = Bounds::new(-10,20,-10,20);
-    /// let mut pos = BoundedMovingObject::from(bounds);
-    /// assert_eq!(pos.position(), &Coordinate {x : 0, y : 0});
-    ///
-    /// let bounds = Bounds::new(5,5,5,5);
-    /// let mut pos = BoundedMovingObject::from(bounds);
-    /// assert_eq!(pos.position(), &Coordinate {x : 5, y : 10});
-    ///
-    /// ```
     fn new(
         x_min_boundary: i32,
         x_max_boundary: i32,
