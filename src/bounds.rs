@@ -142,6 +142,10 @@ impl MaybeOriginBounded for Bounds {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::bounded::test::check_x_max;
+    use crate::bounded::test::check_x_min;
+    use crate::bounded::test::check_y_max;
+    use crate::bounded::test::check_y_min;
 
     #[test]
     fn new() {
@@ -158,20 +162,20 @@ mod tests {
     fn from_boundaries_normalizes_boundary_order() {
         let bounds = Bounds::from_boundaries(3, -2, 7, -5);
 
-        assert_eq!(bounds.x_min_boundary(), -2);
-        assert_eq!(bounds.x_max_boundary(), 3);
-        assert_eq!(bounds.y_min_boundary(), -5);
-        assert_eq!(bounds.y_max_boundary(), 7);
+        check_x_min(bounds, -2);
+        check_x_max(bounds, 3);
+        check_y_min(bounds, -5);
+        check_y_max(bounds, 7);
     }
 
     #[test]
     fn from_boundaries_accepts_full_i32_span() {
         let bounds = Bounds::from_boundaries(i32::MIN, i32::MAX, i32::MAX, i32::MIN);
 
-        assert_eq!(bounds.x_min_boundary(), i32::MIN);
-        assert_eq!(bounds.x_max_boundary(), i32::MAX);
-        assert_eq!(bounds.y_min_boundary(), i32::MIN);
-        assert_eq!(bounds.y_max_boundary(), i32::MAX);
+        check_x_min(bounds, i32::MIN);
+        check_x_max(bounds, i32::MAX);
+        check_y_min(bounds, i32::MIN);
+        check_y_max(bounds, i32::MAX);
     }
 
     #[test]

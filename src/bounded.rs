@@ -550,6 +550,8 @@ impl<T: BoundSeal> Bounded for T {
 
 #[cfg(test)]
 pub mod test {
+    use super::Bounded;
+
     macro_rules! check_out_of_bounds {
         ($bounded:expr, $coordinate:expr => in bounds) => {{
             let coordinate = $coordinate;
@@ -579,4 +581,24 @@ pub mod test {
     }
 
     pub(crate) use check_out_of_bounds;
+
+    #[track_caller]
+    pub fn check_x_min<B: Bounded>(bounded: B, expected: i32) {
+        assert_eq!(bounded.x_min_boundary(), expected);
+    }
+
+    #[track_caller]
+    pub fn check_x_max<B: Bounded>(bounded: B, expected: i32) {
+        assert_eq!(bounded.x_max_boundary(), expected);
+    }
+
+    #[track_caller]
+    pub fn check_y_min<B: Bounded>(bounded: B, expected: i32) {
+        assert_eq!(bounded.y_min_boundary(), expected);
+    }
+
+    #[track_caller]
+    pub fn check_y_max<B: Bounded>(bounded: B, expected: i32) {
+        assert_eq!(bounded.y_max_boundary(), expected);
+    }
 }

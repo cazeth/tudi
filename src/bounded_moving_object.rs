@@ -350,6 +350,10 @@ impl DynamicallyBounded for BoundedMovingObject {
 mod tests {
 
     use super::*;
+    use crate::bounded::test::check_x_max;
+    use crate::bounded::test::check_x_min;
+    use crate::bounded::test::check_y_max;
+    use crate::bounded::test::check_y_min;
 
     fn create_at_origin() -> BoundedMovingObject {
         let x_min = 0;
@@ -358,15 +362,6 @@ mod tests {
         let y_max = 0;
 
         BoundedMovingObject::new(x_min, x_max, y_min, y_max)
-    }
-
-    fn check_boundary(input: &BoundedMovingObject, axis: Axis, minmax: MinMax, boundary: i32) {
-        match (axis, minmax) {
-            (Axis::Y, MinMax::Max) => assert_eq!(input.y_max_boundary(), boundary),
-            (Axis::X, MinMax::Max) => assert_eq!(input.x_max_boundary(), boundary),
-            (Axis::X, MinMax::Min) => assert_eq!(input.x_min_boundary(), boundary),
-            (Axis::Y, MinMax::Min) => assert_eq!(input.y_min_boundary(), boundary),
-        }
     }
 
     // check the count, also check if the geometric is correct if the count is correct.
@@ -393,6 +388,13 @@ mod tests {
     }
 
     #[test]
+    fn outside_origin_starts_at_northwest_corner() {
+        let object = BoundedMovingObject::new(5, 10, 5, 10);
+
+        assert_eq!(object.position(), &Coordinate { x: 5, y: 10 });
+    }
+
+    #[test]
     pub fn create_from_bounds() {
         let bounds = Bounds::new(-5, 10, -5, 10);
         let pos = BoundedMovingObject::try_from((&bounds, &Coordinate::default())).unwrap();
@@ -413,10 +415,10 @@ mod tests {
     pub fn new_from_bounded() {
         let bounds = Bounds::new(-4, 8, -4, 8);
         let pos = BoundedMovingObject::try_from((&bounds, &Coordinate::default())).unwrap();
-        check_boundary(&pos, Axis::X, MinMax::Min, -4);
-        check_boundary(&pos, Axis::X, MinMax::Max, 4);
-        check_boundary(&pos, Axis::Y, MinMax::Min, -4);
-        check_boundary(&pos, Axis::Y, MinMax::Max, 4);
+        check_x_min(&pos, -4);
+        check_x_max(&pos, 4);
+        check_y_min(&pos, -4);
+        check_y_max(&pos, 4);
     }
 
     #[test]
@@ -495,19 +497,19 @@ mod tests {
         let y_max = 0;
 
         let pos = BoundedMovingObject::new(x_min, x_max, y_min, y_max);
-        check_boundary(&pos, Axis::X, MinMax::Min, x_min);
-        check_boundary(&pos, Axis::X, MinMax::Max, x_max);
-        check_boundary(&pos, Axis::Y, MinMax::Min, y_min);
-        check_boundary(&pos, Axis::Y, MinMax::Max, y_max);
+        check_x_min(&pos, x_min);
+        check_x_max(&pos, x_max);
+        check_y_min(&pos, y_min);
+        check_y_max(&pos, y_max);
     }
 
     #[test]
     pub fn bounds_test() {
         let pos = create_at_origin();
-        check_boundary(&pos, Axis::X, MinMax::Min, 0);
-        check_boundary(&pos, Axis::X, MinMax::Max, 0);
-        check_boundary(&pos, Axis::Y, MinMax::Min, 0);
-        check_boundary(&pos, Axis::Y, MinMax::Max, 0);
+        check_x_min(&pos, 0);
+        check_x_max(&pos, 0);
+        check_y_min(&pos, 0);
+        check_y_max(&pos, 0);
     }
 
     mod changing_bounds {
@@ -532,7 +534,7 @@ mod tests {
             let mut pos = create_at_origin();
             let _ = set(&mut pos, Axis::Y, MinMax::Max, 1);
             check_count_and_len(&pos, Axis::Y, 2);
-            check_boundary(&pos, Axis::Y, MinMax::Max, 1);
+            check_y_max(&pos, 1);
         }
 
         #[test]
@@ -540,7 +542,7 @@ mod tests {
             let mut pos = create_at_origin();
             let _ = set(&mut pos, Axis::Y, MinMax::Min, -1);
             check_count_and_len(&pos, Axis::Y, 2);
-            check_boundary(&pos, Axis::Y, MinMax::Min, -1);
+            check_y_min(&pos, -1);
         }
 
         #[test]
@@ -548,7 +550,7 @@ mod tests {
             let mut pos = create_at_origin();
             let _ = set(&mut pos, Axis::X, MinMax::Max, 1);
             check_count_and_len(&pos, Axis::X, 2);
-            check_boundary(&pos, Axis::X, MinMax::Max, 1);
+            check_x_max(&pos, 1);
         }
 
         #[test]
@@ -556,7 +558,7 @@ mod tests {
             let mut pos = create_at_origin();
             let _ = set(&mut pos, Axis::X, MinMax::Min, -1);
             check_count_and_len(&pos, Axis::X, 2);
-            check_boundary(&pos, Axis::X, MinMax::Min, -1);
+            check_x_min(&pos, -1);
         }
     }
 
