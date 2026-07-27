@@ -43,20 +43,17 @@ impl BoundedMovingObject {
             (y_max_boundary - y_min_boundary) as usize,
         );
 
-        let mut result = Self {
-            current_pos: Coordinate {
-                x: x_min_boundary,
-                y: y_max_boundary,
-            },
-            bounds,
-            current_direction: AbsoluteDirection::North,
+        let current_pos = if bounds.is_within_bounds(&Coordinate::default()) {
+            Coordinate::default()
+        } else {
+            bounds.northwest_corner()
         };
 
-        // if origin is within the bounds, it sets the marker to origin.
-        if result.is_within_bounds(&Coordinate::default()) {
-            result.current_pos = Coordinate::default();
-        };
-        result
+        Self {
+            current_pos,
+            bounds,
+            current_direction: AbsoluteDirection::North,
+        }
     }
 
     pub fn turn_toward<C: Positioned>(&mut self, target: &C) -> Result<&AbsoluteDirection, String> {
