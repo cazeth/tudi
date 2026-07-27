@@ -22,25 +22,20 @@ pub struct BoundedMovingObject {
 impl BoundedMovingObject {
     /// Creates new BoundedMovingObject. If the origin is in bounds, the marker is set to the
     /// origin. If not, it is set to the northwest corner.
-    /// input are in the order x_min, x_max, y_min, y_max
-    /// # Panics
     ///
-    /// This method panics if x_min_boundary > x_max_boundary or y_min_boundary > y_max_boundary
+    /// For each axis, the function checks which of the provided boundaries for an axis is the smallest and sets the minimum boundary to it and the other one to the maximum boundary.
     ///
     fn new(
-        x_min_boundary: i32,
-        x_max_boundary: i32,
-        y_min_boundary: i32,
-        y_max_boundary: i32,
+        first_x_boundary: i32,
+        second_x_boundary: i32,
+        first_y_boundary: i32,
+        second_y_boundary: i32,
     ) -> Self {
-        assert!(x_max_boundary >= x_min_boundary);
-        assert!(y_max_boundary >= y_min_boundary);
-
-        let bounds: Bounds = Bounds::new(
-            x_min_boundary,
-            (x_max_boundary - x_min_boundary) as usize,
-            y_min_boundary,
-            (y_max_boundary - y_min_boundary) as usize,
+        let bounds = Bounds::from_boundaries(
+            first_x_boundary,
+            second_x_boundary,
+            first_y_boundary,
+            second_y_boundary,
         );
 
         let current_pos = if bounds.is_within_bounds(&Coordinate::default()) {
