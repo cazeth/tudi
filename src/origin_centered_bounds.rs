@@ -31,10 +31,7 @@ impl OriginCenteredBounds {
         let y_min = -(y_count as i32 - ((y_count + 1) % 2) as i32) / 2;
         let y_max = (y_count as i32 + ((y_count + 1) % 2) as i32) / 2;
 
-        let x_dist = x_max - x_min;
-        let y_dist = y_max - y_min;
-
-        let bounds = Bounds::new(x_min, x_dist as usize, y_min, y_dist as usize);
+        let bounds = Bounds::from_boundaries(x_min, x_max, y_min, y_max);
         Self::try_from(bounds).unwrap()
     }
 
