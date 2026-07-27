@@ -21,7 +21,7 @@ pub struct BoundedMovingObject {
 
 impl BoundedMovingObject {
     /// Creates new BoundedMovingObject. If the origin is in bounds, the marker is set to the
-    /// origin. If not, it is set to the southeast corner.
+    /// origin. If not, it is set to the northwest corner.
     /// input are in the order x_min, x_max, y_min, y_max
     /// # Panics
     ///
