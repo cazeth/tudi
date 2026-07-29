@@ -583,6 +583,18 @@ pub mod test {
     pub(crate) use check_out_of_bounds;
 
     #[track_caller]
+    pub fn check_x_count<B: Bounded>(b: B, x_count: u64) {
+        assert!(x_count != 0, "count is not allowed to be zero");
+        assert_eq!(b.x_count(), x_count as usize)
+    }
+
+    #[track_caller]
+    pub fn check_y_count<B: Bounded>(b: B, y_count: u64) {
+        assert!(y_count != 0, "count is not allowed to be zero");
+        assert_eq!(b.y_count(), y_count as usize)
+    }
+
+    #[track_caller]
     pub fn check_x_min<B: Bounded>(bounded: B, expected: i32) {
         assert_eq!(bounded.x_min_boundary(), expected);
     }

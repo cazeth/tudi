@@ -327,8 +327,10 @@ impl DynamicallyBounded for BoundedMovingObject {
 mod tests {
 
     use super::*;
+    use crate::bounded::test::check_x_count;
     use crate::bounded::test::check_x_max;
     use crate::bounded::test::check_x_min;
+    use crate::bounded::test::check_y_count;
     use crate::bounded::test::check_y_max;
     use crate::bounded::test::check_y_min;
 
@@ -339,29 +341,6 @@ mod tests {
         let y_max = 0;
 
         BoundedMovingObject::new(x_min, x_max, y_min, y_max)
-    }
-
-    // check the count, also check if the geometric is correct if the count is correct.
-    fn check_count_and_len(input: &BoundedMovingObject, axis: Axis, count: usize) {
-        match axis {
-            Axis::X => {
-                assert_eq!(input.x_count(), count);
-                if count > 0 {
-                    assert_eq!(input.x_geometric_len(), count - 1)
-                } else {
-                    assert_eq!(input.x_geometric_len(), 0)
-                }
-            }
-
-            Axis::Y => {
-                assert_eq!(input.y_count(), count);
-                if count > 0 {
-                    assert_eq!(input.y_geometric_len(), count - 1)
-                } else {
-                    assert_eq!(input.y_geometric_len(), 0)
-                }
-            }
-        }
     }
 
     #[test]
@@ -510,7 +489,7 @@ mod tests {
         fn valid_upwards_expansion() {
             let mut pos = create_at_origin();
             let _ = set(&mut pos, Axis::Y, MinMax::Max, 1);
-            check_count_and_len(&pos, Axis::Y, 2);
+            check_y_count(&pos, 2);
             check_y_max(&pos, 1);
         }
 
@@ -518,7 +497,7 @@ mod tests {
         fn valid_downwards_expansion() {
             let mut pos = create_at_origin();
             let _ = set(&mut pos, Axis::Y, MinMax::Min, -1);
-            check_count_and_len(&pos, Axis::Y, 2);
+            check_y_count(&pos, 2);
             check_y_min(&pos, -1);
         }
 
@@ -526,7 +505,7 @@ mod tests {
         fn valid_right_expansion() {
             let mut pos = create_at_origin();
             let _ = set(&mut pos, Axis::X, MinMax::Max, 1);
-            check_count_and_len(&pos, Axis::X, 2);
+            check_x_count(&pos, 2);
             check_x_max(&pos, 1);
         }
 
@@ -534,7 +513,7 @@ mod tests {
         fn valid_left_expansion() {
             let mut pos = create_at_origin();
             let _ = set(&mut pos, Axis::X, MinMax::Min, -1);
-            check_count_and_len(&pos, Axis::X, 2);
+            check_x_count(&pos, 2);
             check_x_min(&pos, -1);
         }
     }

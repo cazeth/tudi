@@ -142,8 +142,10 @@ impl MaybeOriginBounded for Bounds {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::bounded::test::check_x_count;
     use crate::bounded::test::check_x_max;
     use crate::bounded::test::check_x_min;
+    use crate::bounded::test::check_y_count;
     use crate::bounded::test::check_y_max;
     use crate::bounded::test::check_y_min;
 
@@ -154,8 +156,8 @@ mod tests {
         assert_eq!(bounds.southwest_corner(), Coordinate::default());
         assert_eq!(bounds.northeast_corner(), Coordinate::default());
         assert_eq!(bounds.southeast_corner(), Coordinate::default());
-        assert_eq!(bounds.x_count(), 1);
-        assert_eq!(bounds.y_count(), 1);
+        check_x_count(bounds, 1);
+        check_y_count(bounds, 1);
     }
 
     #[test]
@@ -181,24 +183,24 @@ mod tests {
     #[test]
     fn add_row_test() {
         let mut bounds = Bounds::new(-10, 1, -10, 2);
-        assert_eq!(bounds.y_count(), 3);
+        check_y_count(bounds, 3);
         bounds.add_top_row();
         bounds.add_bottom_row();
-        assert_eq!(bounds.x_count(), 2);
-        assert_eq!(bounds.y_count(), 5);
+        check_x_count(bounds, 2);
+        check_y_count(bounds, 5);
     }
 
     #[test]
     fn expansion_test() {
         let mut bounds = Bounds::new(0, 0, 0, 0);
-        assert_eq!(bounds.y_count(), 1);
+        check_y_count(bounds, 1);
         bounds.expand_in_direction(AbsoluteDirection::North);
-        assert_eq!(bounds.y_count(), 2);
+        check_y_count(bounds, 2);
         bounds.expand_in_direction(AbsoluteDirection::South);
-        assert_eq!(bounds.y_count(), 3);
+        check_y_count(bounds, 3);
 
-        assert_eq!(bounds.x_count(), 1);
+        check_x_count(bounds, 1);
         bounds.expand_in_direction(AbsoluteDirection::East);
-        assert_eq!(bounds.x_count(), 2);
+        check_x_count(bounds, 2);
     }
 }

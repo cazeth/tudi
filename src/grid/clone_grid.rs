@@ -58,7 +58,6 @@ impl<T: Clone> PartialEq for Grid<T> {
 
 #[cfg(test)]
 pub mod tests {
-    use super::super::generic_grid::tests::*;
     use super::*;
     use crate::Bounded;
     use crate::Coordinate;
@@ -88,6 +87,8 @@ pub mod tests {
 
     pub mod constructor_tests {
         use super::*;
+        use crate::bounded::test::check_x_count;
+        use crate::bounded::test::check_y_count;
 
         #[test]
         fn no_elements() {

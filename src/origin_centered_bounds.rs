@@ -134,6 +134,8 @@ pub struct InvalidRegionError {
 pub mod tests {
 
     use super::*;
+    use crate::bounded::test::check_x_count;
+    use crate::bounded::test::check_y_count;
 
     /// The smallest possible origin centered bounds.
     ///
@@ -156,8 +158,8 @@ pub mod tests {
     #[test]
     fn empty() {
         let bounds = create_smallest();
-        assert_eq!(bounds.x_count(), 1);
-        assert_eq!(bounds.y_count(), 1);
+        check_x_count(&bounds, 1);
+        check_y_count(&bounds, 1);
     }
 
     #[test]

@@ -741,12 +741,12 @@ pub mod tests {
     use crate::BoundedMovingObject;
     use crate::Coordinate;
     use crate::bounded::test::check_out_of_bounds;
+    use crate::bounded::test::check_x_count;
+    use crate::bounded::test::check_y_count;
     use crate::positioned::test::check_direction;
     use itertools::Itertools;
     use std::collections::HashMap;
     use std::fs::read_to_string;
-    pub use x_count::check_x_count;
-    pub use y_count::check_y_count;
 
     /// Checks that the boundaries of the grid are centered around the origin.
     fn assert_centered_around_origin<T>(input: &Grid<T>) {
@@ -781,11 +781,6 @@ pub mod tests {
         let expected_count_by_bounds = input.bounds.x_count() * input.bounds.y_count();
         let actual_length = input.grid_data.len();
         assert_eq!(expected_count_by_bounds, actual_length);
-    }
-
-    fn check_grid_counts<T>(grid: &Grid<T>, x: usize, y: usize) {
-        assert_eq!(grid.x_count(), x);
-        assert_eq!(grid.y_count(), y)
     }
 
     /// # Panics
@@ -938,11 +933,6 @@ pub mod tests {
     pub mod x_count {
         use super::*;
 
-        #[track_caller]
-        pub fn check_x_count<T>(grid: &Grid<T>, count: usize) {
-            assert_eq!(grid.x_count(), count);
-        }
-
         #[test]
         fn basic_x_count() {
             check_x_count(&empty_grid::<()>(1), 1);
@@ -953,11 +943,6 @@ pub mod tests {
 
     pub mod y_count {
         use super::*;
-
-        #[track_caller]
-        pub fn check_y_count<T>(grid: &Grid<T>, count: usize) {
-            assert_eq!(grid.y_count(), count);
-        }
 
         #[test]
         fn basic_y_count() {
@@ -1625,11 +1610,13 @@ pub mod tests {
         fn test_transpose() {
             let mut grid: Grid<()> = rectangular_empty_grid(3, 1);
             grid.transpose_new();
-            check_grid_counts(&grid, 1, 3);
+            check_x_count(&grid, 1);
+            check_y_count(&grid, 3);
 
             let mut grid: Grid<()> = empty_grid(1);
             grid.transpose_new();
-            check_grid_counts(&grid, 1, 1);
+            check_x_count(&grid, 1);
+            check_y_count(&grid, 1);
 
             let mut grid = empty_grid(3);
             check_store(
