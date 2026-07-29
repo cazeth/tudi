@@ -145,12 +145,12 @@ pub mod tests {
 
     #[test]
     fn valid_create_test_from_bounds() {
-        assert_create_from_valid_bounds(Bounds::new(-1, 2, -1, 2));
-        assert_create_from_valid_bounds(Bounds::new(0, 0, 0, 0));
-        assert_create_from_valid_bounds(Bounds::new(-1, 3, -1, 3));
-        assert_create_from_valid_bounds(Bounds::new(0, 1, 0, 1));
-        assert_create_from_valid_bounds(Bounds::new(0, 1, -2, 4));
-        assert_create_from_valid_bounds(Bounds::new(0, 1, -2, 5));
+        assert_create_from_valid_bounds(Bounds::from_boundaries(-1, 1, -1, 1));
+        assert_create_from_valid_bounds(Bounds::from_boundaries(0, 0, 0, 0));
+        assert_create_from_valid_bounds(Bounds::from_boundaries(-1, 2, -1, 2));
+        assert_create_from_valid_bounds(Bounds::from_boundaries(0, 1, 0, 1));
+        assert_create_from_valid_bounds(Bounds::from_boundaries(0, 1, -2, 2));
+        assert_create_from_valid_bounds(Bounds::from_boundaries(0, 1, -2, 3));
     }
 
     #[test]
@@ -162,9 +162,9 @@ pub mod tests {
 
     #[test]
     fn test_err_from_invalid_bounds() {
-        assert_err_from_invalid_bounds(Bounds::new(0, 3, 0, 3));
-        assert_err_from_invalid_bounds(Bounds::new(-5, 12, 0, 3));
-        assert_err_from_invalid_bounds(Bounds::new(-2, 3, -5, 0));
+        assert_err_from_invalid_bounds(Bounds::from_boundaries(0, 3, 0, 3));
+        assert_err_from_invalid_bounds(Bounds::from_boundaries(-5, 12, 0, 3));
+        assert_err_from_invalid_bounds(Bounds::from_boundaries(-2, 3, -5, 0));
     }
 
     #[test]
@@ -194,7 +194,7 @@ pub mod tests {
 
         assert_eq!(
             bounds,
-            OriginCenteredBounds::try_from(Bounds::new(0, 0, -5, 10)).unwrap()
+            OriginCenteredBounds::try_from(Bounds::from_boundaries(0, 0, -5, 5)).unwrap()
         );
     }
 
