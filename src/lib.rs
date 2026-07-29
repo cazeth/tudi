@@ -1,3 +1,4 @@
+mod axis_count;
 pub mod bounded;
 mod bounded_moving_object;
 mod bounds;
@@ -10,6 +11,8 @@ mod moving_object;
 mod origin_centered_bounds;
 mod out_of_bounds_error;
 mod positioned;
+pub use crate::axis_count::AxisCount;
+pub use crate::axis_count::AxisCountError;
 pub use crate::bounded::Bounded;
 pub use crate::bounded_moving_object::BoundedMovingObject;
 pub use crate::bounds::Bounds;
