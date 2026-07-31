@@ -38,11 +38,10 @@ use performance_tuning::PerformanceTuning;
 /// information - it only acts as a marker.
 ///
 /// ```
-/// use tudi::Grid;
 /// use tudi::Coordinate;
-/// use std::num::NonZeroUsize;
+/// use tudi::grid;
 ///
-/// let mut grid = Grid::with_count(NonZeroUsize::new(3).unwrap(), NonZeroUsize::new(3).unwrap()); // A 3x3 grid.
+/// let mut grid = grid!(3, 3); // A 3x3 grid.
 /// grid.element_statuses(); // all elements are empty
 /// grid.store_element(&Coordinate::default(),()); // store an element at the origin.
 /// grid.element_statuses(); // the grid now contains an element at the origin.

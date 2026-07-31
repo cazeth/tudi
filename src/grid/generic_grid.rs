@@ -26,21 +26,20 @@ impl<T> Grid<T> {
     ///contains the coordinates with `x = -1`, `x = 0`, and `x = 1`.
     ///# Examples
     /// ```
-    /// use tudi::Grid;
+    /// use tudi::grid;
     /// use tudi::bounded::Bounded;
-    /// let x_count = 3;
-    /// let y_count = 3;
-    /// let grid : Grid<()> = Grid::new(x_count,y_count);
+    /// let grid: tudi::Grid<()> = grid!(3, 3);
+    /// let x_count = 3_usize;
+    /// let y_count = 3_usize;
     /// assert_eq!(grid.x_count(), x_count);
     /// assert_eq!(grid.y_count(), y_count);
     /// assert_eq!(grid.iter_new().count(), x_count*y_count); // There are nine coordinates
     /// assert_eq!(grid.iter_elements_new().count(), 0); // There are zero elements
     /// ```
     /// ```
-    /// use tudi::Grid;
-    /// use tudi::Coordinate;
+    /// use tudi::grid;
     /// use tudi::bounded::Bounded;
-    /// let grid : Grid<()> = Grid::new(6, 6);  // Returns an empty 6x6 grid.
+    /// let grid: tudi::Grid<()> = grid!(6, 6);  // Returns an empty 6x6 grid.
     /// // A Grid<()> cannot contain anything (because of the unit type parameter), so you will likely want to replace the type
     /// // with something more useful.
     ///
@@ -83,13 +82,10 @@ impl<T> Grid<T> {
     /// # Examples
     ///
     ///```
-    /// use tudi::Grid;
+    /// use tudi::grid;
     /// use tudi::Bounded;
-    /// use std::num::NonZeroUsize;
     ///
-    /// let grid: Grid<()> = Grid::with_count(
-    /// NonZeroUsize::new(1).unwrap(),
-    /// NonZeroUsize::new(1).unwrap());
+    /// let grid: tudi::Grid<()> = grid!(1, 1);
     ///
     /// assert_eq!(grid.x_count(),1);
     /// assert_eq!(grid.y_count(),1);
@@ -113,11 +109,10 @@ impl<T> Grid<T> {
     /// # Examples
     ///
     /// ```
-    /// use tudi::Grid;
-    /// use tudi::OriginCenteredBounds;
+    /// use tudi::grid;
     /// use tudi::Bounded;
-    /// let bounds = OriginCenteredBounds::new(4,4);
-    /// let grid : Grid<()> = Grid::from_bounds(&bounds).unwrap();
+    /// let source: tudi::Grid<()> = grid!(4, 4);
+    /// let grid: tudi::Grid<()> = tudi::Grid::from_bounds(&source).unwrap();
     /// assert_eq!(grid.x_max_boundary(), 2);
     /// assert_eq!(grid.x_min_boundary(), -1);
     /// assert_eq!(grid.y_max_boundary(), 2);
@@ -154,11 +149,10 @@ impl<T> Grid<T> {
     ///
     /// # Examples
     /// ```
-    /// use std::num::NonZeroUsize;
-    /// use tudi::Grid;
+    /// use tudi::grid;
     /// use tudi::bounded::Bounded;
     /// use tudi::Coordinate;
-    /// let mut grid = Grid::with_count(NonZeroUsize::new(3).unwrap(), NonZeroUsize::new(3).unwrap());
+    /// let mut grid = grid!(3, 3);
     /// grid.store_element(&Coordinate::default(), 1); // store 1 at the origin.
     /// assert!(grid.element(&Coordinate::default()).is_ok()); // This method returns a borrowed
     /// // version of the element.
@@ -347,11 +341,9 @@ impl<T> Grid<T> {
     /// The coordinate count along the x-dimension.
     /// # Examples
     /// ```
-    /// use std::num::NonZeroUsize;
-    /// use tudi::Grid;
+    /// use tudi::grid;
     ///
-    /// let grid: Grid<()> = Grid::with_count(NonZeroUsize::new(3).unwrap(),
-    /// NonZeroUsize::new(3).unwrap());
+    /// let grid: tudi::Grid<()> = grid!(3, 3);
     /// assert_eq!(grid.x_count(), 3);
     ///
     /// ```
@@ -362,10 +354,9 @@ impl<T> Grid<T> {
     /// The coordinate count along the y-dimension.
     /// # Examples
     /// ```
-    /// use std::num::NonZeroUsize;
-    /// use tudi::Grid;
-    /// let grid: Grid<()> = Grid::with_count(NonZeroUsize::new(3).unwrap(),
-    /// NonZeroUsize::new(3).unwrap());
+    /// use tudi::grid;
+    ///
+    /// let grid: tudi::Grid<()> = grid!(3, 3);
     ///
     /// assert_eq!(grid.y_count(), 3);
     ///
@@ -454,10 +445,9 @@ impl<T> Grid<T> {
     /// If the grid has an even number of rows it always has one more positive row than negative row, and if the grid has an odd number of rows the positive and negative number of rows are equal. This method preserves this property. If the row is added to the top it returns true otherwise it returns false.
     /// # Examples
     /// ```
-    /// use std::num::NonZeroUsize;
-    /// use tudi::Grid;
+    /// use tudi::grid;
     /// use tudi::Bounded;
-    /// let mut grid : Grid<()> = Grid::with_count(NonZeroUsize::new(5).unwrap(), NonZeroUsize::new(5).unwrap());
+    /// let mut grid: tudi::Grid<()> = grid!(5, 5);
     ///
     /// // since the grid has an odd number of rows, a new row is added to the top.
     /// assert_eq!(grid.y_max_boundary(), 2);
@@ -551,10 +541,9 @@ impl<T> Grid<T> {
     ///
     /// # Examples
     /// ```
-    /// use tudi::Grid;
+    /// use tudi::grid;
     /// use tudi::Coordinate;
-    /// use std::num::NonZeroUsize;
-    /// let mut grid = Grid::with_count(NonZeroUsize::new(3).unwrap(),NonZeroUsize::new(2).unwrap());
+    /// let mut grid = grid!(3, 2);
     /// grid.store_element(&Coordinate{x: 1, y : 0}, () ); // [2][1] in matrix-like coordinates.
     /// grid.transpose_new();
     /// assert!(grid.element(&Coordinate{y : -1, x: 1}).is_ok()); // [1][2] in matrix-like
