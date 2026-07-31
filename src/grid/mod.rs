@@ -56,3 +56,17 @@ pub struct Grid<T> {
     bounds: OriginCenteredBounds,
     performance_tuning: PerformanceTuning,
 }
+
+/// Creates an empty [`Grid`] from literal axis counts.
+#[macro_export]
+macro_rules! grid {
+    ($x_count:literal, $y_count:literal $(,)?) => {{
+        const _: () = assert!($x_count > 0, "x count must be greater than zero");
+        const _: () = assert!($y_count > 0, "y count must be greater than zero");
+        let x_count = $x_count as u64;
+        let y_count = $y_count as u64;
+        let bounds = $crate::OriginCenteredBounds::new(x_count, y_count);
+
+        $crate::Grid::from_bounds(&bounds).unwrap()
+    }};
+}
