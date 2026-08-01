@@ -52,4 +52,8 @@ impl TryFrom<AxisCount> for u32 {
 #[error("Axis Count Error")]
 pub enum AxisCountError {
     OutOfBoundsError,
+    #[error("Tried to create an axis count that was too large {0}")]
+    TooLarge(u64),
+    #[error("Tried to create a zero axis count")]
+    Zero,
 }
