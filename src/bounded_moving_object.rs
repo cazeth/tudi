@@ -190,17 +190,17 @@ impl BoundedMovingObject {
         };
 
         let new_bounds = match axis {
-            Axis::Y => Bounds::new(
+            Axis::Y => Bounds::from_boundaries(
                 self.bounds.x_min_boundary(),
-                self.bounds.x_count(),
+                self.bounds.x_max_boundary(),
                 new_min,
-                (new_max - new_min) as usize,
+                new_max,
             ),
-            Axis::X => Bounds::new(
+            Axis::X => Bounds::from_boundaries(
                 new_min,
-                (new_max - new_min) as usize,
+                new_max,
                 self.bounds.y_min_boundary(),
-                self.bounds.y_count(),
+                self.bounds.y_max_boundary(),
             ),
         };
         self.bounds = new_bounds;
