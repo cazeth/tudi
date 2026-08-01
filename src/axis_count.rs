@@ -40,7 +40,7 @@ impl TryFrom<AxisCount> for u32 {
     type Error = AxisCountError;
     fn try_from(value: AxisCount) -> Result<Self, Self::Error> {
         if value.0 == u32::MAX {
-            Err(AxisCountError::OutOfBoundsError)
+            Err(AxisCountError::Zero)
         } else {
             Ok(value.0 + 1)
         }
