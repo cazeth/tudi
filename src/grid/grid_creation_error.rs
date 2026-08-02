@@ -1,3 +1,4 @@
+use crate::AxisCountError;
 use thiserror::Error;
 
 /// Errors relating to the creation of a [`Grid`](crate::grid::Grid).
@@ -28,4 +29,13 @@ pub enum GridCreationError {
 
     #[error("A grid with no coordinates is not allowed.")]
     Empty,
+}
+
+impl From<AxisCountError> for GridCreationError {
+    fn from(value: AxisCountError) -> Self {
+        match value {
+            AxisCountError::Zero => GridCreationError::Empty,
+            AxisCountError::TooLarge(x) => GridCreationError::CountTooLarge { count: x },
+        }
+    }
 }
