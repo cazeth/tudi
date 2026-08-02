@@ -1,7 +1,7 @@
 use std::num::NonZeroU32;
 use thiserror::Error;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct AxisCount(u32);
 
 impl AxisCount {
@@ -10,6 +10,12 @@ impl AxisCount {
 
     pub fn as_u64(&self) -> u64 {
         u64::from(self.0) + 1
+    }
+}
+
+impl std::fmt::Debug for AxisCount {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.as_u64().fmt(f)
     }
 }
 
