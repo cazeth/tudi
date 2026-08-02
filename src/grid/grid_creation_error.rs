@@ -23,6 +23,9 @@ pub enum GridCreationError {
         second_row_count: usize,
     },
 
+    #[error("A grid axis cannot contain {count} coordinates.")]
+    CountTooLarge { count: u64 },
+
     #[error("A grid with no coordinates is not allowed.")]
     Empty,
 }
