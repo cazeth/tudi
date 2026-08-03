@@ -36,6 +36,13 @@ impl From<AxisCountError> for GridCreationError {
         match value {
             AxisCountError::Zero => GridCreationError::Empty,
             AxisCountError::TooLarge(x) => GridCreationError::CountTooLarge { count: x },
+            // There are no grid constructors that take signed integers as arguments so this
+            // should never happen.
+            AxisCountError::Negative(_) => {
+                unreachable!(
+                    "Should never be able to try to construct a grid from negative numbers!"
+                )
+            }
         }
     }
 }

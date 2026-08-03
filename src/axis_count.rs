@@ -55,4 +55,6 @@ pub enum AxisCountError {
     TooLarge(u64),
     #[error("Tried to create a zero axis count")]
     Zero,
+    #[error("Tried to create an axis count from a negative number {0}")]
+    Negative(i64),
 }
