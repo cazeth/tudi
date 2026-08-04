@@ -26,6 +26,52 @@ impl From<NonZeroU32> for AxisCount {
     }
 }
 
+macro_rules! try_from_unsigned {
+    ($($number_type:ty),+ $(,)?) => {
+        $(
+            impl TryFrom<$number_type> for AxisCount {
+                type Error = AxisCountError;
+
+                fn try_from(count: $number_type) -> Result<Self, Self::Error> {
+                    let count = count as u64;
+                    if count == 0 {
+                        Err(AxisCountError::Zero)
+                    } else if count > u32::MAX as u64 + 1 {
+                        Err(AxisCountError::TooLarge(count))
+                    } else if count == u32::MAX as u64 + 1 {
+                        Ok(AxisCount::MAX)
+                    } else {
+                        Ok(AxisCount(count as u32 - 1))
+                    }
+                }
+            }
+        )+
+    };
+}
+
+macro_rules! try_from_signed {
+    ($($number_type:ty),+ $(,)?) => {
+        $(
+            impl TryFrom<$number_type> for AxisCount {
+                type Error = AxisCountError;
+
+                fn try_from(count: $number_type) -> Result<Self, Self::Error> {
+                    if count < 0 {
+                        return Err(AxisCountError::Negative(count as i64))
+                    } else if count as u64 > u32::MAX as u64 + 1 {
+                        return Err(AxisCountError::TooLarge(count as u64))
+                    } else {
+                        AxisCount::try_from(count as u64)
+                    }
+                }
+            }
+        )+
+    };
+}
+
+try_from_unsigned!(u8, u16, u32, usize, u64);
+try_from_signed!(i8, i16, i32, isize, i64);
+
 impl std::fmt::Display for AxisCount {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if self.0 == u32::MAX {
@@ -57,4 +103,69 @@ pub enum AxisCountError {
     Zero,
     #[error("Tried to create an axis count from a negative number {0}")]
     Negative(i64),
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn zeroes_err() {
+        assert_eq!(AxisCount::try_from(0_u8), Err(AxisCountError::Zero));
+        assert_eq!(AxisCount::try_from(0_u16), Err(AxisCountError::Zero));
+        assert_eq!(AxisCount::try_from(0_u32), Err(AxisCountError::Zero));
+        assert_eq!(AxisCount::try_from(0_usize), Err(AxisCountError::Zero));
+        assert_eq!(AxisCount::try_from(0_u64), Err(AxisCountError::Zero));
+        assert_eq!(AxisCount::try_from(0_i8), Err(AxisCountError::Zero));
+        assert_eq!(AxisCount::try_from(0_i16), Err(AxisCountError::Zero));
+        assert_eq!(AxisCount::try_from(0_i32), Err(AxisCountError::Zero));
+        assert_eq!(AxisCount::try_from(0_isize), Err(AxisCountError::Zero));
+        assert_eq!(AxisCount::try_from(0_i64), Err(AxisCountError::Zero));
+    }
+
+    #[test]
+    fn large_u64_errs() {
+        let value: u64 = u32::MAX as u64 + 2;
+        assert_eq!(
+            AxisCount::try_from(value),
+            Err(AxisCountError::TooLarge(value))
+        );
+    }
+
+    #[test]
+    fn axis_count_max_is_ok() {
+        assert_eq!(AxisCount::try_from(u32::MAX as u64 + 1), Ok(AxisCount::MAX));
+    }
+
+    #[test]
+    fn i64_max_errs() {
+        assert_eq!(
+            AxisCount::try_from(i64::MAX),
+            Err(AxisCountError::TooLarge(i64::MAX as u64))
+        )
+    }
+
+    #[test]
+    fn negative_errs() {
+        assert_eq!(
+            AxisCount::try_from(-1_i8),
+            Err(AxisCountError::Negative(-1))
+        );
+        assert_eq!(
+            AxisCount::try_from(-1_i16),
+            Err(AxisCountError::Negative(-1))
+        );
+        assert_eq!(
+            AxisCount::try_from(-1_i32),
+            Err(AxisCountError::Negative(-1))
+        );
+        assert_eq!(
+            AxisCount::try_from(-1_isize),
+            Err(AxisCountError::Negative(-1))
+        );
+        assert_eq!(
+            AxisCount::try_from(-1_i64),
+            Err(AxisCountError::Negative(-1))
+        );
+    }
 }
