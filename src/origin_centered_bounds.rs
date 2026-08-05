@@ -213,6 +213,32 @@ pub mod tests {
         );
     }
 
+    #[test]
+    fn test_column_expansion() {
+        let mut bounds = create_smallest();
+        let mut prev_x_min = bounds.x_min_boundary();
+        let mut prev_x_max = bounds.x_max_boundary();
+
+        for _ in 0..10 {
+            bounds.expand_bounds_horizontally();
+            let x_min = bounds.x_min_boundary();
+            let x_max = bounds.x_max_boundary();
+            if prev_x_min == x_min {
+                assert_eq!(prev_x_max + 1, x_max);
+            } else {
+                assert_eq!(prev_x_min - 1, x_min);
+                assert_eq!(prev_x_max, x_max);
+            }
+            prev_x_min = x_min;
+            prev_x_max = x_max;
+        }
+
+        assert_eq!(
+            bounds,
+            OriginCenteredBounds::try_from(Bounds::from_boundaries(-5, 5, 0, 0)).unwrap()
+        );
+    }
+
     fn assert_create_from_valid_bounds(bounds: Bounds) {
         let origin_centered_bounds = OriginCenteredBounds::try_from(bounds)
             .inspect_err(|x| println!("{x}"))
