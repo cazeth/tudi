@@ -190,8 +190,21 @@ pub mod tests {
     #[test]
     fn test_row_expansion() {
         let mut bounds = create_smallest();
+        let mut prev_y_min = bounds.y_min_boundary();
+        let mut prev_y_max = bounds.y_max_boundary();
+
         for _ in 0..10 {
             bounds.expand_bounds_vertically();
+            let y_min = bounds.y_min_boundary();
+            let y_max = bounds.y_max_boundary();
+            if prev_y_min == y_min {
+                assert_eq!(prev_y_max + 1, y_max);
+            } else {
+                assert_eq!(prev_y_min - 1, y_min);
+                assert_eq!(prev_y_max, y_max);
+            }
+            prev_y_min = y_min;
+            prev_y_max = y_max;
         }
 
         assert_eq!(
