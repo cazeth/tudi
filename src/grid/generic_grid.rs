@@ -1616,6 +1616,26 @@ pub mod tests {
         }
     }
 
+    pub mod geometric_len {
+        use super::*;
+        use crate::bounded::test::check_x_len;
+        use crate::bounded::test::check_y_len;
+
+        #[test]
+        fn basic_geometric_len() {
+            let grid: Grid<()> = empty_grid(5);
+            check_x_len(&grid, 4);
+            check_y_len(&grid, 4);
+        }
+
+        #[test]
+        fn smallest_geometric_len() {
+            let grid: Grid<()> = empty_grid(1);
+            check_x_len(&grid, 0);
+            check_y_len(&grid, 0)
+        }
+    }
+
     pub mod transpose_tests {
 
         use super::*;

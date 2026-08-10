@@ -610,4 +610,14 @@ pub mod test {
     pub fn check_y_max<B: Bounded>(bounded: B, expected: i32) {
         assert_eq!(bounded.y_max_boundary(), expected);
     }
+
+    #[track_caller]
+    pub fn check_x_len<B: Bounded>(bounded: B, expected: u32) {
+        assert_eq!(u32::try_from(bounded.x_geometric_len()).unwrap(), expected)
+    }
+
+    #[track_caller]
+    pub fn check_y_len<B: Bounded>(bounded: B, expected: u32) {
+        assert_eq!(u32::try_from(bounded.y_geometric_len()).unwrap(), expected)
+    }
 }
