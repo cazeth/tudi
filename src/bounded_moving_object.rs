@@ -352,6 +352,7 @@ mod tests {
 
     #[test]
     pub fn create_from_bounds() {
+        #[expect(deprecated)]
         let bounds = Bounds::new(-5, 10, -5, 10);
         let pos = BoundedMovingObject::try_from((&bounds, &Coordinate::default())).unwrap();
         assert_eq!(pos.position(), &Coordinate::default());
@@ -369,6 +370,7 @@ mod tests {
 
     #[test]
     pub fn new_from_bounded() {
+        #[expect(deprecated)]
         let bounds = Bounds::new(-4, 8, -4, 8);
         let pos = BoundedMovingObject::try_from((&bounds, &Coordinate::default())).unwrap();
         check_x_min(&pos, -4);
