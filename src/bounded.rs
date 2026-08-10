@@ -74,8 +74,12 @@ pub trait Bounded: BoundSeal {
     /// assert_eq!(bounds.x_geometric_len(), 2); // the distance between -1 and 1 is 2
     ///
     /// ```
-    fn x_geometric_len(&self) -> usize {
-        (self.x_max_boundary() - self.x_min_boundary()).unsigned_abs() as usize
+    fn x_geometric_len(&self) -> u32 {
+        if let Ok(value) = u32::try_from(self.x_count()) {
+            value - 1
+        } else {
+            u32::MAX
+        }
     }
 
     /// The length between `y_min` and `y_max`, i.e `y_max - y_min`.
@@ -92,8 +96,12 @@ pub trait Bounded: BoundSeal {
     /// assert_eq!(bounds.y_geometric_len(), 2); // the distance between -1 and 1 is 2
     ///
     /// ```
-    fn y_geometric_len(&self) -> usize {
-        (self.y_max_boundary() - self.y_min_boundary()).unsigned_abs() as usize
+    fn y_geometric_len(&self) -> u32 {
+        if let Ok(value) = u32::try_from(self.y_count()) {
+            value - 1
+        } else {
+            u32::MAX
+        }
     }
 
     fn is_within_bounds<T: Positioned>(&self, coordinate: &T) -> bool {
@@ -613,11 +621,11 @@ pub mod test {
 
     #[track_caller]
     pub fn check_x_len<B: Bounded>(bounded: B, expected: u32) {
-        assert_eq!(u32::try_from(bounded.x_geometric_len()).unwrap(), expected)
+        assert_eq!(bounded.x_geometric_len(), expected)
     }
 
     #[track_caller]
     pub fn check_y_len<B: Bounded>(bounded: B, expected: u32) {
-        assert_eq!(u32::try_from(bounded.y_geometric_len()).unwrap(), expected)
+        assert_eq!(bounded.y_geometric_len(), expected)
     }
 }
