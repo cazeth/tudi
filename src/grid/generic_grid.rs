@@ -589,7 +589,10 @@ impl<T> Grid<T> {
             let matrix_coordinates = previous_bounds.to_matrix_like(&coordinate);
             #[expect(clippy::missing_panics_doc)]
             let new_coordinate = self
-                .to_grid_like([matrix_coordinates[1], matrix_coordinates[0]])
+                .to_grid_like([
+                    matrix_coordinates[1] as usize,
+                    matrix_coordinates[0] as usize,
+                ])
                 .expect("Transposed coordinates cannot be out of bounds");
 
             if let Some(e) = element {

@@ -254,11 +254,11 @@ pub trait Bounded: BoundSeal {
     /// let origin = Coordinate{x: 0, y : 0};
     /// assert_eq!(bounds.to_matrix_like(&origin), [1,1]);
     /// ```
-    fn to_matrix_like<C: Positioned>(&self, coord: &C) -> [usize; 2] {
+    fn to_matrix_like<C: Positioned>(&self, coord: &C) -> [u32; 2] {
         assert!(self.is_within_bounds(coord));
         [
-            coord.x_coordinate().abs_diff(self.x_min_boundary()) as usize,
-            self.y_max_boundary().abs_diff(coord.y_coordinate()) as usize,
+            coord.x_coordinate().abs_diff(self.x_min_boundary()),
+            self.y_max_boundary().abs_diff(coord.y_coordinate()),
         ]
     }
 
