@@ -13,7 +13,7 @@
 - *(direction)* Implement Display for direction enums
 - *(Coordinate)* Implement Display and arithmetic traits
 - *(GridError)* Include out-of-bounds directions
-- *(Bounds)* Add infallible contructor Bounds::from_boundaries
+- *(Bounds)* Add infallible constructor Bounds::from_boundaries
 - *(axis-count)* Add axis count type
 - *(bounds)* Deprecate legacy constructor
 - *(bounded-moving-object)* Derive Copy
@@ -89,7 +89,7 @@
 - *(grid)* Remove outdated documentation
 - *(grid)* Update documentation for with_count
 - *(grid)* Add capacity to overview
-- *(grid)* Update documentaton for fn remove_element
+- *(grid)* Update documentation for fn remove_element
 - *(bounded)* Update docs for fn index_to_coordinate
 - *(grid)* Add ticks to TryFrom<Vec<Vec<Option<T>>> docs
 
