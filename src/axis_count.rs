@@ -19,6 +19,18 @@ impl std::fmt::Debug for AxisCount {
     }
 }
 
+impl PartialEq<u64> for AxisCount {
+    fn eq(&self, other: &u64) -> bool {
+        self.as_u64() == *other
+    }
+}
+
+impl PartialOrd<u64> for AxisCount {
+    fn partial_cmp(&self, other: &u64) -> Option<std::cmp::Ordering> {
+        Some(self.as_u64().cmp(other))
+    }
+}
+
 impl From<NonZeroU32> for AxisCount {
     fn from(value: NonZeroU32) -> Self {
         let value: u32 = value.into();
