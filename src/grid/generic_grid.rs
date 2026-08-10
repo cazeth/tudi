@@ -1716,13 +1716,13 @@ pub mod tests {
         #[test]
         fn row_expansion_test() {
             let mut grid: Grid<()> = empty_grid(3);
-            assert_eq!(grid.y_count(), 3);
+            check_y_count(&grid, 3);
             assert_coordinate_coverage(&grid);
             assert_centered_around_origin(&grid);
             grid.add_row();
             assert_coordinate_coverage(&grid);
             assert_centered_around_origin(&grid);
-            assert_eq!(grid.y_count(), 4);
+            check_y_count(&grid, 4);
         }
 
         #[track_caller]
@@ -1757,9 +1757,9 @@ pub mod tests {
             let c = Coordinate { x: 0, y: 0 };
             let mut grid: Grid<usize> = grid_with_single_element(3, c);
 
-            assert_eq!(grid.y_count(), 3);
+            check_y_count(&grid, 3);
             check_expand_at_row(&mut grid, 1, true);
-            assert_eq!(grid.y_count(), 4);
+            check_y_count(&grid, 4);
 
             // expansion happens upwards above the element so the object should not move.
             check_element(&grid, c, &0);
