@@ -104,9 +104,7 @@ pub trait Positioned {
     where
         Self: Sized,
     {
-        let x = self.x_coordinate() - other.x_coordinate();
-        let y = self.y_coordinate() - other.y_coordinate();
-        Coordinate { x, y }
+        *self.position() - *other.position()
     }
 
     /// The [`AbsoluteDirection`] from self to another coordinate.
