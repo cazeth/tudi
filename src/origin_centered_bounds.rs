@@ -27,13 +27,21 @@ impl OriginCenteredBounds {
     ///
     /// The method creates a origin-centered region from a x- and y-count pair.
     pub fn new(x_count: AxisCount, y_count: AxisCount) -> Self {
-        let x_min = -(x_count.as_u64() as i32 - ((x_count.as_u64() + 1) % 2) as i32) / 2;
-        let x_max = (x_count.as_u64() as i32 + ((x_count.as_u64() + 1) % 2) as i32) / 2;
-        let y_min = -(y_count.as_u64() as i32 - ((y_count.as_u64() + 1) % 2) as i32) / 2;
-        let y_max = (y_count.as_u64() as i32 + ((y_count.as_u64() + 1) % 2) as i32) / 2;
+        let x_max = (x_count.as_u64() / 2) as i32;
+        let x_min = if x_count.as_u64().is_multiple_of(2) {
+            -((x_count.as_u64() / 2) as i32) + 1
+        } else {
+            -((x_count.as_u64() / 2) as i32)
+        };
 
-        let bounds = Bounds::from_boundaries(x_min, x_max, y_min, y_max);
-        Self::try_from(bounds).unwrap()
+        let y_max = (y_count.as_u64() / 2) as i32;
+        let y_min = if y_count.as_u64().is_multiple_of(2) {
+            -((y_count.as_u64() / 2) as i32) + 1
+        } else {
+            -((y_count.as_u64() / 2) as i32)
+        };
+
+        Self(Bounds::from_boundaries(x_min, x_max, y_min, y_max))
     }
 
     /// Expand the bounds by one. Returns true if the bounds are expanded eastwards and false if expanded
