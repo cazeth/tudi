@@ -1,4 +1,5 @@
 use crate::AbsoluteDirection;
+use crate::AxisCount;
 use crate::bounded::{OriginBounded, OriginCentered, OriginCenteredness};
 use crate::{Bounds, bounded::Bounded};
 use thiserror::Error;
@@ -25,11 +26,11 @@ impl OriginCenteredBounds {
     /// The main constructor for this struct.
     ///
     /// The method creates a origin-centered region from a x- and y-count pair.
-    pub fn new(x_count: u64, y_count: u64) -> Self {
-        let x_min = -(x_count as i32 - ((x_count + 1) % 2) as i32) / 2;
-        let x_max = (x_count as i32 + ((x_count + 1) % 2) as i32) / 2;
-        let y_min = -(y_count as i32 - ((y_count + 1) % 2) as i32) / 2;
-        let y_max = (y_count as i32 + ((y_count + 1) % 2) as i32) / 2;
+    pub fn new(x_count: AxisCount, y_count: AxisCount) -> Self {
+        let x_min = -(x_count.as_u64() as i32 - ((x_count.as_u64() + 1) % 2) as i32) / 2;
+        let x_max = (x_count.as_u64() as i32 + ((x_count.as_u64() + 1) % 2) as i32) / 2;
+        let y_min = -(y_count.as_u64() as i32 - ((y_count.as_u64() + 1) % 2) as i32) / 2;
+        let y_max = (y_count.as_u64() as i32 + ((y_count.as_u64() + 1) % 2) as i32) / 2;
 
         let bounds = Bounds::from_boundaries(x_min, x_max, y_min, y_max);
         Self::try_from(bounds).unwrap()
@@ -142,7 +143,10 @@ pub mod tests {
     /// This should be count 1 across both dimensions and length zero.
     #[track_caller]
     fn create_smallest() -> OriginCenteredBounds {
-        OriginCenteredBounds::new(0, 0)
+        OriginCenteredBounds::new(
+            AxisCount::from_u64_unchecked(1),
+            AxisCount::from_u64_unchecked(1),
+        )
     }
 
     #[test]

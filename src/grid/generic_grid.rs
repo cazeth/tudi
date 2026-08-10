@@ -3,6 +3,7 @@ use super::grid_coordinate::GridCoordinate;
 use super::grid_iter::GridIter;
 use super::performance_tuning::PerformanceTuning;
 use crate::AbsoluteDirection;
+use crate::AxisCount;
 use crate::BoundedMovingObject;
 use crate::Bounds;
 use crate::Coordinate;
@@ -17,7 +18,6 @@ use crate::bounded::OriginCentered;
 use crate::bounded::OriginCenteredness;
 use crate::grid::GridCreationError;
 use itertools::iproduct;
-use std::num::NonZeroUsize;
 
 impl<T> Grid<T> {
     ///Create a rectangular grid with empty elements.
@@ -55,7 +55,9 @@ impl<T> Grid<T> {
         note = "Use Grid::with_count; counts must be NonZeroUsize"
     )]
     pub fn new(x_count: usize, y_count: usize) -> Self {
-        let bounds = OriginCenteredBounds::new(x_count as u64, y_count as u64);
+        let x_count = AxisCount::from_len(u32::try_from(x_count).unwrap() - 1);
+        let y_count = AxisCount::from_len(u32::try_from(y_count).unwrap() - 1);
+        let bounds = OriginCenteredBounds::new(x_count, y_count);
         let mut result = Self {
             grid_data: Vec::new(),
             bounds,
@@ -93,9 +95,24 @@ impl<T> Grid<T> {
     /// assert_eq!(grid.y_max_boundary(), 0);
     ///
     ///```
-    pub fn with_count(x_count: NonZeroUsize, y_count: NonZeroUsize) -> Self {
-        #[allow(deprecated)]
-        Self::new(usize::from(x_count), usize::from(y_count))
+    pub fn with_count(x_count: AxisCount, y_count: AxisCount) -> Self {
+        let bounds = OriginCenteredBounds::new(x_count, y_count);
+
+        let mut result = Self {
+            grid_data: Vec::new(),
+            bounds,
+            performance_tuning: PerformanceTuning::Auto,
+        };
+
+        for (y, x) in iproduct!(
+            (result.y_min_boundary()..=result.y_max_boundary()).rev(),
+            result.x_min_boundary()..=result.x_max_boundary()
+        ) {
+            result
+                .grid_data
+                .push(GridCoordinate::Empty(Coordinate { x, y }));
+        }
+        result
     }
 
     /// Create a new empty grid with the same bounds as another [`OriginBounded`].
@@ -122,14 +139,24 @@ impl<T> Grid<T> {
     // blanket implementation.
     pub fn from_bounds<B: OriginBounded>(other: &B) -> Result<Self, GridCreationError> {
         Ok(Self::with_count(
-            other
-                .x_count()
-                .try_into()
+            AxisCount::from_len(
+                u32::try_from(
+                    other
+                        .x_count()
+                        .checked_sub(1)
+                        .ok_or(GridCreationError::Empty)?,
+                )
                 .map_err(|_| GridCreationError::Empty)?,
-            other
-                .y_count()
-                .try_into()
+            ),
+            AxisCount::from_len(
+                u32::try_from(
+                    other
+                        .y_count()
+                        .checked_sub(1)
+                        .ok_or(GridCreationError::Empty)?,
+                )
                 .map_err(|_| GridCreationError::Empty)?,
+            ),
         ))
     }
 
@@ -553,14 +580,14 @@ impl<T> Grid<T> {
         let old_grid = std::mem::replace(
             self,
             Self::with_count(
-                #[expect(clippy::missing_panics_doc)]
-                OriginBounded::y_count(&self)
-                    .try_into()
-                    .expect("Cannot be zero since it is a Grid count"),
-                #[expect(clippy::missing_panics_doc)]
-                OriginBounded::x_count(&self)
-                    .try_into()
-                    .expect("Cannot be zero since it is a Grid count"),
+                AxisCount::from_len(
+                    u32::try_from(OriginBounded::y_count(&self) - 1)
+                        .expect("Length cannot be zero since it comes from an existing grid."),
+                ),
+                AxisCount::from_len(
+                    u32::try_from(OriginBounded::x_count(&self) - 1)
+                        .expect("Length cannot be zero since it comes from an existing grid."),
+                ),
             ),
         );
 
@@ -662,7 +689,7 @@ impl<T> TryFrom<Vec<Vec<Option<T>>>> for Grid<T> {
         let first_row_len = if let Some(first) = value.first()
             && !first.is_empty()
         {
-            NonZeroUsize::try_from(first.len()).expect("Length cannot be zero at this point.")
+            first.len()
         } else {
             return Err(GridCreationError::Empty);
         };
@@ -671,24 +698,21 @@ impl<T> TryFrom<Vec<Vec<Option<T>>>> for Grid<T> {
         if let Some((invalid_row_index, invalid_row_count)) = value
             .iter()
             .enumerate()
-            .find(|(_, row)| row.len() != first_row_len.into())
+            .find(|(_, row)| row.len() as u64 != first_row_len as u64)
         {
             return Err(GridCreationError::DifferentRowLengths {
                 first_row_index: 0,
-                first_row_count: first_row_len.into(),
+                first_row_count: first_row_len,
                 second_row_index: invalid_row_index,
                 second_row_count: invalid_row_count.len(),
             });
         }
 
-        let y_count = NonZeroUsize::try_from(value.len()).expect("Cannot be zero at this point.");
+        let x_count = AxisCount::try_from(first_row_len)?;
+        let y_count = AxisCount::try_from(value.len())?;
 
         let mut grid_data: Vec<GridCoordinate<T>> = Vec::new();
-
-        let mut result = Grid::with_count(
-            first_row_len,
-            NonZeroUsize::try_from(y_count).expect("Cannot be zero at this point."),
-        );
+        let mut result = Grid::with_count(x_count, y_count);
 
         for (y_count, line) in value.into_iter().enumerate() {
             for (x_count, element) in line.into_iter().enumerate() {
@@ -765,27 +789,36 @@ pub mod tests {
     /// Checks that the grid_data vec is consistent with the bounds in the struct. The bounds
     /// imply a length and the grid_data should be that length.
     fn assert_grid_data_and_bounds_consistency<T>(input: &Grid<T>) {
-        let expected_count_by_bounds = input.bounds.x_count() * input.bounds.y_count();
+        let expected_count_by_bounds =
+            input.bounds.x_count() as u64 * input.bounds.y_count() as u64;
         let actual_length = input.grid_data.len();
-        assert_eq!(expected_count_by_bounds, actual_length);
+        assert_eq!(expected_count_by_bounds, actual_length.try_into().unwrap());
     }
 
     /// # Panics
     /// This method panics when `count = 0`.
-    fn empty_grid<T>(count: usize) -> Grid<T> {
-        Grid::<T>::with_count(count.try_into().unwrap(), count.try_into().unwrap())
+    fn empty_grid<T>(count: u64) -> Grid<T> {
+        Grid::<T>::with_count(
+            AxisCount::from_u64_unchecked(count),
+            AxisCount::from_u64_unchecked(count),
+        )
     }
 
     /// # Panics
     /// This method panics when `x_count = 0` or `y_count = 0`.
-    fn rectangular_empty_grid(x_count: usize, y_count: usize) -> Grid<()> {
-        Grid::with_count(x_count.try_into().unwrap(), y_count.try_into().unwrap())
+    fn rectangular_empty_grid(x_count: u64, y_count: u64) -> Grid<()> {
+        Grid::with_count(
+            AxisCount::from_u64_unchecked(x_count),
+            AxisCount::from_u64_unchecked(y_count),
+        )
     }
 
-    fn grid_with_occupied_corners_and_origin<T: Copy>(count: usize, element: T) -> Grid<T> {
+    fn grid_with_occupied_corners_and_origin<T: Copy>(count: u64, element: T) -> Grid<T> {
         assert!(count > 0);
-        let mut grid: Grid<T> =
-            Grid::with_count(count.try_into().unwrap(), count.try_into().unwrap());
+        let mut grid: Grid<T> = Grid::with_count(
+            AxisCount::from_u64_unchecked(count),
+            AxisCount::from_u64_unchecked(count),
+        );
         let (nw, sw, ne, se) = (
             grid.northwest_corner(),
             grid.southwest_corner(),
@@ -808,11 +841,15 @@ pub mod tests {
 
     // create a grid occupied with the elements at the occupied coordinates
     fn grid_with_occupied_at<T, const M: usize>(
-        count: usize,
+        count: u64,
         occupied_coordinates: [Coordinate; M],
         elements: [T; M],
     ) -> Grid<T> {
-        let mut grid = Grid::with_count(count.try_into().unwrap(), count.try_into().unwrap());
+        let mut grid = Grid::with_count(
+            AxisCount::from_u64_unchecked(count),
+            AxisCount::from_u64_unchecked(count),
+        );
+
         for (coordinate, element) in occupied_coordinates.iter().zip(elements) {
             check_store(&mut grid, *coordinate, element, StoreValidity::Valid)
         }
@@ -873,10 +910,10 @@ pub mod tests {
         }
     }
 
-    fn grid_with_single_element<T: Default>(size: usize, coordinate: Coordinate) -> Grid<T> {
+    fn grid_with_single_element<T: Default>(count: u64, coordinate: Coordinate) -> Grid<T> {
         let mut grid: Grid<T> = Grid::with_count(
-            NonZeroUsize::new(size).unwrap(),
-            NonZeroUsize::new(size).unwrap(),
+            AxisCount::from_u64_unchecked(count),
+            AxisCount::from_u64_unchecked(count),
         );
         check_store(&mut grid, coordinate, T::default(), StoreValidity::Valid);
         grid
@@ -1300,11 +1337,11 @@ pub mod tests {
             );
             assert_eq!(
                 grid.coordinate_to_index(&grid.northeast_corner()).unwrap(),
-                n - 1
+                (n - 1).try_into().unwrap()
             );
             assert_eq!(
                 grid.coordinate_to_index(&grid.southwest_corner()).unwrap(),
-                grid.grid_data.len() - n
+                grid.grid_data.len() - n as usize
             );
             assert_eq!(
                 grid.coordinate_to_index(&grid.southeast_corner()).unwrap(),
@@ -1460,7 +1497,7 @@ pub mod tests {
                         .map(|(_, element)| element)
                         .all(|x| x.is_none())
                 );
-                assert_eq!(grid.iter_new().count(), i * i);
+                assert_eq!(grid.iter_new().count() as u64, i * i);
             }
         }
 
@@ -1520,8 +1557,8 @@ pub mod tests {
             for i in 1..=100 {
                 let len = i;
                 let mut grid: Grid<()> = empty_grid(len);
-                assert_eq!(grid.iter_mut_new().count(), len * len);
-                assert_eq!(grid.iter_new().count(), len * len);
+                assert_eq!(grid.iter_mut_new().count() as u64, len * len);
+                assert_eq!(grid.iter_new().count() as u64, len * len);
             }
         }
     }

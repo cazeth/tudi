@@ -64,6 +64,10 @@ macro_rules! grid {
         const _: () = assert!($y_count > 0, "y count must be greater than zero");
         let x_count = $x_count as u64;
         let y_count = $y_count as u64;
+        let x_count = $crate::AxisCount::try_from(x_count)
+            .expect("x count must be smaller than U32::MAX + 1");
+        let y_count = $crate::AxisCount::try_from(y_count)
+            .expect("y count must be smaller than U32::MAX + 1");
         let bounds = $crate::OriginCenteredBounds::new(x_count, y_count);
 
         $crate::Grid::from_bounds(&bounds).unwrap()

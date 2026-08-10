@@ -11,6 +11,18 @@ impl AxisCount {
     pub fn as_u64(&self) -> u64 {
         u64::from(self.0) + 1
     }
+
+    pub(crate) fn from_len(length: u32) -> Self {
+        debug_assert!(length < u32::MAX);
+        Self(length)
+    }
+
+    #[cfg(test)]
+    pub(crate) fn from_u64_unchecked(count: u64) -> Self {
+        assert!(count > 0 && count <= u32::MAX as u64 + 1);
+        let value: u32 = u32::try_from(count - 1).unwrap();
+        Self(value)
+    }
 }
 
 impl std::fmt::Debug for AxisCount {
