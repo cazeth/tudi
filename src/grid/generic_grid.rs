@@ -138,30 +138,7 @@ impl<T> Grid<T> {
     // OriginBounded, so this implement is not allowed since it conflicts with an already existing
     // blanket implementation.
     pub fn from_bounds<B: OriginBounded>(other: &B) -> Result<Self, GridCreationError> {
-        Ok(Self::with_count(
-            AxisCount::from_len(
-                u32::try_from(
-                    other
-                        .x_count()
-                        .as_usize()
-                        .unwrap()
-                        .checked_sub(1)
-                        .ok_or(GridCreationError::Empty)?,
-                )
-                .map_err(|_| GridCreationError::Empty)?,
-            ),
-            AxisCount::from_len(
-                u32::try_from(
-                    other
-                        .y_count()
-                        .as_usize()
-                        .unwrap()
-                        .checked_sub(1)
-                        .ok_or(GridCreationError::Empty)?,
-                )
-                .map_err(|_| GridCreationError::Empty)?,
-            ),
-        ))
+        Ok(Self::with_count(other.x_count(), other.y_count()))
     }
 
     pub fn bounds(&self) -> OriginCenteredBounds {
