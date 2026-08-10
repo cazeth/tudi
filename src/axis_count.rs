@@ -1,32 +1,44 @@
 use std::num::NonZeroU32;
 use thiserror::Error;
 
+/// A count of coordinates along a dimension.
+///
+/// ## Maximum and Minimum values
+///
+/// An `AxisCount` cannot be zero because it counts points along a dimension in a region and a region contains at least one point. In contrast, the length **can** be zero as it measures the length between the extremes along a dimension. In general, the maximums and minimums are as follows.
+///
+/// |                  | Min | Max      |
+/// |------------------| --- | ---      |
+/// |    AxisCount     |  1  | `u32::MAX` |
+/// |    AxisLength    |   0 | `u32::MAX - 1` |
+/// | x/y-coordinate | `i32::MIN + 1` | `i32::MAX` |
+///
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct AxisCount(u32);
 
 impl AxisCount {
     pub const MAX: Self = Self(u32::MAX);
-    pub const MIN: Self = Self(u32::MIN);
+    pub const MIN: Self = Self(1);
 
     pub fn as_u64(&self) -> u64 {
-        u64::from(self.0) + 1
+        u64::from(self.0)
     }
 
     /// Try to convert into a usize and return none if the value doesn't fit.
     /// This method mostly exists to simplify migration; it is usually preferred to use [AxisCount::as_u64] instead.
     pub(crate) fn as_usize(&self) -> Option<usize> {
-        usize::try_from(self.0).ok().map(|x| x + 1)
+        usize::try_from(self.0).ok()
     }
 
     pub(crate) fn from_len(length: u32) -> Self {
         debug_assert!(length < u32::MAX);
-        Self(length)
+        Self(length + 1)
     }
 
     #[cfg(test)]
     pub(crate) fn from_u64_unchecked(count: u64) -> Self {
-        assert!(count > 0 && count <= u32::MAX as u64 + 1);
-        let value: u32 = u32::try_from(count - 1).unwrap();
+        assert!(count > 0 && count <= u32::MAX as u64);
+        let value: u32 = u32::try_from(count).unwrap();
         Self(value)
     }
 }
@@ -52,7 +64,7 @@ impl PartialOrd<u64> for AxisCount {
 impl From<NonZeroU32> for AxisCount {
     fn from(value: NonZeroU32) -> Self {
         let value: u32 = value.into();
-        Self(value - 1)
+        Self(value)
     }
 }
 
@@ -66,12 +78,12 @@ macro_rules! try_from_unsigned {
                     let count = count as u64;
                     if count == 0 {
                         Err(AxisCountError::Zero)
-                    } else if count > u32::MAX as u64 + 1 {
+                    } else if count > u32::MAX as u64 {
                         Err(AxisCountError::TooLarge(count))
-                    } else if count == u32::MAX as u64 + 1 {
+                    } else if count == u32::MAX as u64 {
                         Ok(AxisCount::MAX)
                     } else {
-                        Ok(AxisCount(count as u32 - 1))
+                        Ok(AxisCount(count as u32 ))
                     }
                 }
             }
@@ -88,7 +100,7 @@ macro_rules! try_from_signed {
                 fn try_from(count: $number_type) -> Result<Self, Self::Error> {
                     if count < 0 {
                         return Err(AxisCountError::Negative(count as i64))
-                    } else if count as u64 > u32::MAX as u64 + 1 {
+                    } else if count as u64 > u32::MAX as u64 {
                         return Err(AxisCountError::TooLarge(count as u64))
                     } else {
                         AxisCount::try_from(count as u64)
@@ -105,9 +117,9 @@ try_from_signed!(i8, i16, i32, isize, i64);
 impl std::fmt::Display for AxisCount {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if self.0 == u32::MAX {
-            write!(f, "{}", u32::MAX as u64 + 1)
+            write!(f, "{}", u32::MAX as u64)
         } else {
-            write!(f, "{}", self.0 + 1)
+            write!(f, "{}", self.0)
         }
     }
 }
@@ -115,10 +127,10 @@ impl std::fmt::Display for AxisCount {
 impl TryFrom<AxisCount> for u32 {
     type Error = AxisCountError;
     fn try_from(value: AxisCount) -> Result<Self, Self::Error> {
-        if value.0 == u32::MAX {
+        if value.0 == 0 {
             Err(AxisCountError::Zero)
         } else {
-            Ok(value.0 + 1)
+            Ok(value.0)
         }
     }
 }
@@ -155,7 +167,7 @@ mod tests {
 
     #[test]
     fn large_u64_errs() {
-        let value: u64 = u32::MAX as u64 + 2;
+        let value: u64 = u32::MAX as u64 + 1;
         assert_eq!(
             AxisCount::try_from(value),
             Err(AxisCountError::TooLarge(value))
@@ -164,7 +176,7 @@ mod tests {
 
     #[test]
     fn axis_count_max_is_ok() {
-        assert_eq!(AxisCount::try_from(u32::MAX as u64 + 1), Ok(AxisCount::MAX));
+        assert_eq!(AxisCount::try_from(u32::MAX as u64), Ok(AxisCount::MAX));
     }
 
     #[test]
