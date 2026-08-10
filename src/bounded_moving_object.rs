@@ -182,7 +182,7 @@ impl BoundedMovingObject {
                 if previous_min > boundary {
                     return Err("New max smaller than previous min!".to_string());
                 } else if pos > boundary {
-                    return Err("Current y-positon greater than new max".to_string());
+                    return Err("Current y-position greater than new max".to_string());
                 } else {
                     [previous_min, boundary]
                 }
