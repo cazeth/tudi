@@ -29,11 +29,9 @@ impl<T> Grid<T> {
     /// use tudi::grid;
     /// use tudi::bounded::Bounded;
     /// let grid: tudi::Grid<()> = grid!(3, 3);
-    /// let x_count = 3_usize;
-    /// let y_count = 3_usize;
-    /// assert_eq!(grid.x_count(), x_count);
-    /// assert_eq!(grid.y_count(), y_count);
-    /// assert_eq!(grid.iter_new().count(), x_count*y_count); // There are nine coordinates
+    /// assert_eq!(grid.x_count(),3);
+    /// assert_eq!(grid.y_count(),3);
+    /// assert_eq!(grid.iter_new().count(), 3*3); // There are nine coordinates
     /// assert_eq!(grid.iter_elements_new().count(), 0); // There are zero elements
     /// ```
     /// ```
