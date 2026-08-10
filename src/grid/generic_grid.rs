@@ -589,10 +589,7 @@ impl<T> Grid<T> {
             let matrix_coordinates = previous_bounds.to_matrix_like(&coordinate);
             #[expect(clippy::missing_panics_doc)]
             let new_coordinate = self
-                .to_grid_like([
-                    matrix_coordinates[1] as usize,
-                    matrix_coordinates[0] as usize,
-                ])
+                .to_grid_like([matrix_coordinates[1], matrix_coordinates[0]])
                 .expect("Transposed coordinates cannot be out of bounds");
 
             if let Some(e) = element {
@@ -708,7 +705,9 @@ impl<T> TryFrom<Vec<Vec<Option<T>>>> for Grid<T> {
 
         for (y_count, line) in value.into_iter().enumerate() {
             for (x_count, element) in line.into_iter().enumerate() {
-                let coordinate = result.to_grid_like([x_count, y_count]).unwrap();
+                let coordinate = result
+                    .to_grid_like([x_count as u32, y_count as u32])
+                    .unwrap();
 
                 let grid_element = if let Some(val) = element {
                     GridCoordinate::Object::<T>(val)

@@ -224,7 +224,7 @@ pub trait Bounded: BoundSeal {
     fn index_to_coordinate(&self, index: usize) -> Result<Coordinate, OutOfBoundsError> {
         let y_matrix_like = index / self.x_count().as_usize().unwrap();
         let x_matrix_like = index - y_matrix_like * self.x_count().as_usize().unwrap();
-        self.to_grid_like([x_matrix_like, y_matrix_like])
+        self.to_grid_like([x_matrix_like as u32, y_matrix_like as u32])
     }
 
     /// returns true if the object is currently on its border.
@@ -267,10 +267,10 @@ pub trait Bounded: BoundSeal {
     /// # Errors
     ///
     /// Returns an error if the resulting coordinate is out of bounds.
-    fn to_grid_like(&self, distance: [usize; 2]) -> Result<Coordinate, OutOfBoundsError> {
+    fn to_grid_like(&self, distance: [u32; 2]) -> Result<Coordinate, OutOfBoundsError> {
         let coordinate = Coordinate {
-            x: self.x_min_boundary() + distance[0] as i32,
-            y: self.y_max_boundary() - distance[1] as i32,
+            x: self.x_min_boundary() + i32::try_from(distance[0]).unwrap(),
+            y: self.y_max_boundary() - i32::try_from(distance[1]).unwrap(),
         };
 
         if let Some((first_direction, second_direction)) =
