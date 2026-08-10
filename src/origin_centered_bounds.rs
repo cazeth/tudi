@@ -162,6 +162,21 @@ pub mod tests {
     }
 
     #[test]
+    fn new_supports_largest_representable_centered_axis() {
+        let count = AxisCount::MAX;
+        let bounds = OriginCenteredBounds::new(count, AxisCount::from_len(0));
+        assert_eq!(bounds.x_min_boundary(), i32::MIN + 1);
+        assert_eq!(bounds.x_max_boundary(), i32::MAX);
+        assert_eq!(bounds.x_count(), count);
+    }
+
+    #[test]
+    fn full_i32_span_is_origin_centered() {
+        let bounds = Bounds::from_boundaries(i32::MIN + 1, i32::MAX, 0, 0);
+        assert!(OriginCenteredBounds::try_from(bounds).is_ok());
+    }
+
+    #[test]
     fn empty() {
         let bounds = create_smallest();
         check_x_count(&bounds, 1);
