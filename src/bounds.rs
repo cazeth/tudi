@@ -143,9 +143,11 @@ impl MaybeOriginBounded for Bounds {
 mod tests {
     use super::*;
     use crate::bounded::test::check_x_count;
+    use crate::bounded::test::check_x_len;
     use crate::bounded::test::check_x_max;
     use crate::bounded::test::check_x_min;
     use crate::bounded::test::check_y_count;
+    use crate::bounded::test::check_y_len;
     use crate::bounded::test::check_y_max;
     use crate::bounded::test::check_y_min;
 
@@ -178,6 +180,91 @@ mod tests {
         check_x_max(bounds, i32::MAX);
         check_y_min(bounds, i32::MIN);
         check_y_max(bounds, i32::MAX);
+    }
+
+    #[test]
+    fn geometric_x_length_handles_full_coord_span() {
+        let bounds = Bounds {
+            northwest: Coordinate {
+                x: i32::MIN + 1,
+                y: 0,
+            },
+            southwest: Coordinate {
+                x: i32::MIN + 1,
+                y: 0,
+            },
+            northeast: Coordinate { x: i32::MAX, y: 0 },
+            southeast: Coordinate { x: i32::MAX, y: 0 },
+        };
+
+        check_x_len(bounds, (i32::MAX + i32::MIN - 1) as u32);
+    }
+
+    #[test]
+    fn geometric_y_length_handles_full_coord_span() {
+        let bounds = Bounds {
+            northwest: Coordinate { y: i32::MAX, x: 0 },
+            southwest: Coordinate {
+                y: i32::MIN + 1,
+                x: 0,
+            },
+            northeast: Coordinate { y: i32::MAX, x: 0 },
+            southeast: Coordinate {
+                y: i32::MIN + 1,
+                x: 0,
+            },
+        };
+
+        let widened_min: i64 = (i32::MIN + 1) as i64;
+
+        let widened_max: i64 = i32::MAX as i64;
+
+        let geometric_len: u64 = (widened_max - widened_min) as u64;
+        check_y_len(bounds, geometric_len as u32);
+    }
+
+    #[test]
+    fn x_coordinate_count_supports_full_coordinate_span() {
+        let bounds = Bounds::from_boundaries(i32::MIN + 1, i32::MAX, 0, 0);
+        check_x_count(bounds, u32::MAX as u64);
+    }
+
+    #[test]
+    fn y_coordinate_count_supports_full_coordinate_span() {
+        let bounds = Bounds::from_boundaries(0, 0, i32::MIN + 1, i32::MAX);
+        check_y_count(bounds, u32::MAX as u64);
+    }
+
+    #[test]
+    fn max_x_boundary_produces_correct_x_count() {
+        let bounds = Bounds::from_boundaries(0, i32::MAX, 0, 0);
+        let expected_x_count = u64::try_from(i32::MAX).unwrap().checked_add(1).unwrap();
+        check_x_count(bounds, expected_x_count);
+    }
+
+    #[test]
+    fn max_y_boundary_produces_correct_y_count() {
+        let bounds = Bounds::from_boundaries(0, 0, 0, i32::MAX);
+        let expected_y_count = u64::try_from(i32::MAX).unwrap().checked_add(1).unwrap();
+        check_y_count(bounds, expected_y_count);
+    }
+
+    #[test]
+    fn longest_y_boundary_produces_correct_y_count() {
+        let bounds = Bounds::from_boundaries(0, 0, i32::MIN + 1, i32::MAX);
+        let expected_y_count = u64::from(i32::MAX.abs_diff(i32::MIN + 1))
+            .checked_add(1)
+            .unwrap();
+        check_y_count(bounds, expected_y_count);
+    }
+
+    #[test]
+    fn longest_x_boundary_produces_correct_x_count() {
+        let bounds = Bounds::from_boundaries(i32::MIN + 1, i32::MAX, 0, 0);
+        let expected_x_count = u64::from(i32::MAX.abs_diff(i32::MIN + 1))
+            .checked_add(1)
+            .unwrap();
+        check_x_count(bounds, expected_x_count);
     }
 
     #[test]
