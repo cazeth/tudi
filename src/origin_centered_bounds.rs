@@ -89,27 +89,25 @@ impl<B: Bounded> PartialEq<B> for OriginCenteredBounds {
 impl TryFrom<Bounds> for OriginCenteredBounds {
     type Error = InvalidRegionError;
     fn try_from(value: Bounds) -> Result<Self, InvalidRegionError> {
-        let x_max = value.x_min_boundary() + value.x_geometric_len() as i32;
-        let y_max = value.y_min_boundary() + value.y_geometric_len() as i32;
         let x_min = value.x_min_boundary();
+        let x_max = value.x_max_boundary();
         let y_min = value.y_min_boundary();
+        let y_max = value.y_max_boundary();
 
-        let x_dist = (x_max - x_min) as usize;
-        let y_dist = (y_max - y_min) as usize;
+        let is_origin_centered = |min: i32, max: i32| -min == max || -min + 1 == max;
 
-        if !(-x_min == x_max || -x_min + 1 == x_max) {
+        if !is_origin_centered(x_min, x_max) {
             Err(InvalidRegionError {
                 min: x_min,
                 max: x_max,
             })
-        } else if !(-y_min == y_max || -y_min + 1 == y_max) {
+        } else if !is_origin_centered(y_min, y_max) {
             Err(InvalidRegionError {
                 min: y_min,
                 max: y_max,
             })
         } else {
-            let bounds = Bounds::new(x_min, x_dist, y_min, y_dist);
-            Ok(OriginCenteredBounds(bounds))
+            Ok(OriginCenteredBounds(value))
         }
     }
 }
