@@ -1,4 +1,5 @@
 use crate::AbsoluteDirection;
+use crate::AxisCount;
 use crate::Coordinate;
 use crate::Mover;
 use crate::OutOfBoundsError;
@@ -46,16 +47,18 @@ pub trait Bounded: BoundSeal {
     ///
     /// See also [`Bounded::x_geometric_len()`]
     ///
-    fn x_count(&self) -> usize {
-        (self.x_max_boundary() - self.x_min_boundary()).unsigned_abs() as usize + 1
+    fn x_count(&self) -> AxisCount {
+        let value: u32 = self.x_max_boundary().abs_diff(self.x_min_boundary());
+        AxisCount::from_len(value)
     }
 
     /// The coordinate count along the y-dimension.
     ///
     /// See also [`Bounded::y_geometric_len()`]
     ///
-    fn y_count(&self) -> usize {
-        (self.y_max_boundary() - self.y_min_boundary()).unsigned_abs() as usize + 1
+    fn y_count(&self) -> AxisCount {
+        let value: u32 = self.y_max_boundary().abs_diff(self.y_min_boundary());
+        AxisCount::from_len(value)
     }
 
     /// The length between `x_min` and `x_max`, i.e `x_max - x_min`.
@@ -201,7 +204,7 @@ pub trait Bounded: BoundSeal {
             ))
         } else {
             let [x_matrix_like, y_matrix_like] = self.to_matrix_like(coordinate.position());
-            Ok(y_matrix_like * self.x_count() + x_matrix_like)
+            Ok(y_matrix_like * self.x_count().as_usize().unwrap() + x_matrix_like)
         }
     }
 
@@ -209,8 +212,8 @@ pub trait Bounded: BoundSeal {
     /// northwest corner by row.
     /// panics if index is out of bounds
     fn index_to_coordinate(&self, index: usize) -> Result<Coordinate, OutOfBoundsError> {
-        let y_matrix_like = index / self.x_count();
-        let x_matrix_like = index - y_matrix_like * self.x_count();
+        let y_matrix_like = index / self.x_count().as_usize().unwrap();
+        let x_matrix_like = index - y_matrix_like * self.x_count().as_usize().unwrap();
         self.to_grid_like([x_matrix_like, y_matrix_like])
     }
 
@@ -357,26 +360,26 @@ impl<T: OriginCenteredness> OriginCenteredness for &mut T {
 }
 
 pub trait OriginBounded: OriginCenteredness<Distinguisher = OriginCentered> {
-    fn x_count(&self) -> usize;
-    fn y_count(&self) -> usize;
+    fn x_count(&self) -> AxisCount;
+    fn y_count(&self) -> AxisCount;
 }
 
 impl<T: OriginBounded> OriginBounded for &T {
-    fn y_count(&self) -> usize {
+    fn y_count(&self) -> AxisCount {
         T::y_count(self)
     }
 
-    fn x_count(&self) -> usize {
+    fn x_count(&self) -> AxisCount {
         T::x_count(self)
     }
 }
 
 impl<T: OriginBounded> OriginBounded for &mut T {
-    fn y_count(&self) -> usize {
+    fn y_count(&self) -> AxisCount {
         T::y_count(self)
     }
 
-    fn x_count(&self) -> usize {
+    fn x_count(&self) -> AxisCount {
         T::x_count(self)
     }
 }
@@ -437,7 +440,7 @@ where
     T: OriginBounded,
 {
     fn x_min_boundary(&self) -> i32 {
-        if self.x_count().is_multiple_of(2) {
+        if self.x_count().as_u64().is_multiple_of(2) {
             -(BoundsHelper::x_max_boundary(self) - 1)
         } else {
             -(BoundsHelper::x_max_boundary(self))
@@ -445,15 +448,11 @@ where
     }
 
     fn x_max_boundary(&self) -> i32 {
-        if self.x_count() == 0 {
-            return 0;
-        };
-
-        self.x_count() as i32 / 2
+        i32::try_from(self.x_count().as_u64() / 2).unwrap()
     }
 
     fn y_min_boundary(&self) -> i32 {
-        if self.y_count().is_multiple_of(2) {
+        if self.y_count().as_u64().is_multiple_of(2) {
             -(BoundsHelper::y_max_boundary(self) - 1)
         } else {
             -(BoundsHelper::y_max_boundary(self))
@@ -461,11 +460,7 @@ where
     }
 
     fn y_max_boundary(&self) -> i32 {
-        if self.y_count() == 0 {
-            return 0;
-        };
-
-        self.y_count() as i32 / 2
+        i32::try_from(self.y_count().as_u64() / 2).unwrap()
     }
 }
 
@@ -550,6 +545,7 @@ impl<T: BoundSeal> Bounded for T {
 #[cfg(test)]
 pub mod test {
     use super::Bounded;
+    use crate::AxisCount;
 
     macro_rules! check_out_of_bounds {
         ($bounded:expr, $coordinate:expr => in bounds) => {{
@@ -584,13 +580,15 @@ pub mod test {
     #[track_caller]
     pub fn check_x_count<B: Bounded>(b: B, x_count: u64) {
         assert!(x_count != 0, "count is not allowed to be zero");
-        assert_eq!(b.x_count(), x_count as usize)
+        let x_count = AxisCount::from_len((x_count - 1) as u32);
+        assert_eq!(b.x_count(), x_count)
     }
 
     #[track_caller]
     pub fn check_y_count<B: Bounded>(b: B, y_count: u64) {
         assert!(y_count != 0, "count is not allowed to be zero");
-        assert_eq!(b.y_count(), y_count as usize)
+        let y_count = AxisCount::from_len((y_count - 1) as u32);
+        assert_eq!(b.y_count(), y_count)
     }
 
     #[track_caller]

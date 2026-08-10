@@ -39,7 +39,7 @@ impl OriginCenteredBounds {
     /// Expand the bounds by one. Returns true if the bounds are expanded eastwards and false if expanded
     /// westwards.
     pub fn expand_bounds_horizontally(&mut self) -> bool {
-        if OriginBounded::x_count(&self).is_multiple_of(2) {
+        if OriginBounded::x_count(&self).as_u64().is_multiple_of(2) {
             self.0.expand_in_direction(AbsoluteDirection::West);
             false
         } else {
@@ -51,7 +51,7 @@ impl OriginCenteredBounds {
     /// Expand the bounds by one. Returns true if the bounds are expanded northwards and false if expanded
     /// southwards.
     pub fn expand_bounds_vertically(&mut self) -> bool {
-        if OriginBounded::y_count(&self).is_multiple_of(2) {
+        if OriginBounded::y_count(&self).as_u64().is_multiple_of(2) {
             self.0.expand_in_direction(AbsoluteDirection::South);
             false
         } else {
@@ -60,11 +60,11 @@ impl OriginCenteredBounds {
         }
     }
 
-    pub fn x_count(&self) -> usize {
+    pub fn x_count(&self) -> AxisCount {
         OriginBounded::x_count(self)
     }
 
-    pub fn y_count(&self) -> usize {
+    pub fn y_count(&self) -> AxisCount {
         OriginBounded::y_count(self)
     }
 }
@@ -111,16 +111,12 @@ impl OriginCenteredness for OriginCenteredBounds {
 }
 
 impl OriginBounded for OriginCenteredBounds {
-    fn x_count(&self) -> usize {
-        (self.0.x_max_boundary() - self.0.x_min_boundary() + 1)
-            .try_into()
-            .unwrap()
+    fn x_count(&self) -> AxisCount {
+        AxisCount::from_len(self.0.x_max_boundary().abs_diff(self.0.x_min_boundary()))
     }
 
-    fn y_count(&self) -> usize {
-        (self.0.y_max_boundary() - self.0.y_min_boundary() + 1)
-            .try_into()
-            .unwrap()
+    fn y_count(&self) -> AxisCount {
+        AxisCount::from_len(self.0.y_max_boundary().abs_diff(self.0.y_min_boundary()))
     }
 }
 

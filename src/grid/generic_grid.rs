@@ -143,6 +143,8 @@ impl<T> Grid<T> {
                 u32::try_from(
                     other
                         .x_count()
+                        .as_usize()
+                        .unwrap()
                         .checked_sub(1)
                         .ok_or(GridCreationError::Empty)?,
                 )
@@ -152,6 +154,8 @@ impl<T> Grid<T> {
                 u32::try_from(
                     other
                         .y_count()
+                        .as_usize()
+                        .unwrap()
                         .checked_sub(1)
                         .ok_or(GridCreationError::Empty)?,
                 )
@@ -291,7 +295,8 @@ impl<T> Grid<T> {
     }
 
     pub fn iter_mut_new(&mut self) -> impl Iterator<Item = (Coordinate, Option<&mut T>)> {
-        let coordinates = (0..OriginBounded::x_count(&self) * OriginBounded::y_count(&self))
+        let coordinates = (0..OriginBounded::x_count(&self).as_usize().unwrap()
+            * OriginBounded::y_count(&self).as_usize().unwrap())
             .flat_map(|x| self.index_to_coordinate(x))
             .collect::<Vec<Coordinate>>();
 
@@ -372,7 +377,7 @@ impl<T> Grid<T> {
     /// assert_eq!(grid.x_count(), 3);
     ///
     /// ```
-    pub fn x_count(&self) -> usize {
+    pub fn x_count(&self) -> AxisCount {
         OriginBounded::x_count(self)
     }
 
@@ -386,7 +391,7 @@ impl<T> Grid<T> {
     /// assert_eq!(grid.y_count(), 3);
     ///
     /// ```
-    pub fn y_count(&self) -> usize {
+    pub fn y_count(&self) -> AxisCount {
         OriginBounded::y_count(self)
     }
 
@@ -487,7 +492,7 @@ impl<T> Grid<T> {
     ///
     /// ```
     pub fn add_row(&mut self) -> bool {
-        if OriginBounded::y_count(&self).is_multiple_of(2) {
+        if OriginBounded::y_count(&self).as_u64().is_multiple_of(2) {
             self.add_bottom_row();
             false
         } else {
@@ -579,16 +584,7 @@ impl<T> Grid<T> {
     pub fn transpose_new(&mut self) {
         let old_grid = std::mem::replace(
             self,
-            Self::with_count(
-                AxisCount::from_len(
-                    u32::try_from(OriginBounded::y_count(&self) - 1)
-                        .expect("Length cannot be zero since it comes from an existing grid."),
-                ),
-                AxisCount::from_len(
-                    u32::try_from(OriginBounded::x_count(&self) - 1)
-                        .expect("Length cannot be zero since it comes from an existing grid."),
-                ),
-            ),
+            Self::with_count(OriginBounded::y_count(&self), OriginBounded::x_count(&self)),
         );
 
         let previous_bounds = Bounds::from_boundaries(
@@ -627,7 +623,9 @@ impl<T> Grid<T> {
     /// each row in the grid.
     /// A simple way to quickly see what is going on in a small grid.
     pub fn element_statuses(&self) -> String {
-        let mut result = String::with_capacity((self.x_count() + 1) * self.y_count());
+        let mut result = String::with_capacity(
+            ((self.x_count().as_u64() + 1) * self.y_count().as_u64()) as usize,
+        );
         for (index, element) in self.iter_new() {
             if element.is_some() {
                 result.push('#');
@@ -736,11 +734,11 @@ impl<T> OriginCenteredness for Grid<T> {
 }
 
 impl<T> OriginBounded for Grid<T> {
-    fn x_count(&self) -> usize {
+    fn x_count(&self) -> AxisCount {
         self.bounds.x_count()
     }
 
-    fn y_count(&self) -> usize {
+    fn y_count(&self) -> AxisCount {
         self.bounds.y_count()
     }
 }
@@ -790,7 +788,7 @@ pub mod tests {
     /// imply a length and the grid_data should be that length.
     fn assert_grid_data_and_bounds_consistency<T>(input: &Grid<T>) {
         let expected_count_by_bounds =
-            input.bounds.x_count() as u64 * input.bounds.y_count() as u64;
+            input.bounds.x_count().as_usize().unwrap() * input.bounds.y_count().as_usize().unwrap();
         let actual_length = input.grid_data.len();
         assert_eq!(expected_count_by_bounds, actual_length.try_into().unwrap());
     }
@@ -860,20 +858,29 @@ pub mod tests {
         use super::*;
 
         struct TestBounds {
-            x_count: usize,
-            y_count: usize,
+            x_count: AxisCount,
+            y_count: AxisCount,
         }
 
         impl OriginCenteredness for TestBounds {
             type Distinguisher = OriginCentered;
         }
 
+        impl TestBounds {
+            fn new(x_count: u64, y_count: u64) -> Self {
+                Self {
+                    x_count: AxisCount::from_u64_unchecked(x_count),
+                    y_count: AxisCount::from_u64_unchecked(y_count),
+                }
+            }
+        }
+
         impl OriginBounded for TestBounds {
-            fn x_count(&self) -> usize {
+            fn x_count(&self) -> AxisCount {
                 self.x_count
             }
 
-            fn y_count(&self) -> usize {
+            fn y_count(&self) -> AxisCount {
                 self.y_count
             }
         }
@@ -885,28 +892,12 @@ pub mod tests {
 
         #[test]
         fn test_create_from_bounds() {
-            let bounds = TestBounds {
-                x_count: 3,
-                y_count: 2,
-            };
+            let bounds = TestBounds::new(3, 2);
 
             let grid: Grid<()> = create_from_bounds(&bounds);
 
             check_x_count(&grid, 3);
             check_y_count(&grid, 2);
-        }
-
-        #[test]
-        fn zero_count_should_err() {
-            let bounds = TestBounds {
-                x_count: 0,
-                y_count: 1,
-            };
-
-            assert_eq!(
-                Grid::<()>::from_bounds(&bounds),
-                Err(GridCreationError::Empty)
-            );
         }
     }
 
