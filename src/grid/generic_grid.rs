@@ -205,6 +205,13 @@ impl<T> Grid<T> {
         }
     }
 
+    /// A mutable reference to an element in the grid.
+    ///
+    /// # Errors
+    ///
+    /// This method returns an error if the provided position does not contain an element.
+    ///
+    /// This method returns an error if the provided position is out of bounds.
     pub fn get_mut_element<C: Positioned>(&mut self, coordinate: &C) -> Result<&mut T, GridError> {
         let index = self.coordinate_to_index(coordinate)?;
 
