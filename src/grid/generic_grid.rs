@@ -167,7 +167,8 @@ impl<T> Grid<T> {
     pub fn element_unchecked<C: Positioned>(&self, coordinate: &C) -> Option<&T> {
         assert!(self.is_within_bounds(coordinate));
         let index = self.coordinate_to_index(coordinate).unwrap();
-        let val = &self.grid_data[index];
+        let val = &self.grid_data[usize::try_from(index)
+            .expect("since the coordinate is within bounds, it also fits in a usize")];
 
         if let GridCoordinate::Object(element) = val {
             Some(element)
@@ -202,7 +203,9 @@ impl<T> Grid<T> {
         assert!(self.is_within_bounds(coordinate));
 
         let index = self.coordinate_to_index(coordinate)?;
-        let val = &mut self.grid_data[index];
+
+        let val = &mut self.grid_data[usize::try_from(index)
+            .expect("since the coordinate is within bounds, it also fits in a usize")];
 
         if let GridCoordinate::Object(element) = val {
             Ok(element)
@@ -228,8 +231,11 @@ impl<T> Grid<T> {
         element: T,
     ) -> Result<Option<T>, GridError> {
         let index = self.coordinate_to_index(coordinate)?;
-        let previous_val =
-            std::mem::replace(&mut self.grid_data[index], GridCoordinate::Object(element));
+        let previous_val = std::mem::replace(
+            &mut self.grid_data[usize::try_from(index)
+                .expect("since index is within bounds it must fit in usize")],
+            GridCoordinate::Object(element),
+        );
         match previous_val {
             GridCoordinate::Object(val) => Ok(Some(val)),
             GridCoordinate::Empty(_) => Ok(None),
@@ -240,12 +246,15 @@ impl<T> Grid<T> {
     pub fn remove_element<C: Positioned>(&mut self, coordinate: &C) -> Result<T, GridError> {
         let index = self.coordinate_to_index(coordinate)?;
         let previous_grid_coordinate = std::mem::replace(
-            &mut self.grid_data[index],
+            &mut self.grid_data[usize::try_from(index)
+                .expect("since index stems from the grid, it should fit in a usize")],
             GridCoordinate::Empty(*coordinate.position()),
         );
 
         if let GridCoordinate::Object(val) = previous_grid_coordinate {
-            self.grid_data[index] = GridCoordinate::Empty(*coordinate.position());
+            self.grid_data[usize::try_from(index)
+                .expect("since index stems from the grid, it should fit in a usize")] =
+                GridCoordinate::Empty(*coordinate.position());
             Ok(val)
         } else {
             Err(GridError::UnoccupiedError(*coordinate.position()))
@@ -1303,15 +1312,15 @@ pub mod tests {
                 0
             );
             assert_eq!(
-                grid.coordinate_to_index(&grid.northeast_corner()).unwrap(),
+                grid.coordinate_to_index(&grid.northeast_corner()).unwrap() as usize,
                 (n - 1).try_into().unwrap()
             );
             assert_eq!(
-                grid.coordinate_to_index(&grid.southwest_corner()).unwrap(),
+                grid.coordinate_to_index(&grid.southwest_corner()).unwrap() as usize,
                 grid.grid_data.len() - n as usize
             );
             assert_eq!(
-                grid.coordinate_to_index(&grid.southeast_corner()).unwrap(),
+                grid.coordinate_to_index(&grid.southeast_corner()).unwrap() as usize,
                 grid.grid_data.len() - 1
             );
         }
@@ -1569,7 +1578,7 @@ pub mod tests {
             );
             let index = grid.coordinate_to_index(&grid_coordinate).unwrap();
             println!("index is {index}");
-            let coordinate = grid.index_to_coordinate(index).unwrap();
+            let coordinate = grid.index_to_coordinate(index as usize).unwrap();
             assert_eq!(grid_coordinate.position(), &coordinate);
         }
     }

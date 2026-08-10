@@ -179,6 +179,11 @@ pub trait Bounded: BoundSeal {
     /// Returns the position of a coordinate when all the integer coordinates in a bounded region are ordered from west to east, north to
     /// south.
     ///
+    /// The maximum index is `(AxisCount::MAX)*(AxisCount::MAX)`, as the index is the two
+    /// dimensions flattened into one. Since `AxisCount::Max = U32::MAX`, the maximum index is
+    /// `(U32::MAX)*(U32::Max) <= u64`. Therefore this method returns a u64 while many other methods
+    /// in the library are based on u32.
+    ///
     /// # Errors
     ///
     /// Returns an error if the coordinate is out of bounds.
@@ -199,10 +204,7 @@ pub trait Bounded: BoundSeal {
     /// // begins at zero)
     /// assert_eq!(bounds.coordinate_to_index(&bounds.southeast_corner()).unwrap(), 5*5-1);
     /// ```
-    fn coordinate_to_index<C: Positioned>(
-        &self,
-        coordinate: &C,
-    ) -> Result<usize, OutOfBoundsError> {
+    fn coordinate_to_index<C: Positioned>(&self, coordinate: &C) -> Result<u64, OutOfBoundsError> {
         if let Some((first_direction, second_direction)) = self.out_of_bounds_directions(coordinate)
         {
             Err(OutOfBoundsError::new(
@@ -212,7 +214,7 @@ pub trait Bounded: BoundSeal {
             ))
         } else {
             let [x_matrix_like, y_matrix_like] = self.to_matrix_like(coordinate.position());
-            Ok(y_matrix_like * self.x_count().as_usize().unwrap() + x_matrix_like)
+            Ok(y_matrix_like as u64 * self.x_count().as_u64() + x_matrix_like as u64)
         }
     }
 
