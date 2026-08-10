@@ -34,14 +34,7 @@ impl Coordinate {
     }
 
     pub fn move_in_direction(&mut self, direction: &AbsoluteDirection, magnitude: usize) {
-        use AbsoluteDirection::*;
-
-        match direction {
-            North => self.y += magnitude as i32,
-            East => self.x += magnitude as i32,
-            West => self.x -= magnitude as i32,
-            South => self.y -= magnitude as i32,
-        }
+        *self += Self::coordinate_in_direction(direction, magnitude);
     }
 
     /// Checks if the coordinate is above a row. If the coordinate is on the row the function returns true.
