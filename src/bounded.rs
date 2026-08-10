@@ -221,9 +221,12 @@ pub trait Bounded: BoundSeal {
     /// Returns the coordinate at an index, counted(started at zero) , counted by row from the
     /// northwest corner by row.
     /// panics if index is out of bounds
-    fn index_to_coordinate(&self, index: usize) -> Result<Coordinate, OutOfBoundsError> {
-        let y_matrix_like = index / self.x_count().as_usize().unwrap();
-        let x_matrix_like = index - y_matrix_like * self.x_count().as_usize().unwrap();
+    ///
+    /// See also [`Self::coordinate_to_index`]
+    fn index_to_coordinate(&self, index: u64) -> Result<Coordinate, OutOfBoundsError> {
+        let x_count = self.x_count().as_u64();
+        let y_matrix_like = index / x_count;
+        let x_matrix_like = index - y_matrix_like * x_count;
         self.to_grid_like([x_matrix_like as u32, y_matrix_like as u32])
     }
 

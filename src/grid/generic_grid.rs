@@ -286,8 +286,8 @@ impl<T> Grid<T> {
     }
 
     pub fn iter_mut_new(&mut self) -> impl Iterator<Item = (Coordinate, Option<&mut T>)> {
-        let coordinates = (0..OriginBounded::x_count(&self).as_usize().unwrap()
-            * OriginBounded::y_count(&self).as_usize().unwrap())
+        let coordinates = (0..OriginBounded::x_count(&self).as_u64()
+            * OriginBounded::y_count(&self).as_u64())
             .flat_map(|x| self.index_to_coordinate(x))
             .collect::<Vec<Coordinate>>();
 
@@ -651,9 +651,11 @@ impl<T> IntoIterator for Grid<T> {
             .enumerate()
             .map(move |(index, grid_coordinate)| match grid_coordinate {
                 GridCoordinate::Object(val) => {
-                    (bounds.index_to_coordinate(index).unwrap(), Some(val))
+                    (bounds.index_to_coordinate(index as u64).unwrap(), Some(val))
                 }
-                GridCoordinate::Empty(_) => (bounds.index_to_coordinate(index).unwrap(), None),
+                GridCoordinate::Empty(_) => {
+                    (bounds.index_to_coordinate(index as u64).unwrap(), None)
+                }
             })
             .collect::<Vec<(Coordinate, Option<T>)>>()
             .into_iter()
@@ -781,7 +783,7 @@ pub mod tests {
     /// imply a length and the grid_data should be that length.
     fn assert_grid_data_and_bounds_consistency<T>(input: &Grid<T>) {
         let expected_count_by_bounds =
-            input.bounds.x_count().as_usize().unwrap() * input.bounds.y_count().as_usize().unwrap();
+            input.bounds.x_count().as_u64() * input.bounds.y_count().as_u64();
         let actual_length = input.grid_data.len();
         assert_eq!(expected_count_by_bounds, actual_length.try_into().unwrap());
     }
@@ -1586,7 +1588,7 @@ pub mod tests {
             );
             let index = grid.coordinate_to_index(&grid_coordinate).unwrap();
             println!("index is {index}");
-            let coordinate = grid.index_to_coordinate(index as usize).unwrap();
+            let coordinate = grid.index_to_coordinate(index).unwrap();
             assert_eq!(grid_coordinate.position(), &coordinate);
         }
     }

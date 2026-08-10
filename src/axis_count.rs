@@ -24,12 +24,6 @@ impl AxisCount {
         u64::from(self.0)
     }
 
-    /// Try to convert into a usize and return none if the value doesn't fit.
-    /// This method mostly exists to simplify migration; it is usually preferred to use [AxisCount::as_u64] instead.
-    pub(crate) fn as_usize(&self) -> Option<usize> {
-        usize::try_from(self.0).ok()
-    }
-
     pub(crate) fn from_len(length: u32) -> Self {
         debug_assert!(length < u32::MAX);
         Self(length + 1)
