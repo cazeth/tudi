@@ -77,8 +77,11 @@ impl<T> Grid<T> {
 
     /// Create an empty grid with a given x- and y-count.
     ///
+    /// # Panics
     ///
-    /// # Examples
+    /// This method panics if the allocation, roughly
+    /// `x_count * y_count * max(size_of::<T>(), size_of::<Coordinate>())`,
+    /// exceeds `isize::MAX` bytes.
     ///
     ///```
     /// use tudi::grid;
