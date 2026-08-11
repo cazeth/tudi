@@ -98,23 +98,26 @@ impl<T> Grid<T> {
     ///
     ///```
     pub fn with_count(x_count: AxisCount, y_count: AxisCount) -> Self {
+        let cell_count = x_count.as_u64() * y_count.as_u64();
+        let cell_count =
+            usize::try_from(cell_count).expect("cell count is greater than usize::MAX");
+
+        let mut grid_data: Vec<GridCoordinate<T>> = Vec::with_capacity(cell_count);
+
         let bounds = OriginCenteredBounds::new(x_count, y_count);
 
-        let mut result = Self {
-            grid_data: Vec::new(),
+        for (y, x) in iproduct!(
+            (bounds.y_min_boundary()..=bounds.y_max_boundary()).rev(),
+            bounds.x_min_boundary()..=bounds.x_max_boundary()
+        ) {
+            grid_data.push(GridCoordinate::Empty(Coordinate { x, y }));
+        }
+
+        Self {
+            grid_data,
             bounds,
             performance_tuning: PerformanceTuning::Auto,
-        };
-
-        for (y, x) in iproduct!(
-            (result.y_min_boundary()..=result.y_max_boundary()).rev(),
-            result.x_min_boundary()..=result.x_max_boundary()
-        ) {
-            result
-                .grid_data
-                .push(GridCoordinate::Empty(Coordinate { x, y }));
         }
-        result
     }
 
     /// Create a new empty grid with the same bounds as another [`OriginBounded`].
