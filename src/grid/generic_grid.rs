@@ -77,7 +77,6 @@ impl<T> Grid<T> {
 
     /// Create an empty grid with a given x- and y-count.
     ///
-    /// A grid cannot have count zero along any dimension, therefore arguments are `NonZeroUsize`.
     ///
     /// # Examples
     ///
