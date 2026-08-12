@@ -31,6 +31,12 @@ use performance_tuning::PerformanceTuning;
 ///
 /// - A grid is either empty or contains a single element T at each coordinate.
 ///
+/// ### Capacity
+///
+/// The maximum size of a grid is currently constrained by memory allocation for the elements, since it internally creates a vec
+/// to hold the elements. The maximum capacity is therefore roughly `x_count * y_count * max(size_of::<T> (),
+/// size_of::<Coordinate>() <= isize::MAX`. This is inefficient for sparse grids and might change in the future.
+///
 /// # Examples
 ///
 /// The simplest grid is one that has a unit type parameter. It represents a grid where each
