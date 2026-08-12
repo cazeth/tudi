@@ -674,7 +674,7 @@ impl<T> TryFrom<Vec<Vec<Option<T>>>> for Grid<T> {
 
     /// Create a grid from a `Vec<Vec<Option<T>>>` that represents the coordinates and elements of the grid.
     ///
-    /// Some(T) represents an element and None represents an empty coordinate.
+    /// `Some(T)` represents an element and `None` represents an empty coordinate.
     ///
     /// The outer vec contains a row of coordinates and each inner vec contains the coordinates of a row.
     ///
