@@ -248,7 +248,13 @@ impl<T> Grid<T> {
         }
     }
 
-    // Returns error when there is no element at a coordinate at which this function is called.
+    /// Remove an element, leaving an empty coordinate in its place.
+    ///
+    /// # Errors
+    ///
+    /// Return an error if the coordinate argument is out of bounds.
+    ///
+    //  Returns an error if there is no element at a coordinate at which this function is called.
     pub fn remove_element<C: Positioned>(&mut self, coordinate: &C) -> Result<T, GridError> {
         let index = self.coordinate_to_index(coordinate)?;
         let previous_grid_coordinate = std::mem::replace(
