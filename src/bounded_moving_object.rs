@@ -12,7 +12,7 @@ use crate::bounded::OriginCenteredness;
 use crate::bounds::Bounds;
 
 /// A bounded movable object that occupies a single point.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Copy)]
 pub struct BoundedMovingObject {
     current_pos: Coordinate,
     current_direction: AbsoluteDirection,
