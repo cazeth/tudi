@@ -153,9 +153,9 @@ pub mod tests {
                 err,
                 Err(GridCreationError::DifferentRowLengths {
                     first_row_index,
-                    first_row_count,
+                    first_row_count: first_row_count as u64,
                     second_row_index,
-                    second_row_count,
+                    second_row_count: second_row_count as u64,
                 })
             );
         }

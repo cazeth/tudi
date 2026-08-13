@@ -19,9 +19,9 @@ pub enum GridCreationError {
     )]
     DifferentRowLengths {
         first_row_index: usize,
-        first_row_count: usize,
+        first_row_count: u64,
         second_row_index: usize,
-        second_row_count: usize,
+        second_row_count: u64,
     },
 
     #[error("A grid axis cannot contain {count} coordinates.")]

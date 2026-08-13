@@ -675,7 +675,7 @@ impl<T> TryFrom<Vec<Vec<Option<T>>>> for Grid<T> {
     ///
     /// Returns an error if the inner vecs are not all of the same length.
     ///
-    /// Returns an error if any vec is empty.
+    /// Returns an error if any vec is empty or either count exceeds `AxisCount::MAX`.
     fn try_from(value: Vec<Vec<Option<T>>>) -> Result<Self, Self::Error> {
         let first_row_len = if let Some(first) = value.first()
             && !first.is_empty()
@@ -689,14 +689,28 @@ impl<T> TryFrom<Vec<Vec<Option<T>>>> for Grid<T> {
         if let Some((invalid_row_index, invalid_row_count)) = value
             .iter()
             .enumerate()
-            .find(|(_, row)| row.len() as u64 != first_row_len as u64)
+            .find(|(_, row)| row.len() != first_row_len)
         {
             return Err(GridCreationError::DifferentRowLengths {
                 first_row_index: 0,
-                first_row_count: first_row_len,
+                first_row_count: first_row_len as u64,
                 second_row_index: invalid_row_index,
-                second_row_count: invalid_row_count.len(),
+                second_row_count: invalid_row_count.len() as u64,
             });
+        };
+
+        if first_row_len as u64 > AxisCount::MAX.as_u64() {
+            return Err(GridCreationError::CountTooLarge {
+                count: first_row_len as u64,
+            });
+        };
+
+        if value.len() as u64 > AxisCount::MAX.as_u64() {
+            {
+                return Err(GridCreationError::CountTooLarge {
+                    count: value.len() as u64,
+                });
+            };
         }
 
         let x_count = AxisCount::try_from(first_row_len)?;
@@ -719,6 +733,7 @@ impl<T> TryFrom<Vec<Vec<Option<T>>>> for Grid<T> {
                 grid_data.push(grid_element);
             }
         }
+
         result.grid_data = grid_data;
         Ok(result)
     }
