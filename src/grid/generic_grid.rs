@@ -600,6 +600,7 @@ impl<T> Grid<T> {
         }
     }
 
+    #[deprecated(since = "0.3.0")]
     pub fn print_properties(&self) {
         println!("-----");
         println!("y min is {}", self.y_min_boundary());
