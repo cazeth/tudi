@@ -138,7 +138,9 @@ pub mod tests {
 
     use super::*;
     use crate::bounded::test::check_x_count;
+    use crate::bounded::test::check_x_len;
     use crate::bounded::test::check_y_count;
+    use crate::bounded::test::check_y_len;
 
     /// The smallest possible origin centered bounds.
     ///
@@ -281,5 +283,12 @@ pub mod tests {
     fn assert_err_from_invalid_bounds(bounds: Bounds) {
         let origin_centered_bounds = OriginCenteredBounds::try_from(bounds);
         assert!(origin_centered_bounds.is_err());
+    }
+
+    #[test]
+    fn largest_len() {
+        let bounds = OriginCenteredBounds::new(AxisCount::MAX, AxisCount::MAX);
+        check_x_len(bounds, AxisCount::MAX.as_u64() as u32 - 1);
+        check_y_len(bounds, AxisCount::MAX.as_u64() as u32 - 1);
     }
 }
