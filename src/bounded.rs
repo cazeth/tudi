@@ -220,7 +220,10 @@ pub trait Bounded: BoundSeal {
 
     /// Returns the coordinate at an index, counted(started at zero) , counted by row from the
     /// northwest corner by row.
-    /// panics if index is out of bounds
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the provided index is out of bounds
     ///
     /// See also [`Self::coordinate_to_index`]
     fn index_to_coordinate(&self, index: u64) -> Result<Coordinate, OutOfBoundsError> {
