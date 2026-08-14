@@ -547,6 +547,17 @@ impl<T> Grid<T> {
         row: i32,
         direction: AbsoluteDirection,
     ) -> Result<(), GridError> {
+        if let Some(out_of_bounds_direction) =
+            self.out_of_bounds_directions(&Coordinate { x: 0, y: row })
+        {
+            let out_of_bounds_error = OutOfBoundsError::new(
+                Coordinate { x: 0, y: row },
+                out_of_bounds_direction.0,
+                out_of_bounds_direction.1,
+            );
+            return Err(GridError::OutOfBoundsError(out_of_bounds_error));
+        }
+
         let element_coordinates = self
             .iter_elements_new()
             .map(|(coordinate, _)| coordinate)
