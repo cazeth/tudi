@@ -206,8 +206,6 @@ impl<T> Grid<T> {
     }
 
     pub fn get_mut_element<C: Positioned>(&mut self, coordinate: &C) -> Result<&mut T, GridError> {
-        assert!(self.is_within_bounds(coordinate));
-
         let index = self.coordinate_to_index(coordinate)?;
 
         let val = &mut self.grid_data[usize::try_from(index)
