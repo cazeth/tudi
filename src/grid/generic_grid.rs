@@ -1805,7 +1805,7 @@ pub mod tests {
         }
 
         #[test]
-        pub fn edges_only_should_tranpose_to_itself() {
+        pub fn edges_only_should_transpose_to_itself() {
             symmetric_shape_should_transpose_to_itself("tests/data/edges_only.txt")
         }
 
