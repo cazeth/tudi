@@ -1942,4 +1942,58 @@ pub mod tests {
             );
         }
     }
+
+    mod move_elements_above_row_in_direction {
+        use super::*;
+
+        #[track_caller]
+        fn check_out_of_bounds_move<T: std::fmt::Debug>(grid: &mut Grid<T>, row: i32) {
+            let oob_direction = if row > grid.y_max_boundary() {
+                AbsoluteDirection::North
+            } else if row < grid.y_min_boundary() {
+                AbsoluteDirection::South
+            } else {
+                panic!("move is not out of bounds");
+            };
+            // if any move direction is out of bounds, all four directions should be out of bounds.
+            for direction in [
+                AbsoluteDirection::North,
+                AbsoluteDirection::South,
+                AbsoluteDirection::East,
+                AbsoluteDirection::West,
+            ] {
+                let res = grid.move_elements_above_row_in_direction(row, direction);
+                assert_eq!(
+                    res,
+                    Err(GridError::OutOfBoundsError(OutOfBoundsError::new(
+                        Coordinate { x: 0, y: row },
+                        oob_direction,
+                        None
+                    )))
+                );
+            }
+        }
+
+        #[test]
+        fn out_of_bounds_south_should_err() {
+            let mut grid: Grid<usize> = grid_with_occupied_corners_and_origin(2, 1);
+            check_out_of_bounds_move(&mut grid, -4);
+        }
+
+        #[test]
+        fn out_of_bounds_north_should_err() {
+            let mut grid: Grid<usize> = grid_with_occupied_corners_and_origin(2, 1);
+            check_out_of_bounds_move(&mut grid, 2);
+        }
+
+        #[test]
+        fn valid_move() {
+            let mut actual_grid: Grid<usize> =
+                grid_with_occupied_at(3, [Coordinate { x: 0, y: 0 }], [1]);
+            let _ = actual_grid.move_elements_above_row_in_direction(0, AbsoluteDirection::North);
+            let expected_grid: Grid<usize> =
+                grid_with_occupied_at(3, [Coordinate { x: 0, y: 1 }], [1]);
+            assert_eq!(actual_grid, expected_grid);
+        }
+    }
 }
