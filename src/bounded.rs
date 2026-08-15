@@ -113,12 +113,7 @@ pub trait Bounded: BoundSeal {
 
     /// The directions in which a coordinate is outside these bounds.
     ///
-    /// Returns `None` when the coordinate is within bounds. Otherwise, returns
-    /// `Some((first_direction, second_direction))`, where `first_direction` identifies one
-    /// boundary crossed. `second_direction` is `Some` only when the coordinate is outside
-    /// both the horizontal and vertical bounds; it is `None` when the coordinate is outside
-    /// in exactly one direction. When both directions are present, the vertical direction
-    /// is first and the horizontal direction is second.
+    /// Returns `None` when the coordinate is within bounds. Otherwise, returns `Some(first_direction, Option<second_direction>)`, where `first_direction` identifies one boundary crossed. `second_direction` is `Some` only when the coordinate is outside both the horizontal and vertical bounds. When both directions are present, the vertical direction is first and the horizontal direction is second.
     fn out_of_bounds_directions<C: Positioned>(
         &self,
         coordinate: &C,
