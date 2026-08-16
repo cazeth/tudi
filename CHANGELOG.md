@@ -1,3 +1,29 @@
+## [0.3.1] - 2026-08-16
+
+### Bug Fixes
+
+- *(grid)* Return out of bounds error in get_mut_element instead of panicking
+- *(grid)* Fix row_filter_move_elements_in_direction
+- *(bounded-moving-object)* Fix typo in error message
+
+### Refactor
+
+- *(coordinate)* Refactor method move_in_direction
+- *(grid)* Fix typo in unit test name
+- *(element)* Simplify
+- *(coordinate)* Refactor fn difference
+
+### Documentation
+
+- Fix typos
+- *(grid)* Add docs for get_mut_element
+- *(bounded)* Update docs out_of_bounds_direction
+
+### Testing
+
+- *(grid)* Add unit tests for get_mut_element
+- *(grid)* Add unit tests for move_elements_above_row
+
 ## [0.3.0] - 2026-08-13
 
 ### 🚀 Features
