@@ -201,7 +201,7 @@ impl<T> Grid<T> {
             )))
         } else {
             self.element_unchecked(coordinate)
-                .ok_or_else(|| GridError::UnoccupiedError(*coordinate.position()))
+                .ok_or(GridError::UnoccupiedError(*coordinate.position()))
         }
     }
 
