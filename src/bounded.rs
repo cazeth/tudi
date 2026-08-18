@@ -533,7 +533,7 @@ impl<T: OriginCenteredBounded> OriginCenteredBounded for &T {
     }
 
     fn y_count(&self) -> u32 {
-        T::x_count(self)
+        T::y_count(self)
     }
 }
 
