@@ -354,6 +354,11 @@ impl<T> Grid<T> {
         result
     }
 
+    /// Move all elements above or on the provided row in the provided direction.
+    ///
+    /// # Errors
+    ///
+    /// This method returns an error in case of out of bounds or collision.
     pub fn move_elements_above_row_in_direction(
         &mut self,
         y_coord: i32,
@@ -362,6 +367,11 @@ impl<T> Grid<T> {
         self.row_filter_move_elements_in_direction(Coordinate::is_above_row, y_coord, direction)
     }
 
+    /// Move all elements below or on the provided row in the provided direction.
+    ///
+    /// # Errors
+    ///
+    /// This method returns an error in case of out of bounds or collision.
     pub fn move_elements_below_row_in_direction(
         &mut self,
         y_coord: i32,
