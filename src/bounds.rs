@@ -297,4 +297,41 @@ mod tests {
         bounds.expand_in_direction(AbsoluteDirection::East);
         check_x_count(bounds, 2);
     }
+
+    macro_rules! check_to_grid_like {
+        ([$nw:expr, $se:expr] with [$x:expr, $y:expr] is out of bounds) => {
+            let lengths = [$x, $y];
+            let bounds = Bounds::from_boundaries($nw.0, $se.0, $nw.1, $se.1);
+            assert!(bounds.to_grid_like(lengths).is_err())
+        };
+
+        ([$nw:expr, $se:expr] with [$x:expr, $y:expr] has out of bounds pos ($x_err:expr, $y_err:expr)) => {
+            let lengths = [$x, $y];
+            let bounds = Bounds::from_boundaries($nw.0, $se.0, $nw.1, $se.1);
+            let res = bounds.to_grid_like(lengths);
+            if let Err(bounds_err) = res {
+                assert_eq!(bounds_err.position().x, $x_err);
+                assert_eq!(bounds_err.position().y, $y_err);
+            } else {
+                panic!("expected out of bounds but wasn't!");
+            }
+        };
+        ([$nw:expr, $se:expr] with [$x:expr, $y:expr] is within bounds) => {
+            let lengths = [$x, $y];
+            let bounds = Bounds::from_boundaries($nw.0, $se.0, $nw.1, $se.1);
+            assert!(bounds.to_grid_like(lengths).is_ok())
+        };
+    }
+
+    #[test]
+    fn to_grid_like_out_of_bounds() {
+        check_to_grid_like!([(0,0), (0,0)] with [5,5] has out of bounds pos (5,-5));
+        check_to_grid_like!([(i32::MIN+1, i32::MAX), (0, 0)] with [u32::MAX -1,u32::MAX-1] has out of bounds pos (i32::MAX, i32::MIN+1));
+        check_to_grid_like!([(i32::MAX, i32::MIN+1), (i32::MAX, i32::MIN+1)] with [1,1] has out of bounds pos (i32::MAX, i32::MIN+1));
+        check_to_grid_like!([(i32::MAX, i32::MIN+1), (i32::MAX, i32::MIN+1)] with [0,0] is within bounds);
+        check_to_grid_like!([(0,0), (0,0)] with [0,0] is within bounds);
+        check_to_grid_like!([(0,0), (0,0)] with [1,1] has out of bounds pos (1, -1));
+        check_to_grid_like!([(0,0), (10,-10)] with [5,5] is within bounds);
+        check_to_grid_like!([(-5,5), (5, -5)] with [100,0] is out of bounds);
+    }
 }
