@@ -20,11 +20,12 @@ pub struct BoundedMovingObject {
 }
 
 impl BoundedMovingObject {
-    /// Creates new BoundedMovingObject. If the origin is in bounds, the marker is set to the
+    /// A new BoundedMovingObject.
+    ///
+    /// If the origin is in bounds, the marker is set to the
     /// origin. If not, it is set to the northwest corner.
     ///
     /// For each axis, the function checks which of the provided boundaries for an axis is the smallest and sets the minimum boundary to it and the other one to the maximum boundary.
-    ///
     fn new(
         first_x_boundary: i32,
         second_x_boundary: i32,
