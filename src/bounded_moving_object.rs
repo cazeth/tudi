@@ -359,14 +359,100 @@ mod tests {
         assert_eq!(pos.position(), &Coordinate::default());
     }
 
+    /// Run a full test of a [`BoundedMovingObject`]'s movement.
+    ///
+    /// Provide a starting bounds, (optionally) a starting position, a chain of instructions to
+    /// execute, and an expected final position.
+    ///
+    /// syntax is
+    /// [<northwest-corner>, <southeast-corner>], <execution-chain> => <expected-position>
+    ///
+    /// where positions are (x,y).
+    ///
+    /// For instance:
+    ///
+    /// check_movement!([(-5,5), (5,-5)], l 3 => (-3,0))
+    ///
+    /// asserts that an object walking three steps to west from the origin in a ten-by-ten bounded region ends up at (-3,0).
+    ///
+    /// You can also provide the starting point:
+    ///
+    /// check_movement!([(-5,5), (5,-5)], start (5,0), l 5 => (0,0))
+    ///
+    /// starts at (5,0) and walks back to the origin.
+    ///
+    macro_rules! check_movement {
+        ([$nw:tt, $se:tt], start $start:tt, $($rest:tt)*) => {{
+            let mut object = BoundedMovingObject::new($nw.0, $se.0, $nw.1, $se.1);
+
+            let starting_coordinate = Coordinate {
+                x: $start.0,
+                y: $start.1,
+            };
+
+            object.set_coordinate(&starting_coordinate);
+            check_movement!(@execute object; $($rest)*)
+        }};
+
+        ([$nw:tt, $se:tt], $($rest:tt)*) => {{
+            let mut object = BoundedMovingObject::new($nw.0, $se.0, $nw.1, $se.1);
+            check_movement!(@execute object; $($rest)*)
+        }};
+
+        (@execute $object:ident; => $final:tt) => {{
+            let final_coordinate = $crate::Coordinate {
+                x: $final.0,
+                y: $final.1,
+            };
+
+            assert_eq!($object.position(), &final_coordinate);
+            $object
+        }};
+
+        (@execute $object:ident; $instruction:tt $($rest:tt)*) => {{
+            execute!(@one $object $instruction);
+            check_movement!(@execute $object; $($rest)*)
+        }};
+    }
+
+    /// a simple dsl for concisely expressing the movement of an object. See the branches for the
+    /// specification.
+    ///
+    /// For instance:
+    /// execute!(object, l 5 l 10) turns left and walks five steps, then turns left and walks ten
+    /// steps.
+    macro_rules! execute {
+        (@one $object:ident l) => {$object.turn(crate::RelativeDirection::Left);};
+        (@one $object:ident r) => {$object.turn(crate::RelativeDirection::Right);};
+        (@one $object:ident n) => {$object.set_current_direction(crate::AbsoluteDirection::North);};
+        (@one $object:ident s) => {$object.set_current_direction(crate::AbsoluteDirection::South);};
+        (@one $object:ident e) => {$object.set_current_direction(crate::AbsoluteDirection::East);};
+        (@one $object:ident w) => {$object.set_current_direction(crate::AbsoluteDirection::West);};
+        (@one $object:ident 1) => {$object.move_in_current_direction_and_return_new_pos(1);};
+        (@one $object:ident 2) => {$object.move_in_current_direction_and_return_new_pos(2);};
+        (@one $object:ident 3) => {$object.move_in_current_direction_and_return_new_pos(3);};
+        (@one $object:ident 4) => {$object.move_in_current_direction_and_return_new_pos(4);};
+        (@one $object:ident 5) => {$object.move_in_current_direction_and_return_new_pos(5);};
+        (@one $object:ident 6) => {$object.move_in_current_direction_and_return_new_pos(6);};
+        (@one $object:ident 7) => {$object.move_in_current_direction_and_return_new_pos(7);};
+        (@one $object:ident 8) => {$object.move_in_current_direction_and_return_new_pos(8);};
+        (@one $object:ident 9) => {$object.move_in_current_direction_and_return_new_pos(9);};
+        ($object:ident, $($instruction:tt)*) => {{
+            $( execute!(@one $object $instruction);)*
+        }};
+    }
+
     #[test]
     pub fn simple_move_test() {
-        let mut pos = BoundedMovingObject::new(-10, 10, -10, 10);
-        let dir = RelativeDirection::Left;
-        let mag = 2;
-        pos.turn(dir);
-        pos.move_in_current_direction_and_return_new_pos(mag);
-        assert_eq!(pos.position(), &Coordinate { x: -2, y: 0 });
+        check_movement!([(-10,10), (10,-10)], l 2 => (-2,0));
+        check_movement!([(0,0), (0,0)], l 2 => (0,0));
+        check_movement!([(-3,3), (3,-3)], 3 l 3 l 6 l 6 l 6 l 3 l 3 l => (0,0));
+        check_movement!([(-3,3), (3,-3)], 3 l l 3 => (0,0));
+        check_movement!([(-5,100), (5,-100)], r 2 2 2 2 => (5,0));
+        check_movement!([(-5,5), (5,-5)], start (5,0), l 5 => (0,0));
+        check_movement!([(-100,5), (100,-100)], 2 2 2 2  => (0,5));
+        check_movement!([(5,10), (10,5)], e 5 s 5 => (10,5));
+        check_movement!([(-10,10), (10,-10)], n 5 e 5 s 5 w 5 => (0,0));
     }
 
     #[test]
@@ -383,63 +469,18 @@ mod tests {
     #[test]
     pub fn simple_move_with_bound_test_y_neg() {
         let mut pos = BoundedMovingObject::new(-10, 10, -10, 10);
-        pos.turn(RelativeDirection::Left);
-        pos.turn(RelativeDirection::Left);
+        execute!(pos, l l);
         pos.set_y_min_boundary(-5).unwrap();
-        let magnitude = 2;
-        pos.move_in_current_direction_and_return_new_pos(magnitude);
-        assert_eq!(pos.position().y, -2);
-        pos.move_in_current_direction_and_return_new_pos(magnitude);
-        assert_eq!(pos.position().y, -4);
-        pos.move_in_current_direction_and_return_new_pos(magnitude);
-        assert_eq!(pos.position().y, -5);
-        pos.move_in_current_direction_and_return_new_pos(magnitude);
+        execute!(pos, 2 2 2 2);
         assert_eq!(pos.position().y, -5);
     }
 
     #[test]
     pub fn simple_move_with_bound_test_x_neg() {
         let mut pos = BoundedMovingObject::new(-5, 100, -100, 100);
-        pos.turn(RelativeDirection::Left);
         pos.set_x_min_boundary(-5).unwrap();
-        let magnitude = 2;
-        pos.move_in_current_direction_and_return_new_pos(magnitude);
-        assert_eq!(pos.position().x, -2);
-        pos.move_in_current_direction_and_return_new_pos(magnitude);
-        assert_eq!(pos.position().x, -4);
-        pos.move_in_current_direction_and_return_new_pos(magnitude);
+        execute!(pos, l 2 2 2 2);
         assert_eq!(pos.position().x, -5);
-        pos.move_in_current_direction_and_return_new_pos(magnitude);
-        assert_eq!(pos.position().x, -5);
-    }
-
-    #[test]
-    pub fn simple_move_with_bound_test_x_pos() {
-        let mut pos = BoundedMovingObject::new(0, 5, -100, 100);
-        pos.turn(RelativeDirection::Right);
-        let magnitude = 2;
-        pos.move_in_current_direction_and_return_new_pos(magnitude);
-        assert_eq!(pos.position().x, 2);
-        pos.move_in_current_direction_and_return_new_pos(magnitude);
-        assert_eq!(pos.position().x, 4);
-        pos.move_in_current_direction_and_return_new_pos(magnitude);
-        assert_eq!(pos.position().x, 5);
-        pos.move_in_current_direction_and_return_new_pos(magnitude);
-        assert_eq!(pos.position().x, 5);
-    }
-
-    #[test]
-    pub fn simple_move_with_bound_test() {
-        let mut pos = BoundedMovingObject::new(-100, 100, -100, 5);
-        let magnitude = 2;
-        pos.move_in_current_direction_and_return_new_pos(magnitude);
-        assert_eq!(pos.position().y, 2);
-        pos.move_in_current_direction_and_return_new_pos(magnitude);
-        assert_eq!(pos.position().y, 4);
-        pos.move_in_current_direction_and_return_new_pos(magnitude);
-        assert_eq!(pos.position().y, 5);
-        pos.move_in_current_direction_and_return_new_pos(magnitude);
-        assert_eq!(pos.position().y, 5);
     }
 
     #[test]
