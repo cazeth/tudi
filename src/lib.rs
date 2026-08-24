@@ -1,3 +1,4 @@
+#![warn(missing_debug_implementations)]
 mod axis_count;
 pub mod bounded;
 mod bounded_moving_object;
