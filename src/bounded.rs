@@ -278,7 +278,7 @@ pub trait Bounded: BoundSeal {
         let y: Option<i32> = self
             .y_max_boundary()
             .checked_sub_unsigned(distance[1])
-            .filter(|y| *y >= i32::MIN + 1)
+            .filter(|y| *y > i32::MIN)
             .filter(|y| *y >= self.y_min_boundary());
 
         match (x, y) {
