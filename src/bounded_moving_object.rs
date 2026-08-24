@@ -515,24 +515,24 @@ mod tests {
     mod changing_bounds {
         use super::*;
 
-        fn set(
+        fn valid_set(
             input: &mut BoundedMovingObject,
             axis: Axis,
             minmax: MinMax,
             boundary: i32,
-        ) -> Result<i32, String> {
+        ) -> i32 {
             match (axis, minmax) {
-                (Axis::Y, MinMax::Max) => input.set_y_max_boundary(boundary),
-                (Axis::X, MinMax::Max) => input.set_x_max_boundary(boundary),
-                (Axis::X, MinMax::Min) => input.set_x_min_boundary(boundary),
-                (Axis::Y, MinMax::Min) => input.set_y_min_boundary(boundary),
+                (Axis::Y, MinMax::Max) => input.set_y_max_boundary(boundary).unwrap(),
+                (Axis::X, MinMax::Max) => input.set_x_max_boundary(boundary).unwrap(),
+                (Axis::X, MinMax::Min) => input.set_x_min_boundary(boundary).unwrap(),
+                (Axis::Y, MinMax::Min) => input.set_y_min_boundary(boundary).unwrap(),
             }
         }
 
         #[test]
         fn valid_upwards_expansion() {
             let mut pos = create_at_origin();
-            let _ = set(&mut pos, Axis::Y, MinMax::Max, 1);
+            let _ = valid_set(&mut pos, Axis::Y, MinMax::Max, 1);
             check_y_count(&pos, 2);
             check_y_max(&pos, 1);
         }
@@ -540,7 +540,7 @@ mod tests {
         #[test]
         fn valid_downwards_expansion() {
             let mut pos = create_at_origin();
-            let _ = set(&mut pos, Axis::Y, MinMax::Min, -1);
+            let _ = valid_set(&mut pos, Axis::Y, MinMax::Min, -1);
             check_y_count(&pos, 2);
             check_y_min(&pos, -1);
         }
@@ -548,7 +548,7 @@ mod tests {
         #[test]
         fn valid_right_expansion() {
             let mut pos = create_at_origin();
-            let _ = set(&mut pos, Axis::X, MinMax::Max, 1);
+            let _ = valid_set(&mut pos, Axis::X, MinMax::Max, 1);
             check_x_count(&pos, 2);
             check_x_max(&pos, 1);
         }
@@ -556,7 +556,7 @@ mod tests {
         #[test]
         fn valid_left_expansion() {
             let mut pos = create_at_origin();
-            let _ = set(&mut pos, Axis::X, MinMax::Min, -1);
+            let _ = valid_set(&mut pos, Axis::X, MinMax::Min, -1);
             check_x_count(&pos, 2);
             check_x_min(&pos, -1);
         }
