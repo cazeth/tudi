@@ -1,4 +1,5 @@
 #![warn(missing_debug_implementations)]
+#![allow(clippy::must_use_candidate)]
 mod axis_count;
 pub mod bounded;
 mod bounded_moving_object;
