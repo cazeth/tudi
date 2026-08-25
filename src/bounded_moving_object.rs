@@ -532,7 +532,7 @@ mod tests {
         #[test]
         fn valid_upwards_expansion() {
             let mut pos = create_at_origin();
-            let _ = valid_set(&mut pos, Axis::Y, MinMax::Max, 1);
+            valid_set(&mut pos, Axis::Y, MinMax::Max, 1);
             check_y_count(&pos, 2);
             check_y_max(&pos, 1);
         }
@@ -540,7 +540,7 @@ mod tests {
         #[test]
         fn valid_downwards_expansion() {
             let mut pos = create_at_origin();
-            let _ = valid_set(&mut pos, Axis::Y, MinMax::Min, -1);
+            valid_set(&mut pos, Axis::Y, MinMax::Min, -1);
             check_y_count(&pos, 2);
             check_y_min(&pos, -1);
         }
@@ -548,7 +548,7 @@ mod tests {
         #[test]
         fn valid_right_expansion() {
             let mut pos = create_at_origin();
-            let _ = valid_set(&mut pos, Axis::X, MinMax::Max, 1);
+            valid_set(&mut pos, Axis::X, MinMax::Max, 1);
             check_x_count(&pos, 2);
             check_x_max(&pos, 1);
         }
@@ -556,7 +556,7 @@ mod tests {
         #[test]
         fn valid_left_expansion() {
             let mut pos = create_at_origin();
-            let _ = valid_set(&mut pos, Axis::X, MinMax::Min, -1);
+            valid_set(&mut pos, Axis::X, MinMax::Min, -1);
             check_x_count(&pos, 2);
             check_x_min(&pos, -1);
         }
