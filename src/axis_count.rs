@@ -44,7 +44,7 @@ impl AxisCount {
 
 impl std::fmt::Debug for AxisCount {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        self.as_u64().fmt(f)
+        self.as_u32().fmt(f)
     }
 }
 
