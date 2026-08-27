@@ -24,6 +24,11 @@ impl AxisCount {
         u64::from(self.0)
     }
 
+    #[inline]
+    pub const fn as_u32(&self) -> u32 {
+        self.0
+    }
+
     pub(crate) fn from_len(length: u32) -> Self {
         debug_assert!(length < u32::MAX);
         Self(length + 1)
