@@ -187,7 +187,7 @@ impl<T> Grid<T> {
     ///
     /// # Errors
     ///
-    /// This method returns an error if the coordinate is out of bounds.
+    /// This method returns an error if the provided position is out of bounds.
     ///
     /// This method returns an error if the provided position does not contain an element.
     ///
