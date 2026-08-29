@@ -1,5 +1,6 @@
 use crate::AbsoluteDirection;
 use crate::AxisCount;
+use crate::AxisLength;
 use crate::Coordinate;
 use crate::Mover;
 use crate::OutOfBoundsError;
@@ -74,12 +75,8 @@ pub trait Bounded: BoundSeal {
     /// assert_eq!(bounds.x_geometric_len(), 2); // the distance between -1 and 1 is 2
     ///
     /// ```
-    fn x_geometric_len(&self) -> u32 {
-        if let Ok(value) = u32::try_from(self.x_count()) {
-            value - 1
-        } else {
-            u32::MAX
-        }
+    fn x_geometric_len(&self) -> AxisLength {
+        self.x_count().into()
     }
 
     /// The length between `y_min` and `y_max`, i.e `y_max - y_min`.
@@ -96,12 +93,8 @@ pub trait Bounded: BoundSeal {
     /// assert_eq!(bounds.y_geometric_len(), 2); // the distance between -1 and 1 is 2
     ///
     /// ```
-    fn y_geometric_len(&self) -> u32 {
-        if let Ok(value) = u32::try_from(self.y_count()) {
-            value - 1
-        } else {
-            u32::MAX
-        }
+    fn y_geometric_len(&self) -> AxisLength {
+        self.y_count().into()
     }
 
     fn is_within_bounds<T: Positioned>(&self, coordinate: &T) -> bool {
