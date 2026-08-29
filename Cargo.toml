@@ -9,6 +9,10 @@ keywords = ["grid", "2D", "matrix", "data-structure"]
 categories = ["data-structures", "game-development", "games"]
 description = "There, inside the game's two-dimensional universe, life was simple."
 
+[lints.clippy]
+manual_is_multiple_of = "allow"
+collapsible_if = "allow"
+
 [dependencies]
 itertools = "0.14.0"
 thiserror = "2.0.17"
