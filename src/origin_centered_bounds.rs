@@ -28,14 +28,14 @@ impl OriginCenteredBounds {
     /// The method creates a origin-centered region from a x- and y-count pair.
     pub fn new(x_count: AxisCount, y_count: AxisCount) -> Self {
         let x_max = (x_count.as_u64() / 2) as i32;
-        let x_min = if x_count.as_u64().is_multiple_of(2) {
+        let x_min = if x_count.as_u64() % 2 == 0 {
             -((x_count.as_u64() / 2) as i32) + 1
         } else {
             -((x_count.as_u64() / 2) as i32)
         };
 
         let y_max = (y_count.as_u64() / 2) as i32;
-        let y_min = if y_count.as_u64().is_multiple_of(2) {
+        let y_min = if y_count.as_u64() % 2 == 0 {
             -((y_count.as_u64() / 2) as i32) + 1
         } else {
             -((y_count.as_u64() / 2) as i32)
@@ -47,7 +47,7 @@ impl OriginCenteredBounds {
     /// Expand the bounds by one. Returns true if the bounds are expanded eastwards and false if expanded
     /// westwards.
     pub fn expand_bounds_horizontally(&mut self) -> bool {
-        if OriginBounded::x_count(&self).as_u64().is_multiple_of(2) {
+        if OriginBounded::x_count(&self).as_u64() % 2 == 0 {
             self.0.expand_in_direction(AbsoluteDirection::West);
             false
         } else {
@@ -59,7 +59,7 @@ impl OriginCenteredBounds {
     /// Expand the bounds by one. Returns true if the bounds are expanded northwards and false if expanded
     /// southwards.
     pub fn expand_bounds_vertically(&mut self) -> bool {
-        if OriginBounded::y_count(&self).as_u64().is_multiple_of(2) {
+        if OriginBounded::y_count(&self).as_u64() % 2 == 0 {
             self.0.expand_in_direction(AbsoluteDirection::South);
             false
         } else {
