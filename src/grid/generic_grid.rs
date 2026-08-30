@@ -504,7 +504,7 @@ impl<T> Grid<T> {
     ///
     /// ```
     pub fn add_row(&mut self) -> bool {
-        if OriginBounded::y_count(&self).as_u64().is_multiple_of(2) {
+        if OriginBounded::y_count(&self).as_u64() % 2 == 0 {
             self.add_bottom_row();
             false
         } else {
