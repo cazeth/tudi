@@ -1577,12 +1577,8 @@ pub mod tests {
             let corners = corners(&grid);
             let origin = Coordinate::default();
 
-            for (coordinate, element) in grid.iter_mut_new() {
-                if (corners.contains(&coordinate) || coordinate == origin)
-                    && let Some(value) = element
-                {
-                    *value += 1;
-                }
+            for (_, element) in grid.iter_mut_elements_new() {
+                *element += 1;
             }
 
             for (coordinate, element) in grid.iter_mut_new() {
