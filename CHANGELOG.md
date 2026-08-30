@@ -1,3 +1,49 @@
+## [0.3.2] - 2026-08-30
+
+### Features
+
+- *(axis_count)* Add const as_u32
+- *(AxisLength)* Create
+
+### Bug Fixes
+
+- *(bounded)* Bug
+- *(bounded)* Fix to_grid_like
+
+### Other
+
+- *(refactor)* Remove expect clippy lints
+
+### Refactor
+
+- *(bounded-moving-object)* Change test helper fn changing_bounds::set
+- Add global warn(missing_debug_implementation)
+- *(bounded)* Fix clippy
+- Allow must use candidate globally
+- *(bounded-moving-object)* Simplify calls
+- *(origin-centered-bounds)* Replace is_multiple_of
+- *(grid)* Simplify test
+- *(bounded)* Replace is_multiple_of
+- *(origin-centered-bounded)* Replace use of is_multiple_of
+- *(grid)* Remove let chain
+
+### Documentation
+
+- *(grid)* Add docs to move_elements_above/below_in_direction
+- *(bounded-moving-object)* Fix docs
+- *(grid)* Update docs for fn element
+
+### Testing
+
+- *(bounds)* Add unit tests for fn to_grid_like
+- *(bounded-moving-object)* Add and refactor unit tests
+
+### Miscellaneous Tasks
+
+- *(clippy)* Allow Rust 1.85 compatibility lints
+- Declare Rust 1.85 MSRV
+- Add CI
+
 ## [0.3.1] - 2026-08-16
 
 ### Bug Fixes
