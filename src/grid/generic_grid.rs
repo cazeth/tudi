@@ -710,10 +710,12 @@ impl<T> TryFrom<Vec<Vec<Option<T>>>> for Grid<T> {
     ///
     /// Returns an error if any vec is empty or either count exceeds `AxisCount::MAX`.
     fn try_from(value: Vec<Vec<Option<T>>>) -> Result<Self, Self::Error> {
-        let first_row_len = if let Some(first) = value.first()
-            && !first.is_empty()
-        {
-            first.len()
+        let first_row_len = if let Some(first) = value.first() {
+            if !first.is_empty() {
+                first.len()
+            } else {
+                return Err(GridCreationError::Empty);
+            }
         } else {
             return Err(GridCreationError::Empty);
         };
