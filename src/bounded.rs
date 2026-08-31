@@ -209,7 +209,7 @@ pub trait Bounded: BoundSeal {
             ))
         } else {
             let [x_matrix_like, y_matrix_like] = self.to_matrix_like(coordinate.position());
-            Ok(y_matrix_like as u64 * self.x_count().as_u64() + x_matrix_like as u64)
+            Ok(y_matrix_like as u64 * u64::from(self.x_count()) + x_matrix_like as u64)
         }
     }
 
@@ -222,7 +222,7 @@ pub trait Bounded: BoundSeal {
     ///
     /// See also [`Self::coordinate_to_index`]
     fn index_to_coordinate(&self, index: u64) -> Result<Coordinate, OutOfBoundsError> {
-        let x_count = self.x_count().as_u64();
+        let x_count = u64::from(self.x_count());
         let y_matrix_like = index / x_count;
         let x_matrix_like = index - y_matrix_like * x_count;
         self.to_grid_like([x_matrix_like as u32, y_matrix_like as u32])

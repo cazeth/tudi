@@ -297,8 +297,8 @@ impl<T> Grid<T> {
     }
 
     pub fn iter_mut_new(&mut self) -> impl Iterator<Item = (Coordinate, Option<&mut T>)> {
-        let coordinates = (0..OriginBounded::x_count(&self).as_u64()
-            * OriginBounded::y_count(&self).as_u64())
+        let coordinates = (0..u64::from(OriginBounded::x_count(&self))
+            * u64::from(OriginBounded::y_count(&self)))
             .flat_map(|x| self.index_to_coordinate(x))
             .collect::<Vec<Coordinate>>();
 
