@@ -67,6 +67,12 @@ impl From<NonZeroU32> for AxisCount {
     }
 }
 
+impl From<AxisCount> for u64 {
+    fn from(value: AxisCount) -> Self {
+        value.0 as u64
+    }
+}
+
 macro_rules! try_from_unsigned {
     ($($number_type:ty),+ $(,)?) => {
         $(
