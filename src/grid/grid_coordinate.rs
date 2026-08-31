@@ -6,7 +6,7 @@ pub enum GridCoordinate<T> {
     Object(T),
 }
 
-impl<T: Positioned + Clone> Positioned for GridCoordinate<T> {
+impl<T: Positioned> Positioned for GridCoordinate<T> {
     fn position(&self) -> &Coordinate {
         match self {
             GridCoordinate::Empty(coordinate) => coordinate.position(),
