@@ -497,7 +497,7 @@ where
     }
 
     fn x_max_boundary(&self) -> i32 {
-        i32::try_from(self.x_count().as_u64() / 2).unwrap()
+        i32::try_from(self.x_count().as_u32() / 2).unwrap()
     }
 
     fn y_min_boundary(&self) -> i32 {
@@ -509,7 +509,7 @@ where
     }
 
     fn y_max_boundary(&self) -> i32 {
-        i32::try_from(self.y_count().as_u64() / 2).unwrap()
+        i32::try_from(self.y_count().as_u32() / 2).unwrap()
     }
 }
 
