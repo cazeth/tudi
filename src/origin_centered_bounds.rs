@@ -27,18 +27,19 @@ impl OriginCenteredBounds {
     ///
     /// The method creates a origin-centered region from a x- and y-count pair.
     pub fn new(x_count: AxisCount, y_count: AxisCount) -> Self {
-        let x_max = (x_count.as_u64() / 2) as i32;
-        let x_min = if x_count.as_u64() % 2 == 0 {
-            -((x_count.as_u64() / 2) as i32) + 1
+        let x_max = (x_count.as_u32() / 2) as i32;
+        let x_min = if x_count.as_u32() % 2 == 0 {
+            -((x_count.as_u32() / 2) as i32) + 1
         } else {
-            -((x_count.as_u64() / 2) as i32)
+            -((x_count.as_u32() / 2) as i32)
         };
 
-        let y_max = (y_count.as_u64() / 2) as i32;
-        let y_min = if y_count.as_u64() % 2 == 0 {
-            -((y_count.as_u64() / 2) as i32) + 1
+        let y_max = (y_count.as_u32() / 2) as i32;
+
+        let y_min = if y_count.as_u32() % 2 == 0 {
+            -((y_count.as_u32() / 2) as i32) + 1
         } else {
-            -((y_count.as_u64() / 2) as i32)
+            -((y_count.as_u32() / 2) as i32)
         };
 
         Self(Bounds::from_boundaries(x_min, x_max, y_min, y_max))
@@ -288,7 +289,7 @@ pub mod tests {
     #[test]
     fn largest_len() {
         let bounds = OriginCenteredBounds::new(AxisCount::MAX, AxisCount::MAX);
-        check_x_len(bounds, AxisCount::MAX.as_u64() as u32 - 1);
-        check_y_len(bounds, AxisCount::MAX.as_u64() as u32 - 1);
+        check_x_len(bounds, AxisCount::MAX.as_u32() - 1);
+        check_y_len(bounds, AxisCount::MAX.as_u32() - 1);
     }
 }
