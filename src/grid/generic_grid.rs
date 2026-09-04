@@ -20,61 +20,6 @@ use crate::grid::GridCreationError;
 use itertools::iproduct;
 
 impl<T> Grid<T> {
-    ///Create a rectangular grid with empty elements.
-    ///The x and y-variables represent the number of coordinates along an axis, rather than the
-    ///length between the extremes along the axis. For instance, `x_count = 3` creates a grid that
-    ///contains the coordinates with `x = -1`, `x = 0`, and `x = 1`.
-    ///# Examples
-    /// ```
-    /// use tudi::grid;
-    /// use tudi::bounded::Bounded;
-    /// let grid: tudi::Grid<()> = grid!(3, 3);
-    /// assert_eq!(grid.x_count(),3);
-    /// assert_eq!(grid.y_count(),3);
-    /// assert_eq!(grid.iter_new().count(), 3*3); // There are nine coordinates
-    /// assert_eq!(grid.iter_elements_new().count(), 0); // There are zero elements
-    /// ```
-    /// ```
-    /// use tudi::grid;
-    /// use tudi::bounded::Bounded;
-    /// let grid: tudi::Grid<()> = grid!(6, 6);  // Returns an empty 6x6 grid.
-    /// // A Grid<()> cannot contain anything (because of the unit type parameter), so you will likely want to replace the type
-    /// // with something more useful.
-    ///
-    /// assert_eq!(grid.iter_elements_new().count(), 0); // The grid contains no elements
-    /// assert_eq!(grid.iter_new().count(), 36);         // but it contains 36 coordinates.
-    /// assert_eq!(grid.x_max_boundary(), 3);         // the grid is centered around the origin
-    ///                                              // with a bias toward the positive axes.
-    /// assert_eq!(grid.x_min_boundary(), -2);
-    /// assert_eq!(grid.y_max_boundary(), 3);
-    /// assert_eq!(grid.y_min_boundary(), -2);
-    /// ```
-    ///
-    #[deprecated(
-        since = "0.3.0",
-        note = "Use Grid::with_count; counts must be NonZeroUsize"
-    )]
-    pub fn new(x_count: usize, y_count: usize) -> Self {
-        let x_count = AxisCount::from_len(u32::try_from(x_count).unwrap() - 1);
-        let y_count = AxisCount::from_len(u32::try_from(y_count).unwrap() - 1);
-        let bounds = OriginCenteredBounds::new(x_count, y_count);
-        let mut result = Self {
-            grid_data: Vec::new(),
-            bounds,
-            performance_tuning: PerformanceTuning::Auto,
-        };
-
-        for (y, x) in iproduct!(
-            (result.y_min_boundary()..=result.y_max_boundary()).rev(),
-            result.x_min_boundary()..=result.x_max_boundary()
-        ) {
-            result
-                .grid_data
-                .push(GridCoordinate::Empty(Coordinate { x, y }));
-        }
-        result
-    }
-
     /// Create an empty grid with a given x- and y-count.
     ///
     /// # Panics
