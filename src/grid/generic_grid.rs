@@ -573,17 +573,6 @@ impl<T> Grid<T> {
         }
     }
 
-    #[deprecated(since = "0.3.0")]
-    pub fn print_properties(&self) {
-        println!("-----");
-        println!("y min is {}", self.y_min_boundary());
-        println!("y max is {}", self.y_max_boundary());
-        println!("x_min is {}", self.x_min_boundary());
-        println!("x_max is {}", self.x_max_boundary());
-        println!("number of elements is {}", self.iter_elements_new().count());
-        println!("-----");
-    }
-
     /// A string where '#' marks a occupied element and '.' marks an empty element with one line for
     /// each row in the grid.
     /// A simple way to quickly see what is going on in a small grid.
