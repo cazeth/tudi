@@ -76,7 +76,7 @@ impl BoundedMovingObject {
 
     /// same as move_in_current_direction but reports the new position of the object, which makes
     /// it possible to keep track of what happened.
-    pub fn move_in_current_direction_and_return_new_pos(&mut self, magnitude: u32) -> Coordinate {
+    pub fn move_in_current_direction(&mut self, magnitude: u32) -> Coordinate {
         let dir = self.direction();
         self.move_in_absolute_direction(*dir, magnitude);
         self.current_pos
@@ -428,15 +428,15 @@ mod tests {
         (@one $object:ident s) => {$object.set_current_direction(crate::AbsoluteDirection::South);};
         (@one $object:ident e) => {$object.set_current_direction(crate::AbsoluteDirection::East);};
         (@one $object:ident w) => {$object.set_current_direction(crate::AbsoluteDirection::West);};
-        (@one $object:ident 1) => {$object.move_in_current_direction_and_return_new_pos(1);};
-        (@one $object:ident 2) => {$object.move_in_current_direction_and_return_new_pos(2);};
-        (@one $object:ident 3) => {$object.move_in_current_direction_and_return_new_pos(3);};
-        (@one $object:ident 4) => {$object.move_in_current_direction_and_return_new_pos(4);};
-        (@one $object:ident 5) => {$object.move_in_current_direction_and_return_new_pos(5);};
-        (@one $object:ident 6) => {$object.move_in_current_direction_and_return_new_pos(6);};
-        (@one $object:ident 7) => {$object.move_in_current_direction_and_return_new_pos(7);};
-        (@one $object:ident 8) => {$object.move_in_current_direction_and_return_new_pos(8);};
-        (@one $object:ident 9) => {$object.move_in_current_direction_and_return_new_pos(9);};
+        (@one $object:ident 1) => {$object.move_in_current_direction(1);};
+        (@one $object:ident 2) => {$object.move_in_current_direction(2);};
+        (@one $object:ident 3) => {$object.move_in_current_direction(3);};
+        (@one $object:ident 4) => {$object.move_in_current_direction(4);};
+        (@one $object:ident 5) => {$object.move_in_current_direction(5);};
+        (@one $object:ident 6) => {$object.move_in_current_direction(6);};
+        (@one $object:ident 7) => {$object.move_in_current_direction(7);};
+        (@one $object:ident 8) => {$object.move_in_current_direction(8);};
+        (@one $object:ident 9) => {$object.move_in_current_direction(9);};
         ($object:ident, $($instruction:tt)*) => {{
             $( execute!(@one $object $instruction);)*
         }};
