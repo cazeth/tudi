@@ -157,7 +157,7 @@ impl<T> Grid<T> {
     /// This method returns an error if the provided position does not contain an element.
     ///
     /// This method returns an error if the provided position is out of bounds.
-    pub fn get_mut_element<C: Positioned>(&mut self, coordinate: &C) -> Result<&mut T, GridError> {
+    pub fn element_mut<C: Positioned>(&mut self, coordinate: &C) -> Result<&mut T, GridError> {
         let index = self.coordinate_to_index(coordinate)?;
 
         let val = &mut self.grid_data[usize::try_from(index)
@@ -1170,14 +1170,14 @@ pub mod tests {
         #[test]
         fn in_bounds_should_be_ok() {
             let mut grid: Grid<usize> = grid_with_occupied_corners_and_origin(3, 1);
-            assert_eq!(grid.get_mut_element(&Coordinate { x: 0, y: 0 }), Ok(&mut 1));
+            assert_eq!(grid.element_mut(&Coordinate { x: 0, y: 0 }), Ok(&mut 1));
         }
 
         #[test]
         fn empty_should_err() {
             let mut grid: Grid<usize> = grid_with_occupied_corners_and_origin(3, 1);
             assert_eq!(
-                grid.get_mut_element(&Coordinate { x: 1, y: 0 }),
+                grid.element_mut(&Coordinate { x: 1, y: 0 }),
                 Err(GridError::UnoccupiedError(Coordinate { x: 1, y: 0 }))
             );
         }
@@ -1186,7 +1186,7 @@ pub mod tests {
         fn out_of_bounds_should_err() {
             let mut grid: Grid<usize> = grid_with_occupied_corners_and_origin(3, 1);
             assert_eq!(
-                grid.get_mut_element(&Coordinate { x: 5, y: 5 }),
+                grid.element_mut(&Coordinate { x: 5, y: 5 }),
                 Err(GridError::OutOfBoundsError({
                     OutOfBoundsError::new(
                         Coordinate { x: 5, y: 5 },
