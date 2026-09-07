@@ -223,7 +223,7 @@ impl<T> Grid<T> {
         }
     }
 
-    pub fn iter_new(&self) -> GridIter<'_, T> {
+    pub fn iter(&self) -> GridIter<'_, T> {
         match self.performance_tuning {
             PerformanceTuning::Auto => self.iter_new_memory(),
 
@@ -261,7 +261,7 @@ impl<T> Grid<T> {
     }
 
     pub fn iter_elements_new(&self) -> impl Iterator<Item = (Coordinate, &T)> {
-        self.iter_new()
+        self.iter()
             .filter_map(|(coordinate, element)| element.map(|element| (coordinate, element)))
     }
 
@@ -580,7 +580,7 @@ impl<T> Grid<T> {
         let mut result = String::with_capacity(
             ((self.x_count().as_u64() + 1) * self.y_count().as_u64()) as usize,
         );
-        for (index, element) in self.iter_new() {
+        for (index, element) in self.iter() {
             if element.is_some() {
                 result.push('#');
             } else {
@@ -1493,12 +1493,8 @@ pub mod tests {
         fn iter_new_len() {
             for i in 1..100 {
                 let grid: Grid<()> = empty_grid(i);
-                assert!(
-                    grid.iter_new()
-                        .map(|(_, element)| element)
-                        .all(|x| x.is_none())
-                );
-                assert_eq!(grid.iter_new().count() as u64, i * i);
+                assert!(grid.iter().map(|(_, element)| element).all(|x| x.is_none()));
+                assert_eq!(grid.iter().count() as u64, i * i);
             }
         }
 
@@ -1528,7 +1524,7 @@ pub mod tests {
             let origin = Coordinate::default();
             let grid = grid_with_occupied_corners_and_origin(n, 1);
             let corners = corners(&grid);
-            for (coordinate, element) in grid.iter_new() {
+            for (coordinate, element) in grid.iter() {
                 if coordinate == origin || corners.contains(&coordinate) {
                     assert_eq!(element, Some(&1));
                 } else {
@@ -1555,7 +1551,7 @@ pub mod tests {
                 let len = i;
                 let mut grid: Grid<()> = empty_grid(len);
                 assert_eq!(grid.iter_mut_new().count() as u64, len * len);
-                assert_eq!(grid.iter_new().count() as u64, len * len);
+                assert_eq!(grid.iter().count() as u64, len * len);
             }
         }
     }
@@ -1592,7 +1588,7 @@ pub mod tests {
     #[test]
     fn coordinate_to_index_and_index_to_coordinate_inverse_functions() {
         let grid: Grid<()> = empty_grid(100);
-        for (grid_coordinate, _) in grid.iter_new() {
+        for (grid_coordinate, _) in grid.iter() {
             println!(
                 "check index for coordinate {:?}",
                 grid_coordinate.position()
@@ -1610,7 +1606,7 @@ pub mod tests {
         let grid: Grid<()> = empty_grid(20);
 
         let directions = [North, East, South, West];
-        for (coord, _) in grid.iter_new() {
+        for (coord, _) in grid.iter() {
             for direction in directions.iter() {
                 if let Some(neighbor) = grid.neighbor_in_direction_from(&coord, *direction) {
                     assert_eq!(coord.manhattan_distance_to(&neighbor), 1);

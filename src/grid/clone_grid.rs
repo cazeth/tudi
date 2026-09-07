@@ -50,8 +50,8 @@ impl<T: Clone> PartialEq for Grid<T> {
         if self.x_count() != other.x_count() || self.y_count() != other.y_count() {
             return false;
         };
-        self.iter_new()
-            .zip(other.iter_new())
+        self.iter()
+            .zip(other.iter())
             .all(|((_, a), (_, b))| a.is_some() == b.is_some())
     }
 }
