@@ -143,6 +143,22 @@ pub mod tests {
     use crate::bounded::test::check_y_count;
     use crate::bounded::test::check_y_len;
 
+    #[track_caller]
+    pub fn assert_origin_centered<B: Bounded>(value: B) {
+        assert!(
+            (-value.x_min_boundary() == value.x_max_boundary()
+                && value.x_count().as_u32() % 2 == 1)
+                || (value.x_max_boundary() == -value.x_min_boundary() + 1
+                    && value.x_count().as_u32() % 2 == 0)
+        );
+        assert!(
+            (-value.y_min_boundary() == value.y_max_boundary()
+                && value.y_count().as_u32() % 2 == 1)
+                || (value.y_max_boundary() == -value.y_min_boundary() + 1
+                    && value.y_count().as_u32() % 2 == 0)
+        );
+    }
+
     /// The smallest possible origin centered bounds.
     ///
     /// This should be count 1 across both dimensions and length zero.

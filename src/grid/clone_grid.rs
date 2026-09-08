@@ -62,19 +62,8 @@ pub mod tests {
     use crate::Bounded;
     use crate::Coordinate;
     use crate::GridCreationError;
+    use crate::origin_centered_bounds::tests::assert_origin_centered;
     use itertools::Itertools;
-
-    /// Checks that the boundaries of the grid are centered around the origin.
-    fn assert_centered_around_origin<T: Clone>(input: &Grid<T>) {
-        assert!(
-            -input.x_min_boundary() == input.x_max_boundary()
-                || input.x_max_boundary() == -input.x_min_boundary() + 1
-        );
-        assert!(
-            -input.y_min_boundary() == input.y_max_boundary()
-                || input.y_max_boundary() == -input.y_min_boundary() + 1
-        );
-    }
 
     /// Checks that element doesn't panic for any coordinate in bounds.
     fn assert_coordinate_coverage<T: Clone>(input: &Grid<T>) {
@@ -99,7 +88,7 @@ pub mod tests {
             check_y_count(&data, 1);
             assert_eq!(data.iter_elements().count(), 0);
             assert_coordinate_coverage(&data);
-            assert_centered_around_origin(&data);
+            assert_origin_centered(&data);
         }
 
         #[test]
@@ -177,7 +166,7 @@ pub mod tests {
             let data = Grid::<()>::from_str_by_map(input, &map).unwrap();
             assert_eq!(data.empty_rows(), vec![-1, 1]);
             assert_coordinate_coverage(&data);
-            assert_centered_around_origin(&data);
+            assert_origin_centered(&data);
         }
 
         #[test]
@@ -189,7 +178,7 @@ pub mod tests {
             check_x_count(&grid, 3);
             check_y_count(&grid, 2);
             assert_coordinate_coverage(&grid);
-            assert_centered_around_origin(&grid);
+            assert_origin_centered(&grid);
         }
 
         #[test]
