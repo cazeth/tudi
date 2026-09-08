@@ -256,7 +256,7 @@ impl<T> Grid<T> {
             })
     }
 
-    pub fn iter_mut_elements_new(&mut self) -> impl Iterator<Item = (Coordinate, &mut T)> {
+    pub fn iter_mut_elements(&mut self) -> impl Iterator<Item = (Coordinate, &mut T)> {
         self.iter_mut().filter_map(|(c, x)| x.map(|x| (c, x)))
     }
 
@@ -1505,7 +1505,7 @@ pub mod tests {
             let corners = corners(&grid);
             let origin = Coordinate::default();
 
-            for (_, element) in grid.iter_mut_elements_new() {
+            for (_, element) in grid.iter_mut_elements() {
                 *element += 1;
             }
 
@@ -1542,7 +1542,7 @@ pub mod tests {
         #[test]
         fn iter_mut_elements_new_count() {
             let mut grid = grid_with_occupied_corners_and_origin(100, 1);
-            assert_eq!(grid.iter_mut_elements_new().count(), 5);
+            assert_eq!(grid.iter_mut_elements().count(), 5);
         }
 
         #[test]
