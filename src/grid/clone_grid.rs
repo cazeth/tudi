@@ -97,7 +97,7 @@ pub mod tests {
             let data = Grid::<usize>::from_str_by_map(input, &map).unwrap();
             check_x_count(&data, 3);
             check_y_count(&data, 1);
-            assert_eq!(data.iter_elements_new().count(), 0);
+            assert_eq!(data.iter_elements().count(), 0);
             assert_coordinate_coverage(&data);
             assert_centered_around_origin(&data);
         }
@@ -110,7 +110,7 @@ pub mod tests {
             let data = Grid::<usize>::from_str_by_map(input, &map).unwrap();
             check_x_count(&data, 3);
             check_y_count(&data, 1);
-            assert_eq!(data.iter_elements_new().count(), 1);
+            assert_eq!(data.iter_elements().count(), 1);
             assert_eq!(*data.element(&Coordinate::default()).unwrap(), 1);
         }
 
@@ -185,7 +185,7 @@ pub mod tests {
             let input = ".x.\nA#.";
             let map: HashMap<char, usize> = HashMap::from_iter([('x', 1), ('#', 2)]);
             let grid: Grid<usize> = Grid::<usize>::from_str_by_map(input, &map).unwrap();
-            assert_eq!(grid.iter_elements_new().count(), 2);
+            assert_eq!(grid.iter_elements().count(), 2);
             check_x_count(&grid, 3);
             check_y_count(&grid, 2);
             assert_coordinate_coverage(&grid);

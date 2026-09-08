@@ -260,7 +260,7 @@ impl<T> Grid<T> {
         self.iter_mut().filter_map(|(c, x)| x.map(|x| (c, x)))
     }
 
-    pub fn iter_elements_new(&self) -> impl Iterator<Item = (Coordinate, &T)> {
+    pub fn iter_elements(&self) -> impl Iterator<Item = (Coordinate, &T)> {
         self.iter()
             .filter_map(|(coordinate, element)| element.map(|element| (coordinate, element)))
     }
@@ -512,7 +512,7 @@ impl<T> Grid<T> {
         }
 
         let element_coordinates = self
-            .iter_elements_new()
+            .iter_elements()
             .map(|(coordinate, _)| coordinate)
             .filter(|c| filter(c, row))
             .collect::<Vec<Coordinate>>();
@@ -1536,7 +1536,7 @@ pub mod tests {
         #[test]
         fn iter_elements_new_count() {
             let grid = grid_with_occupied_corners_and_origin(100, 1);
-            assert_eq!(grid.iter_elements_new().count(), 5);
+            assert_eq!(grid.iter_elements().count(), 5);
         }
 
         #[test]
