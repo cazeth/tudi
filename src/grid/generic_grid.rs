@@ -241,7 +241,7 @@ impl<T> Grid<T> {
         GridIter::new(self)
     }
 
-    pub fn iter_mut_new(&mut self) -> impl Iterator<Item = (Coordinate, Option<&mut T>)> {
+    pub fn iter_mut(&mut self) -> impl Iterator<Item = (Coordinate, Option<&mut T>)> {
         let coordinates = (0..u64::from(OriginBounded::x_count(&self))
             * u64::from(OriginBounded::y_count(&self)))
             .flat_map(|x| self.index_to_coordinate(x))
@@ -257,7 +257,7 @@ impl<T> Grid<T> {
     }
 
     pub fn iter_mut_elements_new(&mut self) -> impl Iterator<Item = (Coordinate, &mut T)> {
-        self.iter_mut_new().filter_map(|(c, x)| x.map(|x| (c, x)))
+        self.iter_mut().filter_map(|(c, x)| x.map(|x| (c, x)))
     }
 
     pub fn iter_elements_new(&self) -> impl Iterator<Item = (Coordinate, &T)> {
@@ -1509,7 +1509,7 @@ pub mod tests {
                 *element += 1;
             }
 
-            for (coordinate, element) in grid.iter_mut_new() {
+            for (coordinate, element) in grid.iter_mut() {
                 if corners.contains(&coordinate) || coordinate == origin {
                     assert_eq!(element, Some(&mut 2));
                 } else {
@@ -1550,7 +1550,7 @@ pub mod tests {
             for i in 1..=100 {
                 let len = i;
                 let mut grid: Grid<()> = empty_grid(len);
-                assert_eq!(grid.iter_mut_new().count() as u64, len * len);
+                assert_eq!(grid.iter_mut().count() as u64, len * len);
                 assert_eq!(grid.iter().count() as u64, len * len);
             }
         }
