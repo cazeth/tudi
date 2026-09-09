@@ -541,13 +541,13 @@ impl<T> Grid<T> {
     /// use tudi::Coordinate;
     /// let mut grid = grid!(3, 2);
     /// grid.store_element(&Coordinate{x: 1, y : 0}, () ); // [2][1] in matrix-like coordinates.
-    /// grid.transpose_new();
+    /// grid.transpose();
     /// assert!(grid.element(&Coordinate{y : -1, x: 1}).is_ok()); // [1][2] in matrix-like
     /// // coordinates
     ///
     /// ```
     ///
-    pub fn transpose_new(&mut self) {
+    pub fn transpose(&mut self) {
         let old_grid = std::mem::replace(
             self,
             Self::with_count(OriginBounded::y_count(&self), OriginBounded::x_count(&self)),
@@ -1570,7 +1570,7 @@ pub mod tests {
         let mut changed_grid: Grid<()> =
             Grid::from_str_by_map(&read_to_string(path).unwrap(), &map).unwrap();
 
-        changed_grid.transpose_new();
+        changed_grid.transpose();
         assert_eq!(original_grid, changed_grid);
     }
 
@@ -1646,12 +1646,12 @@ pub mod tests {
         #[test]
         fn test_transpose() {
             let mut grid: Grid<()> = rectangular_empty_grid(3, 1);
-            grid.transpose_new();
+            grid.transpose();
             check_x_count(&grid, 1);
             check_y_count(&grid, 3);
 
             let mut grid: Grid<()> = empty_grid(1);
-            grid.transpose_new();
+            grid.transpose();
             check_x_count(&grid, 1);
             check_y_count(&grid, 1);
 
@@ -1663,7 +1663,7 @@ pub mod tests {
                 StoreValidity::Valid,
             );
 
-            grid.transpose_new();
+            grid.transpose();
             check_element(&grid, Coordinate { x: 1, y: 1 }, &1);
             check_empty(&grid, Coordinate { x: -1, y: -1 });
             assert_centered_around_origin(&grid);
@@ -1677,7 +1677,7 @@ pub mod tests {
             let mut grid: Grid<usize> = empty_grid(n);
             let [_, ne, sw, _] = corners(&grid);
             check_store(&mut grid, ne, element, StoreValidity::Valid);
-            grid.transpose_new();
+            grid.transpose();
             check_element(&grid, sw, &1);
             check_empty(&grid, ne);
         }
@@ -1693,12 +1693,12 @@ pub mod tests {
             let mut grid: Grid<()> = Grid::from_str_by_map(&input_data, &map).unwrap();
             let expected_result_grid: Grid<()> = Grid::from_str_by_map(&input_data, &map).unwrap();
 
-            grid.transpose_new();
+            grid.transpose();
 
             assert_coordinate_coverage(&grid);
             assert_centered_around_origin(&grid);
             assert_grid_data_and_bounds_consistency(&grid);
-            grid.transpose_new();
+            grid.transpose();
             assert_coordinate_coverage(&grid);
             assert_centered_around_origin(&grid);
 
@@ -1714,10 +1714,10 @@ pub mod tests {
             let mut grid: Grid<()> = Grid::from_str_by_map(&input_data, &map).unwrap();
             let expected_result_grid: Grid<()> = Grid::from_str_by_map(&input_data, &map).unwrap();
 
-            grid.transpose_new();
+            grid.transpose();
             assert_coordinate_coverage(&grid);
             assert_centered_around_origin(&grid);
-            grid.transpose_new();
+            grid.transpose();
             assert_coordinate_coverage(&grid);
             assert_centered_around_origin(&grid);
             assert_eq!(grid, expected_result_grid);
@@ -1733,8 +1733,8 @@ pub mod tests {
             let mut grid: Grid<()> = Grid::from_str_by_map(&input_data, &map).unwrap();
             let expected_result_grid: Grid<()> = Grid::from_str_by_map(&input_data, &map).unwrap();
 
-            grid.transpose_new();
-            grid.transpose_new();
+            grid.transpose();
+            grid.transpose();
             assert_eq!(grid, expected_result_grid);
         }
 
