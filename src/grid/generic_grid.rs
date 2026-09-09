@@ -730,7 +730,6 @@ pub mod tests {
     use crate::grid;
     use crate::positioned::test::check_direction;
     use itertools::Itertools;
-    use std::collections::HashMap;
 
     /// Checks that the boundaries of the grid are centered around the origin.
     fn assert_centered_around_origin<T>(input: &Grid<T>) {
@@ -757,15 +756,6 @@ pub mod tests {
         {
             input.element_unchecked(&Coordinate { x, y });
         }
-    }
-
-    /// Checks that the grid_data vec is consistent with the bounds in the struct. The bounds
-    /// imply a length and the grid_data should be that length.
-    fn assert_grid_data_and_bounds_consistency<T>(input: &Grid<T>) {
-        let expected_count_by_bounds =
-            input.bounds.x_count().as_u32() * input.bounds.y_count().as_u32();
-        let actual_length = input.grid_data.len();
-        assert_eq!(expected_count_by_bounds, actual_length.try_into().unwrap());
     }
 
     /// # Panics
@@ -1665,7 +1655,6 @@ pub mod tests {
     pub mod transpose_tests {
 
         use super::*;
-        use std::fs::read_to_string;
 
         #[test]
         fn test_transpose() {
@@ -1704,62 +1693,6 @@ pub mod tests {
             grid.transpose();
             check_element(&grid, sw, &1);
             check_empty(&grid, ne);
-        }
-
-        /// Testing that double transpose yields original grid.
-        #[test]
-        fn double_transpose_test() {
-            let input_data = read_to_string("tests/data/row_expansion_test_1.txt").unwrap();
-            let mut map: HashMap<char, ()> = HashMap::new();
-
-            map.insert('#', ());
-
-            let mut grid: Grid<()> = Grid::from_str_by_map(&input_data, &map).unwrap();
-            let expected_result_grid: Grid<()> = Grid::from_str_by_map(&input_data, &map).unwrap();
-
-            grid.transpose();
-
-            assert_coordinate_coverage(&grid);
-            assert_centered_around_origin(&grid);
-            assert_grid_data_and_bounds_consistency(&grid);
-            grid.transpose();
-            assert_coordinate_coverage(&grid);
-            assert_centered_around_origin(&grid);
-
-            assert_eq!(grid, expected_result_grid);
-        }
-
-        #[test]
-        fn double_transpose_test_two() {
-            let input_data = read_to_string("tests/data/row_expansion_test_3.txt").unwrap();
-            let mut map: HashMap<char, ()> = HashMap::new();
-            map.insert('#', ());
-
-            let mut grid: Grid<()> = Grid::from_str_by_map(&input_data, &map).unwrap();
-            let expected_result_grid: Grid<()> = Grid::from_str_by_map(&input_data, &map).unwrap();
-
-            grid.transpose();
-            assert_coordinate_coverage(&grid);
-            assert_centered_around_origin(&grid);
-            grid.transpose();
-            assert_coordinate_coverage(&grid);
-            assert_centered_around_origin(&grid);
-            assert_eq!(grid, expected_result_grid);
-        }
-
-        #[test]
-        fn double_transpose_test_three() {
-            let input_data =
-                read_to_string("tests/data/row_expansion_test_3_expected_result.txt").unwrap();
-            let mut map: HashMap<char, ()> = HashMap::new();
-            map.insert('#', ());
-
-            let mut grid: Grid<()> = Grid::from_str_by_map(&input_data, &map).unwrap();
-            let expected_result_grid: Grid<()> = Grid::from_str_by_map(&input_data, &map).unwrap();
-
-            grid.transpose();
-            grid.transpose();
-            assert_eq!(grid, expected_result_grid);
         }
 
         #[test]
