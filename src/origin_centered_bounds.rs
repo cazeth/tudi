@@ -48,7 +48,7 @@ impl OriginCenteredBounds {
     /// Expand the bounds by one. Returns true if the bounds are expanded eastwards and false if expanded
     /// westwards.
     pub fn expand_bounds_horizontally(&mut self) -> bool {
-        if OriginBounded::x_count(&self).as_u64() % 2 == 0 {
+        if OriginBounded::x_count(&self).as_u32() % 2 == 0 {
             self.0.expand_in_direction(AbsoluteDirection::West);
             false
         } else {
@@ -60,7 +60,7 @@ impl OriginCenteredBounds {
     /// Expand the bounds by one. Returns true if the bounds are expanded northwards and false if expanded
     /// southwards.
     pub fn expand_bounds_vertically(&mut self) -> bool {
-        if OriginBounded::y_count(&self).as_u64() % 2 == 0 {
+        if OriginBounded::y_count(&self).as_u32() % 2 == 0 {
             self.0.expand_in_direction(AbsoluteDirection::South);
             false
         } else {

@@ -20,10 +20,6 @@ impl AxisCount {
     pub const MAX: Self = Self(u32::MAX);
     pub const MIN: Self = Self(1);
 
-    pub fn as_u64(&self) -> u64 {
-        u64::from(self.0)
-    }
-
     #[inline]
     pub const fn as_u32(&self) -> u32 {
         self.0

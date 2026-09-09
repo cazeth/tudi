@@ -43,7 +43,7 @@ impl<T> Grid<T> {
     ///
     ///```
     pub fn with_count(x_count: AxisCount, y_count: AxisCount) -> Self {
-        let cell_count = x_count.as_u64() * y_count.as_u64();
+        let cell_count = x_count.as_u32() * y_count.as_u32();
         let cell_count =
             usize::try_from(cell_count).expect("cell count is greater than usize::MAX");
 
@@ -447,7 +447,7 @@ impl<T> Grid<T> {
     ///
     /// ```
     pub fn add_row(&mut self) -> bool {
-        if OriginBounded::y_count(&self).as_u64() % 2 == 0 {
+        if OriginBounded::y_count(&self).as_u32() % 2 == 0 {
             self.add_bottom_row();
             false
         } else {
@@ -578,7 +578,7 @@ impl<T> Grid<T> {
     /// A simple way to quickly see what is going on in a small grid.
     pub fn element_statuses(&self) -> String {
         let mut result = String::with_capacity(
-            ((self.x_count().as_u64() + 1) * self.y_count().as_u64()) as usize,
+            ((self.x_count().as_u32() + 1) * self.y_count().as_u32()) as usize,
         );
         for (index, element) in self.iter() {
             if element.is_some() {
@@ -664,13 +664,13 @@ impl<T> TryFrom<Vec<Vec<Option<T>>>> for Grid<T> {
             });
         };
 
-        if first_row_len as u64 > AxisCount::MAX.as_u64() {
+        if first_row_len as u32 > AxisCount::MAX.as_u32() {
             return Err(GridCreationError::CountTooLarge {
                 count: first_row_len as u64,
             });
         };
 
-        if value.len() as u64 > AxisCount::MAX.as_u64() {
+        if value.len() as u32 > AxisCount::MAX.as_u32() {
             {
                 return Err(GridCreationError::CountTooLarge {
                     count: value.len() as u64,
@@ -763,7 +763,7 @@ pub mod tests {
     /// imply a length and the grid_data should be that length.
     fn assert_grid_data_and_bounds_consistency<T>(input: &Grid<T>) {
         let expected_count_by_bounds =
-            input.bounds.x_count().as_u64() * input.bounds.y_count().as_u64();
+            input.bounds.x_count().as_u32() * input.bounds.y_count().as_u32();
         let actual_length = input.grid_data.len();
         assert_eq!(expected_count_by_bounds, actual_length.try_into().unwrap());
     }

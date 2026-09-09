@@ -482,7 +482,7 @@ where
     T: OriginBounded,
 {
     fn x_min_boundary(&self) -> i32 {
-        if self.x_count().as_u64() % 2 == 0 {
+        if self.x_count().as_u32() % 2 == 0 {
             -(BoundsHelper::x_max_boundary(self) - 1)
         } else {
             -(BoundsHelper::x_max_boundary(self))
@@ -494,7 +494,7 @@ where
     }
 
     fn y_min_boundary(&self) -> i32 {
-        if self.y_count().as_u64() % 2 == 0 {
+        if self.y_count().as_u32() % 2 == 0 {
             -(BoundsHelper::y_max_boundary(self) - 1)
         } else {
             -(BoundsHelper::y_max_boundary(self))
