@@ -307,6 +307,7 @@ enum MinMax {
 }
 
 impl DynamicallyBounded for BoundedMovingObject {
+    type Error = String;
     fn set_y_max_boundary(&mut self, boundary: i32) -> Result<i32, String> {
         self.set_boundary(Axis::Y, MinMax::Max, boundary)
     }
