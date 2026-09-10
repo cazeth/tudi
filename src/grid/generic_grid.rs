@@ -727,10 +727,10 @@ pub mod tests {
     use crate::bounded::test::check_out_of_bounds;
     use crate::bounded::test::check_x_count;
     use crate::bounded::test::check_y_count;
+    use crate::grid;
     use crate::positioned::test::check_direction;
     use itertools::Itertools;
     use std::collections::HashMap;
-    use std::fs::read_to_string;
 
     /// Checks that the boundaries of the grid are centered around the origin.
     fn assert_centered_around_origin<T>(input: &Grid<T>) {
@@ -777,6 +777,19 @@ pub mod tests {
         )
     }
 
+    fn grid_with_elements_on_border<T: Clone>(count: u64, element: T) -> Grid<T> {
+        let iter_grid: Grid<T> = empty_grid(count);
+        let mut result: Grid<T> = empty_grid(count);
+
+        for (coordinate, _) in iter_grid.iter() {
+            if iter_grid.other_is_on_border(&coordinate) {
+                result.store_element(&coordinate, element.clone()).unwrap();
+            }
+        }
+
+        result
+    }
+
     /// # Panics
     /// This method panics when `x_count = 0` or `y_count = 0`.
     fn rectangular_empty_grid(x_count: u64, y_count: u64) -> Grid<()> {
@@ -784,6 +797,29 @@ pub mod tests {
             AxisCount::from_u64_unchecked(x_count),
             AxisCount::from_u64_unchecked(y_count),
         )
+    }
+
+    pub fn grid_with_cross() -> Grid<char> {
+        let coordinates = [
+            [0, 0],
+            [4, 0],
+            [1, 1],
+            [3, 1],
+            [2, 2],
+            [1, 3],
+            [3, 3],
+            [0, 4],
+            [4, 4],
+        ];
+
+        let mut grid = grid!(5, 5);
+
+        for coordinate in coordinates {
+            grid.store_element(&grid.to_grid_like(coordinate).unwrap(), '#')
+                .unwrap();
+        }
+
+        grid
     }
 
     fn grid_with_occupied_corners_and_origin<T: Copy>(count: u64, element: T) -> Grid<T> {
@@ -1556,22 +1592,10 @@ pub mod tests {
         }
     }
 
-    fn hashtag_occupied_map() -> HashMap<char, ()> {
-        let mut map = HashMap::new();
-        map.insert('.', ());
-        map
-    }
-
-    fn symmetric_shape_should_transpose_to_itself(path: &str) {
-        let map = hashtag_occupied_map();
-        let original_grid: Grid<()> =
-            Grid::from_str_by_map(&read_to_string(path).unwrap(), &map).unwrap();
-
-        let mut changed_grid: Grid<()> =
-            Grid::from_str_by_map(&read_to_string(path).unwrap(), &map).unwrap();
-
-        changed_grid.transpose();
-        assert_eq!(original_grid, changed_grid);
+    fn symmetric_shape_should_transpose_to_itself<T: Clone + std::fmt::Debug>(grid: &Grid<T>) {
+        let mut transposed_grid = grid.clone();
+        transposed_grid.transpose();
+        assert_eq!(*grid, transposed_grid);
     }
 
     #[test]
@@ -1740,12 +1764,12 @@ pub mod tests {
 
         #[test]
         pub fn edges_only_should_transpose_to_itself() {
-            symmetric_shape_should_transpose_to_itself("tests/data/edges_only.txt")
+            symmetric_shape_should_transpose_to_itself(&grid_with_elements_on_border(3, '#'));
         }
 
         #[test]
         pub fn cross_should_transpose_to_itself() {
-            symmetric_shape_should_transpose_to_itself("tests/data/cross.txt");
+            symmetric_shape_should_transpose_to_itself(&grid_with_cross());
         }
     }
 
