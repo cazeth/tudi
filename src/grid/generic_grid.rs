@@ -720,6 +720,7 @@ impl<T> OriginBounded for Grid<T> {
 
 #[cfg(test)]
 pub mod tests {
+
     use super::*;
     use crate::AbsoluteDirection;
     use crate::BoundedMovingObject;
@@ -765,6 +766,29 @@ pub mod tests {
             AxisCount::from_u64_unchecked(count),
             AxisCount::from_u64_unchecked(count),
         )
+    }
+
+    #[track_caller]
+    fn semi_occupied_example_grid<T: Clone>(element: T) -> Grid<T> {
+        let occupied_elements = [
+            [4, 0],
+            [10, 1],
+            [7, 4],
+            [1, 7],
+            [11, 8],
+            [9, 10],
+            [0, 12],
+            [4, 12],
+            [6, 12],
+        ];
+
+        let mut grid: Grid<T> = grid![13, 13];
+
+        for coordinate in occupied_elements {
+            grid.store_element(&grid.to_grid_like(coordinate).unwrap(), element.clone())
+                .unwrap();
+        }
+        grid
     }
 
     fn grid_with_elements_on_border<T: Clone>(count: u64, element: T) -> Grid<T> {
@@ -1703,6 +1727,17 @@ pub mod tests {
         #[test]
         pub fn cross_should_transpose_to_itself() {
             symmetric_shape_should_transpose_to_itself(&grid_with_cross());
+        }
+
+        #[test]
+        fn double_transpose_test() {
+            let mut actual = semi_occupied_example_grid(());
+            let expected = actual.clone();
+            actual.transpose();
+            assert_coordinate_coverage(&actual);
+            assert_centered_around_origin(&actual);
+            actual.transpose();
+            assert_eq!(actual, expected);
         }
     }
 
