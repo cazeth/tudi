@@ -55,7 +55,7 @@ use performance_tuning::PerformanceTuning;
 /// assert!(grid.element(&Coordinate::default()).is_ok()); // the grid now contains an element at
 /// // the origin.
 /// ```
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Grid<T> {
     grid_data: Vec<GridCoordinate<T>>,
     bounds: OriginCenteredBounds,
