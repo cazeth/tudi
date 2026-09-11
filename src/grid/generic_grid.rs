@@ -1087,9 +1087,6 @@ pub mod tests {
                 );
             }
             _ => {
-                println!("unexpected result in move:");
-                println!("expected {expected:?}");
-                println!("got {res:?}");
                 panic!();
             }
         }
@@ -1627,12 +1624,7 @@ pub mod tests {
     fn coordinate_to_index_and_index_to_coordinate_inverse_functions() {
         let grid: Grid<()> = empty_grid(100);
         for (grid_coordinate, _) in grid.iter() {
-            println!(
-                "check index for coordinate {:?}",
-                grid_coordinate.position()
-            );
             let index = grid.coordinate_to_index(&grid_coordinate).unwrap();
-            println!("index is {index}");
             let coordinate = grid.index_to_coordinate(index).unwrap();
             assert_eq!(grid_coordinate.position(), &coordinate);
         }

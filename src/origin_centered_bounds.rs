@@ -264,9 +264,7 @@ pub mod tests {
     }
 
     fn assert_create_from_valid_bounds(bounds: Bounds) {
-        let origin_centered_bounds = OriginCenteredBounds::try_from(bounds)
-            .inspect_err(|x| println!("{x}"))
-            .unwrap();
+        let origin_centered_bounds = OriginCenteredBounds::try_from(bounds).unwrap();
 
         assert_eq!(origin_centered_bounds.x_count(), bounds.x_count());
         assert_eq!(origin_centered_bounds.y_count(), bounds.y_count());
