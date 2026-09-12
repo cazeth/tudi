@@ -681,25 +681,25 @@ impl<T> TryFrom<Vec<Vec<Option<T>>>> for Grid<T> {
         let x_count = AxisCount::try_from(first_row_len)?;
         let y_count = AxisCount::try_from(value.len())?;
 
-        let mut grid_data: Vec<GridCoordinate<T>> = Vec::new();
         let mut result = Grid::with_count(x_count, y_count);
 
-        for (y_count, line) in value.into_iter().enumerate() {
-            for (x_count, element) in line.into_iter().enumerate() {
-                let coordinate = result
-                    .to_grid_like([x_count as u32, y_count as u32])
-                    .unwrap();
-
-                let grid_element = if let Some(val) = element {
-                    GridCoordinate::Object::<T>(val)
+        result.grid_data = value
+            .into_iter()
+            .flatten()
+            .enumerate()
+            .map(|(n, x)| {
+                if let Some(element) = x {
+                    GridCoordinate::Object(element)
                 } else {
-                    GridCoordinate::Empty::<T>(coordinate)
-                };
-                grid_data.push(grid_element);
-            }
-        }
+                    GridCoordinate::Empty(
+                        result
+                            .index_to_coordinate(n as u64)
+                            .expect("already checked out of bounds"),
+                    )
+                }
+            })
+            .collect::<Vec<GridCoordinate<T>>>();
 
-        result.grid_data = grid_data;
         Ok(result)
     }
 }
