@@ -14,8 +14,9 @@ pub trait Positioned {
         self.position().y
     }
 
-    fn manhattan_distance_to_origin(&self) -> usize {
-        self.x_coordinate().unsigned_abs() as usize + self.y_coordinate().unsigned_abs() as usize
+    fn manhattan_distance_to_origin(&self) -> u64 {
+        u64::from(self.x_coordinate().unsigned_abs())
+            + u64::from(self.y_coordinate().unsigned_abs())
     }
 
     /// The Manhattan distance to another [`Positioned`].
