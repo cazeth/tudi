@@ -5,6 +5,7 @@ use crate::Mover;
 use crate::OutOfBoundsError;
 use crate::Positioned;
 use crate::RelativeDirection;
+use crate::TurnError;
 use crate::bounded::Bounded;
 use crate::bounded::MaybeOriginBounded;
 use crate::bounded::MaybeOriginCentered;
@@ -52,10 +53,12 @@ impl BoundedMovingObject {
         }
     }
 
-    pub fn turn_toward<C: Positioned>(&mut self, target: &C) -> Result<&AbsoluteDirection, String> {
+    pub fn turn_toward<C: Positioned>(
+        &mut self,
+        target: &C,
+    ) -> Result<&AbsoluteDirection, TurnError> {
         match self.direction_toward(target.position()) {
-            (None, _) => Err("Target and source have the same position".to_string()),
-            (Some(_), Some(_)) => Err("No clean turn".to_string()),
+            (None, _) | (Some(_), Some(_)) => Err(TurnError),
             (Some(first), None) => {
                 self.current_direction = first;
                 Ok(&self.current_direction)
