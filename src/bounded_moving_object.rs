@@ -56,12 +56,12 @@ impl BoundedMovingObject {
     pub fn turn_toward<C: Positioned>(
         &mut self,
         target: &C,
-    ) -> Result<&AbsoluteDirection, TurnError> {
+    ) -> Result<AbsoluteDirection, TurnError> {
         match self.direction_toward(target.position()) {
             (None, _) | (Some(_), Some(_)) => Err(TurnError),
             (Some(first), None) => {
                 self.current_direction = first;
-                Ok(&self.current_direction)
+                Ok(first)
             }
         }
     }
