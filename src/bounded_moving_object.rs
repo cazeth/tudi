@@ -97,7 +97,8 @@ impl BoundedMovingObject {
         self.current_pos
     }
 
-    pub fn get_signed_boundary_in_direction(&self, direction: &AbsoluteDirection) -> i32 {
+    /// The bound in the provided [`AbsoluteDirection`]
+    pub fn bound_in_direction(&self, direction: &AbsoluteDirection) -> i32 {
         use AbsoluteDirection::*;
         match direction {
             North => self.y_max_boundary(),
