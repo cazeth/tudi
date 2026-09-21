@@ -53,6 +53,17 @@ impl BoundedMovingObject {
         }
     }
 
+    /// Turn `self` to face another [`Positioned`].
+    ///
+    /// This method requires there to be a single preferred [`AbsoluteDirection`] between `self` and `target` to
+    /// set `self` to.
+    ///
+    /// # Errors
+    ///
+    /// This method returns an error if `self` and `target` have the same position.
+    ///
+    /// This method returns an error if there is no unambiguous [`AbsoluteDirection`] between `self`
+    /// and `target`.
     pub fn turn_toward<C: Positioned>(
         &mut self,
         target: &C,
