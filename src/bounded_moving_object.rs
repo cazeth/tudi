@@ -77,6 +77,7 @@ impl BoundedMovingObject {
         }
     }
 
+    /// Turn the direction of `self` relative to its current direction.
     pub fn turn(&mut self, dir: RelativeDirection) {
         match dir {
             RelativeDirection::Left => {
