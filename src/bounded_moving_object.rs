@@ -112,7 +112,7 @@ impl BoundedMovingObject {
     /// # Examples
     /// ```
     /// use tudi::{Bounds, BoundedMovingObject, RelativeDirection, Coordinate};
-    /// let bounds = Bounds::new(-5, 10, -5, 10);
+    /// let bounds = Bounds::from_boundaries(-5, 5, -5, 5);
     /// let marker = BoundedMovingObject::try_from((&bounds, &Coordinate::default())).unwrap();
     /// // the marker is now at the origin facing north.
     /// assert_eq!(marker.coordinate_in_relative_direction(&RelativeDirection::Left), Some ( Coordinate {x:
@@ -365,8 +365,7 @@ mod tests {
 
     #[test]
     pub fn create_from_bounds() {
-        #[expect(deprecated)]
-        let bounds = Bounds::new(-5, 10, -5, 10);
+        let bounds = Bounds::from_boundaries(-5, 10, -5, 10);
         let pos = BoundedMovingObject::try_from((&bounds, &Coordinate::default())).unwrap();
         assert_eq!(pos.position(), &Coordinate::default());
     }
@@ -469,8 +468,7 @@ mod tests {
 
     #[test]
     pub fn new_from_bounded() {
-        #[expect(deprecated)]
-        let bounds = Bounds::new(-4, 8, -4, 8);
+        let bounds = Bounds::from_boundaries(-4, 4, -4, 4);
         let pos = BoundedMovingObject::try_from((&bounds, &Coordinate::default())).unwrap();
         check_x_min(&pos, -4);
         check_x_max(&pos, 4);

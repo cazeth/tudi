@@ -19,39 +19,6 @@ pub struct Bounds {
 }
 
 impl Bounds {
-    /// This is the preferred constructor for bounds because it cannot fail.
-    /// It is important to note that x_len is not the number of coordinates on the x-axis but
-    /// rather the distance between the coordinates on the axes farthest from each other. Thus, if
-    /// the bounds only contains the origin (or any single point), x_len and y_len should be zero.
-    #[deprecated(
-        since = "0.3.0",
-        note = "Since this method is not actually infallible, it is preferred to use fn from_boundaries instead."
-    )]
-    pub fn new(x_min: i32, x_len: usize, y_min: i32, y_len: usize) -> Self {
-        let northwest = Coordinate {
-            y: y_min + y_len as i32,
-            x: x_min,
-        };
-
-        let northeast = Coordinate {
-            y: y_min + y_len as i32,
-            x: x_min + x_len as i32,
-        };
-
-        let southeast = Coordinate {
-            y: y_min,
-            x: x_min + x_len as i32,
-        };
-
-        let southwest = Coordinate { y: y_min, x: x_min };
-        Self {
-            northwest,
-            southwest,
-            northeast,
-            southeast,
-        }
-    }
-
     /// Creates bounds from two boundaries along each axis.
     ///
     /// The boundary arguments may be provided in either order.
@@ -157,8 +124,7 @@ mod tests {
 
     #[test]
     fn new() {
-        #[expect(deprecated)]
-        let bounds = Bounds::new(0, 0, 0, 0);
+        let bounds = Bounds::from_boundaries(0, 0, 0, 0);
         assert_eq!(bounds.northwest_corner(), Coordinate::default());
         assert_eq!(bounds.southwest_corner(), Coordinate::default());
         assert_eq!(bounds.northeast_corner(), Coordinate::default());
@@ -274,8 +240,7 @@ mod tests {
 
     #[test]
     fn add_row_test() {
-        #[expect(deprecated)]
-        let mut bounds = Bounds::new(-10, 1, -10, 2);
+        let mut bounds = Bounds::from_boundaries(-10, -9, -10, -8);
         check_y_count(bounds, 3);
         bounds.add_top_row();
         bounds.add_bottom_row();
@@ -285,8 +250,7 @@ mod tests {
 
     #[test]
     fn expansion_test() {
-        #[expect(deprecated)]
-        let mut bounds = Bounds::new(0, 0, 0, 0);
+        let mut bounds = Bounds::from_boundaries(0, 0, 0, 0);
         check_y_count(bounds, 1);
         bounds.expand_in_direction(AbsoluteDirection::North);
         check_y_count(bounds, 2);

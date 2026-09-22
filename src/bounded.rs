@@ -71,7 +71,7 @@ pub trait Bounded: BoundSeal {
     /// ```
     /// use tudi::Bounded;
     /// use tudi::Bounds;
-    /// let bounds = Bounds::new(-1,2,-1,2);
+    /// let bounds = Bounds::from_boundaries(-1,1,-1,1);
     /// assert_eq!(bounds.x_geometric_len(), 2); // the distance between -1 and 1 is 2
     ///
     /// ```
@@ -89,7 +89,7 @@ pub trait Bounded: BoundSeal {
     /// use tudi::Bounds;
     /// use tudi::Bounded;
     /// use std::num::NonZeroUsize;
-    /// let bounds= Bounds::new(-1,2,-1,2);
+    /// let bounds= Bounds::from_boundaries(-1,1,-1,1);
     /// assert_eq!(bounds.y_geometric_len(), 2); // the distance between -1 and 1 is 2
     ///
     /// ```
@@ -183,7 +183,7 @@ pub trait Bounded: BoundSeal {
     /// use tudi::Bounded;
     /// use tudi::Bounds;
     ///
-    /// let bounds = Bounds::new(0,4,0,4);
+    /// let bounds = Bounds::from_boundaries(0,4,0,4);
     ///
     /// // The northwest corner always returns 0 since that is where the count begins.
     /// assert_eq!(bounds.coordinate_to_index(&bounds.northwest_corner()).unwrap(), 0);
@@ -244,7 +244,7 @@ pub trait Bounded: BoundSeal {
     /// use tudi::Coordinate;
     /// use tudi::Bounded;
     /// use tudi::Bounds;
-    /// let bounds : Bounds = Bounds::new(-1,2,-1,2);
+    /// let bounds : Bounds = Bounds::from_boundaries(-1,1,-1,1);
     /// let origin = Coordinate{x: 0, y : 0};
     /// assert_eq!(bounds.to_matrix_like(&origin), [1,1]);
     /// ```
