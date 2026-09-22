@@ -1,4 +1,5 @@
 use crate::AbsoluteDirection;
+use crate::Axis;
 use crate::Coordinate;
 use crate::DynamicallyBounded;
 use crate::Mover;
@@ -309,11 +310,6 @@ impl MaybeOriginBounded for BoundedMovingObject {
     fn x_min(&self) -> i32 {
         self.bounds.x_min_boundary()
     }
-}
-
-enum Axis {
-    X,
-    Y,
 }
 
 enum MinMax {

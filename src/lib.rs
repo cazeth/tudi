@@ -1,5 +1,6 @@
 #![warn(missing_debug_implementations)]
 #![allow(clippy::must_use_candidate)]
+mod axis;
 mod axis_count;
 mod axis_length;
 pub mod bounded;
@@ -15,6 +16,7 @@ mod origin_centered_bounds;
 mod out_of_bounds_error;
 mod positioned;
 mod turn_error;
+pub use crate::axis::Axis;
 pub use crate::axis_count::AxisCount;
 pub use crate::axis_count::AxisCountError;
 pub use crate::axis_length::AxisLength;
