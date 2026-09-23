@@ -23,6 +23,14 @@ impl fmt::Display for Coordinate {
 }
 
 impl Coordinate {
+    /// The largest allowed value along an axis.
+    pub const MAX: i32 = i32::MAX;
+
+    /// The smallest allowed value along an axis.
+    ///
+    /// This value is i32::MIN + 1
+    pub const MIN: i32 = i32::MIN + 1;
+
     pub fn coordinate_in_direction(direction: &AbsoluteDirection, magnitude: usize) -> Self {
         let [x, y]: [i32; 2] = match direction {
             AbsoluteDirection::North => [0, magnitude as i32],
