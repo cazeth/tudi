@@ -148,15 +148,15 @@ mod tests {
 
     #[test]
     pub fn test_move() {
-        let mut coordinate = Coordinate { x: 10, y: 10 };
-        coordinate.move_in_direction(&AbsoluteDirection::North, 1);
-        assert_eq!(coordinate, Coordinate { x: 10, y: 11 });
-        coordinate.move_in_direction(&AbsoluteDirection::South, 1);
-        assert_eq!(coordinate, Coordinate { x: 10, y: 10 });
-        coordinate.move_in_direction(&AbsoluteDirection::South, 10);
-        assert_eq!(coordinate, Coordinate { x: 10, y: 0 });
-        coordinate.move_in_direction(&AbsoluteDirection::West, 10);
-        assert_eq!(coordinate, Coordinate { x: 0, y: 0 });
+        let coordinate = Coordinate { x: 10, y: 10 };
+        let new = coordinate.coordinate_in_direction(AbsoluteDirection::North, 1);
+        assert_eq!(new, Coordinate { x: 10, y: 11 });
+        let new = new.coordinate_in_direction(AbsoluteDirection::South, 1);
+        assert_eq!(new, Coordinate { x: 10, y: 10 });
+        let new = new.coordinate_in_direction(AbsoluteDirection::South, 10);
+        assert_eq!(new, Coordinate { x: 10, y: 0 });
+        let new = new.coordinate_in_direction(AbsoluteDirection::West, 10);
+        assert_eq!(new, Coordinate { x: 0, y: 0 });
     }
 
     #[test]
