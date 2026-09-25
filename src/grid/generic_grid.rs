@@ -1603,12 +1603,6 @@ pub mod tests {
         }
     }
 
-    fn symmetric_shape_should_transpose_to_itself<T: Clone + std::fmt::Debug>(grid: &Grid<T>) {
-        let mut transposed_grid = grid.clone();
-        transposed_grid.transpose();
-        assert_eq!(*grid, transposed_grid);
-    }
-
     #[test]
     fn coordinates_in_direction() {
         let len = 5;
@@ -1672,6 +1666,12 @@ pub mod tests {
 
         use super::*;
 
+        fn check_symmetric_shape_transpose<T: Clone + std::fmt::Debug>(grid: &Grid<T>) {
+            let mut transposed_grid = grid.clone();
+            transposed_grid.transpose();
+            assert_eq!(*grid, transposed_grid);
+        }
+
         #[test]
         fn test_transpose() {
             let mut grid: Grid<()> = rectangular_empty_grid(3, 1);
@@ -1713,12 +1713,12 @@ pub mod tests {
 
         #[test]
         pub fn edges_only_should_transpose_to_itself() {
-            symmetric_shape_should_transpose_to_itself(&grid_with_elements_on_border(3, '#'));
+            check_symmetric_shape_transpose(&grid_with_elements_on_border(3, '#'));
         }
 
         #[test]
         pub fn cross_should_transpose_to_itself() {
-            symmetric_shape_should_transpose_to_itself(&grid_with_cross());
+            check_symmetric_shape_transpose(&grid_with_cross());
         }
 
         #[test]
