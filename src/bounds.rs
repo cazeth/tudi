@@ -43,7 +43,7 @@ impl Bounds {
 
     pub fn expand_in_direction(&mut self, dir: AbsoluteDirection) {
         for c in self.mut_coordinates_facing_direction(&dir) {
-            c.move_in_direction(&dir, 1);
+            *c = c.coordinate_in_direction(dir, 1);
         }
     }
 

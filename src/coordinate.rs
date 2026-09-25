@@ -41,10 +41,6 @@ impl Coordinate {
         Self { x, y }
     }
 
-    pub fn move_in_direction(&mut self, direction: &AbsoluteDirection, magnitude: usize) {
-        *self += Self::coordinate_in_direction(direction, magnitude);
-    }
-
     /// Checks if the coordinate is above a row. If the coordinate is on the row the function returns true.
     pub fn is_above_row(&self, row: i32) -> bool {
         self.y_coordinate() >= row
