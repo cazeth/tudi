@@ -1914,4 +1914,45 @@ pub mod tests {
             assert_eq!(actual_grid, expected_grid);
         }
     }
+
+    mod empty_rows {
+        use super::grid_with_cross;
+        use crate::Coordinate;
+        use crate::Grid;
+        use crate::grid::generic_grid::tests::empty_grid;
+        use crate::grid::generic_grid::tests::grid_with_elements_on_border;
+        use crate::grid::generic_grid::tests::grid_with_occupied_at;
+        use crate::grid::generic_grid::tests::grid_with_occupied_corners_and_origin;
+
+        #[track_caller]
+        fn check_empty_rows<T>(grid: &Grid<T>, empty: &mut [i32]) {
+            empty.sort();
+            let mut actual_empty_rows = grid.empty_rows();
+            actual_empty_rows.sort();
+            assert_eq!(actual_empty_rows, empty);
+        }
+
+        #[test]
+        fn no_empty_rows() {
+            check_empty_rows(&grid_with_cross(), &mut []);
+            check_empty_rows(&grid_with_elements_on_border(3, ()), &mut []);
+            check_empty_rows(&grid_with_elements_on_border(5, ()), &mut []);
+            check_empty_rows(&grid_with_elements_on_border(7, ()), &mut []);
+        }
+
+        #[test]
+        fn empty_rows() {
+            check_empty_rows(&empty_grid::<()>(4), &mut [-1, 0, 1, 2]);
+            check_empty_rows(&empty_grid::<()>(1), &mut [0]);
+        }
+
+        #[test]
+        fn some_empty_rows() {
+            check_empty_rows(&grid_with_occupied_corners_and_origin(5, ()), &mut [-1, 1]);
+            check_empty_rows(
+                &grid_with_occupied_at(5, [Coordinate { x: 0, y: 0 }], [()]),
+                &mut [-1, -2, 1, 2],
+            );
+        }
+    }
 }
