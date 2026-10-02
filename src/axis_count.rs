@@ -10,8 +10,8 @@ use thiserror::Error;
 /// |                  | Min | Max      |
 /// |------------------| --- | ---      |
 /// |    AxisCount     |  1  | `u32::MAX` |
-/// |    AxisLength    |   0 | `u32::MAX - 1` |
-/// | x/y-coordinate | `i32::MIN + 1` | `i32::MAX` |
+/// |    [`AxisLength`](crate::AxisLength)    |   0 | `u32::MAX - 1` |
+/// | [`Coordinate`](crate::Coordinate) | `i32::MIN + 1` | `i32::MAX` |
 ///
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct AxisCount(u32);
