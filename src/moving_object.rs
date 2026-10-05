@@ -29,11 +29,16 @@ impl MovingObject {
     }
 
     pub fn move_in_current_direction(&mut self, magnitude: u32) {
-        self.current_pos = self.coordinate_in_direction(*self.get_current_direction(), magnitude);
+        self.current_pos = self.coordinate_in_direction(
+            *self.get_current_direction(),
+            magnitude
+                .try_into()
+                .expect("Magnitude is greater than AxisLength::MAX"),
+        );
     }
 
     pub fn move_in_direction(&mut self, direction: &AbsoluteDirection, magnitude: u32) {
-        self.current_pos = self.coordinate_in_direction(*direction, magnitude);
+        self.current_pos = self.coordinate_in_direction(*direction, magnitude.try_into().unwrap());
     }
 
     pub fn get_current_direction(&self) -> &AbsoluteDirection {

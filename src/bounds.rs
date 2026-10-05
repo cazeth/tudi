@@ -1,3 +1,4 @@
+use crate::AxisLength;
 use crate::bounded::MaybeOriginBounded;
 use crate::bounded::MaybeOriginCentered;
 use crate::bounded::OriginCenteredness;
@@ -43,26 +44,26 @@ impl Bounds {
 
     pub fn expand_in_direction(&mut self, dir: AbsoluteDirection) {
         for c in self.mut_coordinates_facing_direction(&dir) {
-            *c = c.coordinate_in_direction(dir, 1);
+            *c = c.coordinate_in_direction(dir, AxisLength::from(1_u8));
         }
     }
 
     pub fn add_top_row(&mut self) {
         self.northwest = self
             .northwest
-            .coordinate_in_direction(AbsoluteDirection::North, 1);
+            .coordinate_in_direction(AbsoluteDirection::North, AxisLength::from(1_u8));
         self.northeast = self
             .northeast
-            .coordinate_in_direction(AbsoluteDirection::North, 1);
+            .coordinate_in_direction(AbsoluteDirection::North, AxisLength::from(1_u8));
     }
 
     pub fn add_bottom_row(&mut self) {
         self.southwest = self
             .southwest
-            .coordinate_in_direction(AbsoluteDirection::South, 1);
+            .coordinate_in_direction(AbsoluteDirection::South, AxisLength::from(1_u8));
         self.southeast = self
             .southeast
-            .coordinate_in_direction(AbsoluteDirection::South, 1);
+            .coordinate_in_direction(AbsoluteDirection::South, AxisLength::from(1_u8));
     }
 
     fn mut_coordinates_facing_direction(

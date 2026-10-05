@@ -1,5 +1,6 @@
 #![allow(clippy::enum_glob_use)]
 use crate::AbsoluteDirection;
+use crate::AxisLength;
 use crate::Coordinate;
 
 pub trait Positioned {
@@ -56,7 +57,7 @@ pub trait Positioned {
         let mut result: Vec<Coordinate> = Vec::new();
         use AbsoluteDirection::*;
         for direction in [North, East, South, West] {
-            result.push(self.coordinate_in_direction(direction, 1))
+            result.push(self.coordinate_in_direction(direction, AxisLength::from(1_u8)))
         }
 
         result
@@ -82,14 +83,14 @@ pub trait Positioned {
         let mut result: Vec<Coordinate> = Vec::new();
         use AbsoluteDirection::*;
         for direction in [North, East, South, West] {
-            result.push(self.coordinate_in_direction(direction, 1))
+            result.push(self.coordinate_in_direction(direction, AxisLength::from(1_u8)))
         }
 
         for first_direction in [North, South] {
             for second_direction in [East, West] {
                 result.push(
-                    self.coordinate_in_direction(first_direction, 1)
-                        .coordinate_in_direction(second_direction, 1),
+                    self.coordinate_in_direction(first_direction, AxisLength::from(1_u8))
+                        .coordinate_in_direction(second_direction, AxisLength::from(1_u8)),
                 )
             }
         }
@@ -163,26 +164,46 @@ pub trait Positioned {
     /// Max allowed magnitude is 2^31. Numbers larger than this yield undefined behavior.
     /// If the current coordinate + magnitude is larger than 2^32, that will also trigger
     /// undefined behavior.
-    fn coordinate_in_direction(&self, direction: AbsoluteDirection, magnitude: u32) -> Coordinate {
+    fn coordinate_in_direction(
+        &self,
+        direction: AbsoluteDirection,
+        magnitude: AxisLength,
+    ) -> Coordinate {
         use AbsoluteDirection::*;
         match direction {
             North => Coordinate {
                 x: self.x_coordinate(),
-                y: self.y_coordinate() + i32::try_from(magnitude).unwrap_or(i32::MAX),
+                y: self
+                    .y_coordinate()
+                    .checked_add(magnitude.try_into().expect("coordinate overflow"))
+                    .expect("coordinate overflow"),
             },
 
             South => Coordinate {
                 x: self.x_coordinate(),
-                y: self.y_coordinate() - i32::try_from(magnitude).unwrap_or(i32::MAX),
+                y: self
+                    .y_coordinate()
+                    .checked_sub(magnitude.try_into().expect("coordinate overflow"))
+                    // coordinate == i32::MIN is considered an overflow
+                    .filter(|&y| y != i32::MIN)
+                    .expect("coordinate overflow"),
             },
 
             East => Coordinate {
-                x: self.x_coordinate() + i32::try_from(magnitude).unwrap_or(i32::MAX),
+                x: self
+                    .x_coordinate()
+                    .checked_add(magnitude.try_into().expect("coordinate overflow"))
+                    .expect("coordinate overflow"),
                 y: self.y_coordinate(),
             },
 
             West => Coordinate {
-                x: self.x_coordinate() - i32::try_from(magnitude).unwrap_or(i32::MAX),
+                x: self
+                    .x_coordinate()
+                    .checked_sub(magnitude.try_into().expect("coordinate overflow"))
+                    // coordinate == i32::MIN is considered an overflow
+                    .filter(|&x| x != i32::MIN)
+                    .expect("coordinate overflow"),
                 y: self.y_coordinate(),
             },
         }

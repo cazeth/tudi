@@ -119,6 +119,7 @@ impl SubAssign for Coordinate {
 mod tests {
 
     use super::*;
+    use crate::AxisLength;
 
     #[test]
     fn display() {
@@ -145,13 +146,14 @@ mod tests {
     #[test]
     pub fn test_move() {
         let coordinate = Coordinate { x: 10, y: 10 };
-        let new = coordinate.coordinate_in_direction(AbsoluteDirection::North, 1);
+        let new =
+            coordinate.coordinate_in_direction(AbsoluteDirection::North, AxisLength::from(1_u8));
         assert_eq!(new, Coordinate { x: 10, y: 11 });
-        let new = new.coordinate_in_direction(AbsoluteDirection::South, 1);
+        let new = new.coordinate_in_direction(AbsoluteDirection::South, AxisLength::from(1_u8));
         assert_eq!(new, Coordinate { x: 10, y: 10 });
-        let new = new.coordinate_in_direction(AbsoluteDirection::South, 10);
+        let new = new.coordinate_in_direction(AbsoluteDirection::South, AxisLength::from(10_u8));
         assert_eq!(new, Coordinate { x: 10, y: 0 });
-        let new = new.coordinate_in_direction(AbsoluteDirection::West, 10);
+        let new = new.coordinate_in_direction(AbsoluteDirection::West, AxisLength::from(10_u8));
         assert_eq!(new, Coordinate { x: 0, y: 0 });
     }
 
@@ -212,9 +214,9 @@ mod tests {
             AbsoluteDirection::West,
             AbsoluteDirection::East,
         ] {
-            assert!(
-                neighbors.contains(&Coordinate::default().coordinate_in_direction(direction, 1),)
-            );
+            assert!(neighbors.contains(
+                &Coordinate::default().coordinate_in_direction(direction, AxisLength::from(1_u8))
+            ));
         }
     }
 

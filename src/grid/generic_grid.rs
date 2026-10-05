@@ -4,6 +4,7 @@ use super::grid_iter::GridIter;
 use super::performance_tuning::PerformanceTuning;
 use crate::AbsoluteDirection;
 use crate::AxisCount;
+use crate::AxisLength;
 use crate::BoundedMovingObject;
 use crate::Bounds;
 use crate::Coordinate;
@@ -368,7 +369,7 @@ impl<T> Grid<T> {
     ) -> Result<Coordinate, GridError> {
         let mut marker = BoundedMovingObject::try_from((&self, coordinate))?;
 
-        if marker.move_in_absolute_direction(direction, 1) {
+        if marker.move_in_absolute_direction(direction, AxisLength::from(1_u8)) {
             if self.element_unchecked(marker.position()).is_some() {
                 return Err(GridError::CollisionError);
             }
@@ -378,7 +379,7 @@ impl<T> Grid<T> {
             Ok(*marker.position())
         } else {
             Err(GridError::OutOfBoundsError(OutOfBoundsError::new(
-                marker.coordinate_in_direction(direction, 1),
+                marker.coordinate_in_direction(direction, AxisLength::from(1_u8)),
                 direction,
                 None,
             )))
@@ -1083,7 +1084,7 @@ pub mod tests {
             ) => {
                 assert_eq!(
                     out_of_bounds_error.position(),
-                    c.coordinate_in_direction(direction, 1)
+                    c.coordinate_in_direction(direction, AxisLength::from(1_u8))
                 );
             }
             _ => {
@@ -1464,20 +1465,28 @@ pub mod tests {
         #[track_caller]
         fn check_contains_corner<T>(grid: &Grid<T>, coordinate: impl Positioned) {
             assert!(
-                grid.bounded_neighbors_to(coordinate.position())
-                    .contains(&coordinate.coordinate_in_direction(AbsoluteDirection::North, 1))
+                grid.bounded_neighbors_to(coordinate.position()).contains(
+                    &coordinate
+                        .coordinate_in_direction(AbsoluteDirection::North, AxisLength::from(1_u8))
+                )
             );
             assert!(
-                grid.bounded_neighbors_to(coordinate.position())
-                    .contains(&coordinate.coordinate_in_direction(AbsoluteDirection::South, 1))
+                grid.bounded_neighbors_to(coordinate.position()).contains(
+                    &coordinate
+                        .coordinate_in_direction(AbsoluteDirection::South, AxisLength::from(1_u8))
+                )
             );
             assert!(
-                grid.bounded_neighbors_to(coordinate.position())
-                    .contains(&coordinate.coordinate_in_direction(AbsoluteDirection::East, 1))
+                grid.bounded_neighbors_to(coordinate.position()).contains(
+                    &coordinate
+                        .coordinate_in_direction(AbsoluteDirection::East, AxisLength::from(1_u8))
+                )
             );
             assert!(
-                grid.bounded_neighbors_to(coordinate.position())
-                    .contains(&coordinate.coordinate_in_direction(AbsoluteDirection::West, 1))
+                grid.bounded_neighbors_to(coordinate.position()).contains(
+                    &coordinate
+                        .coordinate_in_direction(AbsoluteDirection::West, AxisLength::from(1_u8))
+                )
             )
         }
 

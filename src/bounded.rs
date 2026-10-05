@@ -153,7 +153,7 @@ pub trait Bounded: BoundSeal {
         let mut result = Vec::new();
 
         loop {
-            coordinate = coordinate.coordinate_in_direction(direction, 1);
+            coordinate = coordinate.coordinate_in_direction(direction, AxisLength::from(1_u8));
             if self.is_within_bounds(&coordinate) {
                 result.push(coordinate);
             } else {
@@ -324,7 +324,8 @@ pub trait Bounded: BoundSeal {
         position: &C,
         direction: AbsoluteDirection,
     ) -> Option<Coordinate> {
-        let potential_neighbor = position.coordinate_in_direction(direction, 1);
+        let potential_neighbor =
+            position.coordinate_in_direction(direction, AxisLength::from(1_u8));
         if self.is_within_bounds(&potential_neighbor) {
             Some(potential_neighbor)
         } else {
@@ -365,7 +366,11 @@ pub trait Bounded: BoundSeal {
 
     /// Returns true if the coordinate actually moved and false if not, if there is
     /// an attempt to move outside of the border.
-    fn move_in_absolute_direction(&mut self, direction: AbsoluteDirection, magnitude: u32) -> bool
+    fn move_in_absolute_direction(
+        &mut self,
+        direction: AbsoluteDirection,
+        magnitude: AxisLength,
+    ) -> bool
     where
         Self: Mover,
     {

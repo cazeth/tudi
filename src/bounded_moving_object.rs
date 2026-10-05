@@ -1,5 +1,6 @@
 use crate::AbsoluteDirection;
 use crate::Axis;
+use crate::AxisLength;
 use crate::Coordinate;
 use crate::DynamicallyBounded;
 use crate::Mover;
@@ -91,7 +92,7 @@ impl BoundedMovingObject {
     }
 
     /// Move `self` in its current direction by the provided `magnitude`.
-    pub fn move_in_current_direction(&mut self, magnitude: u32) -> Coordinate {
+    pub fn move_in_current_direction(&mut self, magnitude: AxisLength) -> Coordinate {
         let dir = self.direction();
         self.move_in_absolute_direction(*dir, magnitude);
         self.current_pos
@@ -124,10 +125,10 @@ impl BoundedMovingObject {
     pub fn coordinate_in_relative_direction(&self, dir: &RelativeDirection) -> Option<Coordinate> {
         let candidate_coordinate = match dir {
             RelativeDirection::Left => {
-                self.coordinate_in_direction(self.direction().incremented(), 1)
+                self.coordinate_in_direction(self.direction().incremented(), AxisLength::from(1_u8))
             }
             RelativeDirection::Right => {
-                self.coordinate_in_direction(self.direction().decremented(), 1)
+                self.coordinate_in_direction(self.direction().decremented(), AxisLength::from(1_u8))
             }
         };
 
@@ -439,15 +440,15 @@ mod tests {
         (@one $object:ident s) => {$object.set_current_direction(crate::AbsoluteDirection::South);};
         (@one $object:ident e) => {$object.set_current_direction(crate::AbsoluteDirection::East);};
         (@one $object:ident w) => {$object.set_current_direction(crate::AbsoluteDirection::West);};
-        (@one $object:ident 1) => {$object.move_in_current_direction(1);};
-        (@one $object:ident 2) => {$object.move_in_current_direction(2);};
-        (@one $object:ident 3) => {$object.move_in_current_direction(3);};
-        (@one $object:ident 4) => {$object.move_in_current_direction(4);};
-        (@one $object:ident 5) => {$object.move_in_current_direction(5);};
-        (@one $object:ident 6) => {$object.move_in_current_direction(6);};
-        (@one $object:ident 7) => {$object.move_in_current_direction(7);};
-        (@one $object:ident 8) => {$object.move_in_current_direction(8);};
-        (@one $object:ident 9) => {$object.move_in_current_direction(9);};
+        (@one $object:ident 1) => {$object.move_in_current_direction(AxisLength::from(1_u8));};
+        (@one $object:ident 2) => {$object.move_in_current_direction(AxisLength::from(2_u8));};
+        (@one $object:ident 3) => {$object.move_in_current_direction(AxisLength::from(3_u8));};
+        (@one $object:ident 4) => {$object.move_in_current_direction(AxisLength::from(4_u8));};
+        (@one $object:ident 5) => {$object.move_in_current_direction(AxisLength::from(5_u8));};
+        (@one $object:ident 6) => {$object.move_in_current_direction(AxisLength::from(6_u8));};
+        (@one $object:ident 7) => {$object.move_in_current_direction(AxisLength::from(7_u8));};
+        (@one $object:ident 8) => {$object.move_in_current_direction(AxisLength::from(8_u8));};
+        (@one $object:ident 9) => {$object.move_in_current_direction(AxisLength::from(9_u8));};
         ($object:ident, $($instruction:tt)*) => {{
             $( execute!(@one $object $instruction);)*
         }};

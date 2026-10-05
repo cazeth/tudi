@@ -1,5 +1,6 @@
 use super::Grid;
 use crate::AbsoluteDirection;
+use crate::AxisLength;
 use crate::BoundedMovingObject;
 use crate::Coordinate;
 use crate::Positioned;
@@ -43,11 +44,11 @@ impl<'a, T> Iterator for GridIter<'a, T> {
 
         if self
             .current
-            .move_in_absolute_direction(AbsoluteDirection::East, 1)
+            .move_in_absolute_direction(AbsoluteDirection::East, AxisLength::from(1_u8))
         {
         } else if self
             .current
-            .move_in_absolute_direction(AbsoluteDirection::South, 1)
+            .move_in_absolute_direction(AbsoluteDirection::South, AxisLength::from(1_u8))
         {
             self.current.set_current_x_to_x_min();
         };
