@@ -65,65 +65,80 @@ mod tests {
 
     use super::*;
 
+    /// a simple dsl for concisely expressing the movement of an object. See the branches for the
+    /// specification.
+    ///
+    /// For instance:
+    /// execute!(object, l 5 l 10) turns left and walks five steps, then turns left and walks ten
+    /// steps.
+    macro_rules! execute {
+        (@one $object:ident l) => {$object.turn(crate::RelativeDirection::Left);};
+        (@one $object:ident r) => {$object.turn(crate::RelativeDirection::Right);};
+        (@one $object:ident n) => {$object.set_current_direction(crate::AbsoluteDirection::North);};
+        (@one $object:ident s) => {$object.set_current_direction(crate::AbsoluteDirection::South);};
+        (@one $object:ident e) => {$object.set_current_direction(crate::AbsoluteDirection::East);};
+        (@one $object:ident w) => {$object.set_current_direction(crate::AbsoluteDirection::West);};
+        (@one $object:ident 1) => {$object.move_in_current_direction(1);};
+        (@one $object:ident 2) => {$object.move_in_current_direction(2);};
+        (@one $object:ident 3) => {$object.move_in_current_direction(3);};
+        (@one $object:ident 4) => {$object.move_in_current_direction(4);};
+        (@one $object:ident 5) => {$object.move_in_current_direction(5);};
+        (@one $object:ident 6) => {$object.move_in_current_direction(6);};
+        (@one $object:ident 7) => {$object.move_in_current_direction(7);};
+        (@one $object:ident 8) => {$object.move_in_current_direction(8);};
+        (@one $object:ident 9) => {$object.move_in_current_direction(9);};
+        ($object:ident, $($instruction:tt)*) => {{
+            $( execute!(@one $object $instruction);)*
+        }};
+    }
+
     #[test]
     pub fn simple_move_test() {
         let mut pos = MovingObject::default();
-        let dir = RelativeDirection::Left;
-        let mag = 2;
-        pos.turn(dir);
-        pos.move_in_current_direction(mag);
-
+        execute!(pos, l 2);
         assert_eq!(pos.position(), &Coordinate { x: -2, y: 0 });
     }
 
     #[test]
     pub fn simple_move_y_neg() {
         let mut pos = MovingObject::default();
-        pos.turn(RelativeDirection::Left);
-        pos.turn(RelativeDirection::Left);
-        let magnitude = 2;
-        pos.move_in_current_direction(magnitude);
+        execute!(pos, l l 2);
         assert_eq!(pos.position().y, -2);
-        pos.move_in_current_direction(magnitude);
+        execute!(pos, 2);
         assert_eq!(pos.position().y, -4);
-        pos.move_in_current_direction(magnitude);
+        execute!(pos, 2);
         assert_eq!(pos.position().y, -6);
     }
 
     #[test]
     pub fn simple_move_with_x_neg() {
         let mut pos = MovingObject::default();
-        pos.turn(RelativeDirection::Left);
-        let magnitude = 2;
-        pos.move_in_current_direction(magnitude);
+        execute!(pos, l 2);
         assert_eq!(pos.position().x, -2);
-        pos.move_in_current_direction(magnitude);
+        execute!(pos, 2);
         assert_eq!(pos.position().x, -4);
-        pos.move_in_current_direction(magnitude);
+        execute!(pos, 2);
         assert_eq!(pos.position().x, -6);
     }
 
     #[test]
     pub fn simple_move_test_x_pos() {
         let mut pos = MovingObject::default();
-        pos.turn(RelativeDirection::Right);
-        let magnitude = 2;
-        pos.move_in_current_direction(magnitude);
+        execute!(pos, r 2);
         assert_eq!(pos.position().x, 2);
-        pos.move_in_current_direction(magnitude);
+        execute!(pos, 2);
         assert_eq!(pos.position().x, 4);
-        pos.move_in_current_direction(magnitude);
+        execute!(pos, 2);
         assert_eq!(pos.position().x, 6);
     }
     #[test]
     pub fn simple_move_y_with_test() {
         let mut pos = MovingObject::default();
-        let magnitude = 2;
-        pos.move_in_current_direction(magnitude);
+        execute!(pos, 2);
         assert_eq!(pos.position().y, 2);
-        pos.move_in_current_direction(magnitude);
+        execute!(pos, 2);
         assert_eq!(pos.position().y, 4);
-        pos.move_in_current_direction(magnitude);
+        execute!(pos, 2);
         assert_eq!(pos.position().y, 6);
     }
 
