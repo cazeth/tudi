@@ -29,10 +29,21 @@ impl MovingObject {
         }
     }
 
+    /// Move `self` in its current `direction` by the provided `magnitude`.
+    ///
+    /// # Panics
+    ///
+    /// This method panics when the move's result coordinate has a x- or y-coordinate greater than [`Coordinate::MAX`] or smaller than [`Coordinate::MIN`]
     pub fn move_in_current_direction(&mut self, magnitude: AxisLength) {
         self.current_pos = self.coordinate_in_direction(*self.get_current_direction(), magnitude);
     }
 
+    /// Move `self` in the provided `direction` by the provided `magnitude`
+    ///
+    /// # Panics
+    ///
+    /// This method panics when the move's result coordinate has a x- or y-coordinate greater than
+    /// [`Coordinate::MAX`] or smaller than [`Coordinate::MIN`]
     pub fn move_in_direction(&mut self, direction: &AbsoluteDirection, magnitude: u32) {
         self.current_pos = self.coordinate_in_direction(*direction, magnitude.try_into().unwrap());
     }
