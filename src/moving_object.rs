@@ -1,4 +1,5 @@
 use crate::AbsoluteDirection;
+use crate::AxisLength;
 use crate::Coordinate;
 use crate::Positioned;
 use crate::RelativeDirection;
@@ -28,13 +29,8 @@ impl MovingObject {
         }
     }
 
-    pub fn move_in_current_direction(&mut self, magnitude: u32) {
-        self.current_pos = self.coordinate_in_direction(
-            *self.get_current_direction(),
-            magnitude
-                .try_into()
-                .expect("Magnitude is greater than AxisLength::MAX"),
-        );
+    pub fn move_in_current_direction(&mut self, magnitude: AxisLength) {
+        self.current_pos = self.coordinate_in_direction(*self.get_current_direction(), magnitude);
     }
 
     pub fn move_in_direction(&mut self, direction: &AbsoluteDirection, magnitude: u32) {
@@ -78,15 +74,15 @@ mod tests {
         (@one $object:ident s) => {$object.set_current_direction(crate::AbsoluteDirection::South);};
         (@one $object:ident e) => {$object.set_current_direction(crate::AbsoluteDirection::East);};
         (@one $object:ident w) => {$object.set_current_direction(crate::AbsoluteDirection::West);};
-        (@one $object:ident 1) => {$object.move_in_current_direction(1);};
-        (@one $object:ident 2) => {$object.move_in_current_direction(2);};
-        (@one $object:ident 3) => {$object.move_in_current_direction(3);};
-        (@one $object:ident 4) => {$object.move_in_current_direction(4);};
-        (@one $object:ident 5) => {$object.move_in_current_direction(5);};
-        (@one $object:ident 6) => {$object.move_in_current_direction(6);};
-        (@one $object:ident 7) => {$object.move_in_current_direction(7);};
-        (@one $object:ident 8) => {$object.move_in_current_direction(8);};
-        (@one $object:ident 9) => {$object.move_in_current_direction(9);};
+        (@one $object:ident 1) => {$object.move_in_current_direction(AxisLength::from(1_u8));};
+        (@one $object:ident 2) => {$object.move_in_current_direction(AxisLength::from(2_u8));};
+        (@one $object:ident 3) => {$object.move_in_current_direction(AxisLength::from(3_u8));};
+        (@one $object:ident 4) => {$object.move_in_current_direction(AxisLength::from(4_u8));};
+        (@one $object:ident 5) => {$object.move_in_current_direction(AxisLength::from(5_u8));};
+        (@one $object:ident 6) => {$object.move_in_current_direction(AxisLength::from(6_u8));};
+        (@one $object:ident 7) => {$object.move_in_current_direction(AxisLength::from(7_u8));};
+        (@one $object:ident 8) => {$object.move_in_current_direction(AxisLength::from(8_u8));};
+        (@one $object:ident 9) => {$object.move_in_current_direction(AxisLength::from(9_u8));};
         ($object:ident, $($instruction:tt)*) => {{
             $( execute!(@one $object $instruction);)*
         }};
