@@ -164,6 +164,11 @@ pub trait Positioned {
     /// Max allowed magnitude is 2^31. Numbers larger than this yield undefined behavior.
     /// If the current coordinate + magnitude is larger than 2^32, that will also trigger
     /// undefined behavior.
+    ///
+    /// # Panics
+    ///
+    /// This method panics if the x- or y-coordinate in the resulting position is greater than
+    /// [`Coordinate::MAX`] or smaller than [`Coordinate::MIN`].
     fn coordinate_in_direction(
         &self,
         direction: AbsoluteDirection,
