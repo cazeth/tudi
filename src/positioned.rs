@@ -161,9 +161,7 @@ pub trait Positioned {
             || (&cord.x_coordinate() > row && row > &self.x_coordinate())
     }
 
-    /// Max allowed magnitude is 2^31. Numbers larger than this yield undefined behavior.
-    /// If the current coordinate + magnitude is larger than 2^32, that will also trigger
-    /// undefined behavior.
+    /// The position in the provided `direction` and `magnitude`.
     ///
     /// # Panics
     ///
