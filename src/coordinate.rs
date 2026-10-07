@@ -1,4 +1,3 @@
-use crate::AbsoluteDirection;
 use crate::Positioned;
 use std::fmt;
 use std::ops::Add;
@@ -30,16 +29,6 @@ impl Coordinate {
     ///
     /// This value is i32::MIN + 1
     pub const MIN: i32 = i32::MIN + 1;
-
-    pub fn coordinate_in_direction(direction: &AbsoluteDirection, magnitude: usize) -> Self {
-        let [x, y]: [i32; 2] = match direction {
-            AbsoluteDirection::North => [0, magnitude as i32],
-            AbsoluteDirection::South => [0, -(magnitude as i32)],
-            AbsoluteDirection::East => [magnitude as i32, 0],
-            AbsoluteDirection::West => [-(magnitude as i32), 0],
-        };
-        Self { x, y }
-    }
 
     /// Checks if the coordinate is above a row. If the coordinate is on the row the function returns true.
     pub fn is_above_row(&self, row: i32) -> bool {
@@ -119,6 +108,7 @@ impl SubAssign for Coordinate {
 mod tests {
 
     use super::*;
+    use crate::AbsoluteDirection;
     use crate::AxisLength;
 
     #[test]
