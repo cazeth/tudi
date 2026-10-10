@@ -55,10 +55,6 @@ impl MovingObject {
     pub fn set_current_direction(&mut self, direction: AbsoluteDirection) {
         self.current_direction = direction;
     }
-
-    pub fn get_sum_of_current_coordinates(&self) -> i32 {
-        self.current_pos.x.abs() + self.current_pos.y.abs()
-    }
 }
 
 impl Positioned for MovingObject {
