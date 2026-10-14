@@ -64,7 +64,7 @@ pub trait Bounded: BoundSeal {
 
     /// The length between `x_min` and `x_max`, i.e `x_max - x_min`.
     ///
-    /// Note that this different to the *count* along the dimension. See also [`Bounded::x_count()`]
+    /// Note that this is different to the *count* along the dimension. See also [`Bounded::x_count()`]
     ///
     /// # Examples
     ///
@@ -81,7 +81,7 @@ pub trait Bounded: BoundSeal {
 
     /// The length between `y_min` and `y_max`, i.e `y_max - y_min`.
     ///
-    /// Note that this different to the *count* along the dimension. See also [`Bounded::y_count()`]
+    /// Note that this is different to the *count* along the dimension. See also [`Bounded::y_count()`]
     ///
     /// # Examples
     ///
