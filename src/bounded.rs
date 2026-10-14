@@ -164,14 +164,9 @@ pub trait Bounded: BoundSeal {
         result
     }
 
-    /// Returns the position of a coordinate when all the integer coordinates in a bounded region are ordered from west to east, north to
-    /// south.
+    /// The position of a coordinate when all the coordinates in a bounded region are ordered from west to east, north to south.
     ///
-    /// The maximum index is `(AxisCount::MAX)*(AxisCount::MAX)`, as the index is the two
-    /// dimensions flattened into one. Since `AxisCount::Max = U32::MAX`, the maximum index is
-    /// `(U32::MAX)*(U32::Max) <= u64`. Therefore this method returns a u64 while many other methods
-    /// in the library are based on u32.
-    ///
+    /// The maximum result value is [`AxisCount::MAX`]*[`AxisCount::MAX`], as the value lies in a single line with the length of the x- and y-dimensions flattened. Since `AxisCount::MAX = u32::MAX`, the maximum result value is `(u32::MAX)*(u32::Max) < u64`. This method therefore returns a `u64`.
     /// # Errors
     ///
     /// Returns an error if the coordinate is out of bounds.
