@@ -35,6 +35,26 @@ impl OutOfBoundsError {
         }
     }
 
+    /// A new `OutOfBoundsError`, out of bounds in a single direction.
+    ///
+    /// Use this method to create a new error without having to specify a full out-of-bounds
+    /// coordinate, only a single direction and a position in that direction.
+    pub fn with_single_direction(axis_coordinate: i128, direction: AbsoluteDirection) -> Self {
+        let (x, y) = match direction {
+            AbsoluteDirection::East => (Some(axis_coordinate), None),
+            AbsoluteDirection::West => (Some(axis_coordinate), None),
+            AbsoluteDirection::South => (None, Some(axis_coordinate)),
+            AbsoluteDirection::North => (None, Some(axis_coordinate)),
+        };
+
+        Self {
+            x,
+            y,
+            first_out_of_bounds_direction: direction,
+            second_out_of_bounds_direction: None,
+        }
+    }
+
     pub fn position(&self) -> Option<Coordinate> {
         if let Some(x) = self.x {
             if let Some(y) = self.y {
