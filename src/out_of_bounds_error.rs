@@ -55,6 +55,55 @@ impl OutOfBoundsError {
         }
     }
 
+    /// Add a second out of bounds direction.
+    ///
+    /// The error will sort the directions so that the vertical direction is always first, i.e. adding `AbsoluteDirection::North` as a second direction to an error with `AbsoluteDirection::East` as its first direction will swap the directions so that `AbsoluteDirection::North` is the first direction.
+    ///
+    /// # Panics
+    ///
+    /// This method panics if the second direction is equal or inverse to the first direction.
+    ///
+    /// See also [`AbsoluteDirection::inverse`]
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tudi::OutOfBoundsError;
+    /// use tudi::AbsoluteDirection;
+    ///
+    /// let mut err = OutOfBoundsError::with_single_direction(10, AbsoluteDirection::East);
+    /// err.add_second_direction(5, AbsoluteDirection::North);
+    /// assert_eq!(err.first_out_of_bounds_direction(), AbsoluteDirection::North);
+    /// assert_eq!(err.second_out_of_bounds_direction(), Some(AbsoluteDirection::East));
+    ///
+    /// ```
+    ///
+    pub fn add_second_direction(&mut self, axis_coordinate: i128, direction: AbsoluteDirection) {
+        match (self.first_out_of_bounds_direction, direction) {
+            (first, second) if first == second.inverse() || first == second => {
+                panic!(
+                    "Cannot be out of bounds to the same direction twice or to the inverse direction!"
+                )
+            }
+            (first, second)
+                if first == AbsoluteDirection::North || first == AbsoluteDirection::South =>
+            {
+                self.second_out_of_bounds_direction = Some(second);
+                self.x = Some(axis_coordinate);
+            }
+            (first, second)
+                if first == AbsoluteDirection::East || first == AbsoluteDirection::West =>
+            {
+                self.second_out_of_bounds_direction = Some(self.first_out_of_bounds_direction);
+                self.first_out_of_bounds_direction = second;
+                self.y = Some(axis_coordinate);
+            }
+            (_, _) => {
+                unreachable!();
+            }
+        }
+    }
+
     pub fn position(&self) -> Option<Coordinate> {
         if let Some(x) = self.x {
             if let Some(y) = self.y {
