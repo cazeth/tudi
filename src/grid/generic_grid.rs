@@ -564,7 +564,14 @@ impl<T> Grid<T> {
         for (coordinate, element) in old_grid {
             let matrix_coordinates = previous_bounds.to_matrix_like(&coordinate);
             let new_coordinate = self
-                .to_grid_like([matrix_coordinates[1], matrix_coordinates[0]])
+                .to_grid_like([
+                    matrix_coordinates[1]
+                        .try_into()
+                        .expect("should be valid as its comes from a bounded"),
+                    matrix_coordinates[0]
+                        .try_into()
+                        .expect("should be valid as its comes from a bounded"),
+                ])
                 .expect("Transposed coordinates cannot be out of bounds");
 
             if let Some(e) = element {
@@ -775,7 +782,7 @@ pub mod tests {
 
     #[track_caller]
     fn semi_occupied_example_grid<T: Clone>(element: T) -> Grid<T> {
-        let occupied_elements = [
+        let occupied_elements: [[u16; 2]; 9] = [
             [4, 0],
             [10, 1],
             [7, 4],
@@ -789,7 +796,10 @@ pub mod tests {
 
         let mut grid: Grid<T> = grid![13, 13];
 
-        for coordinate in occupied_elements {
+        for coordinate in occupied_elements
+            .into_iter()
+            .map(|[x, y]| [AxisLength::from(x), AxisLength::from(y)])
+        {
             grid.store_element(&grid.to_grid_like(coordinate).unwrap(), element.clone())
                 .unwrap();
         }
@@ -819,7 +829,7 @@ pub mod tests {
     }
 
     pub fn grid_with_cross() -> Grid<char> {
-        let coordinates = [
+        let coordinates: [[u16; 2]; 9] = [
             [0, 0],
             [4, 0],
             [1, 1],
@@ -833,7 +843,10 @@ pub mod tests {
 
         let mut grid = grid!(5, 5);
 
-        for coordinate in coordinates {
+        for coordinate in coordinates
+            .into_iter()
+            .map(|[x, y]| [AxisLength::from(x), AxisLength::from(y)])
+        {
             grid.store_element(&grid.to_grid_like(coordinate).unwrap(), '#')
                 .unwrap();
         }

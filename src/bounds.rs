@@ -265,13 +265,19 @@ mod tests {
 
     macro_rules! check_to_grid_like {
         ([$nw:expr, $se:expr] with [$x:expr, $y:expr] is out of bounds) => {
-            let lengths = [$x, $y];
+            let lengths = [
+                AxisLength::try_from($x).unwrap(),
+                AxisLength::try_from($y).unwrap(),
+            ];
             let bounds = Bounds::from_boundaries($nw.0, $se.0, $nw.1, $se.1);
             assert!(bounds.to_grid_like(lengths).is_err())
         };
 
         ([$nw:expr, $se:expr] with [$x:expr, $y:expr] has out of bounds pos ($x_err:expr, $y_err:expr)) => {
-            let lengths = [$x, $y];
+            let lengths = [
+                AxisLength::try_from($x).unwrap(),
+                AxisLength::try_from($y).unwrap(),
+            ];
             let bounds = Bounds::from_boundaries($nw.0, $se.0, $nw.1, $se.1);
             let res = bounds.to_grid_like(lengths);
             if let Err(bounds_err) = res {
@@ -282,7 +288,10 @@ mod tests {
             }
         };
         ([$nw:expr, $se:expr] with [$x:expr, $y:expr] is within bounds) => {
-            let lengths = [$x, $y];
+            let lengths = [
+                AxisLength::try_from($x).unwrap(),
+                AxisLength::try_from($y).unwrap(),
+            ];
             let bounds = Bounds::from_boundaries($nw.0, $se.0, $nw.1, $se.1);
             assert!(bounds.to_grid_like(lengths).is_ok())
         };

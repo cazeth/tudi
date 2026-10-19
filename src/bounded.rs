@@ -229,7 +229,16 @@ pub trait Bounded: BoundSeal {
 
         let y_matrix_like = index / x_count;
         let x_matrix_like = index % x_count;
-        self.to_grid_like([x_matrix_like as u32, y_matrix_like as u32])
+
+        self.to_grid_like([
+            AxisLength::try_from(x_matrix_like).expect("cannot be out of bounds"),
+            AxisLength::try_from(y_matrix_like).map_err(|_| {
+                OutOfBoundsError::with_single_direction(
+                    y_matrix_like.into(),
+                    AbsoluteDirection::South,
+                )
+            })?,
+        ])
     }
 
     /// returns true if the object is currently on its border.
@@ -272,16 +281,16 @@ pub trait Bounded: BoundSeal {
     /// # Errors
     ///
     /// Returns an error if the resulting coordinate is out of bounds.
-    fn to_grid_like(&self, distance: [u32; 2]) -> Result<Coordinate, OutOfBoundsError> {
+    fn to_grid_like(&self, distance: [AxisLength; 2]) -> Result<Coordinate, OutOfBoundsError> {
         // None : Coordinate is out of bounds along its axis.
         let x: Option<i32> = self
             .x_min_boundary()
-            .checked_add_unsigned(distance[0])
+            .checked_add_unsigned(u32::from(distance[0]))
             .filter(|x| *x <= self.x_max_boundary());
 
         let y: Option<i32> = self
             .y_max_boundary()
-            .checked_sub_unsigned(distance[1])
+            .checked_sub_unsigned(u32::from(distance[1]))
             .filter(|y| *y >= Coordinate::MIN && *y >= self.y_min_boundary());
 
         match (x, y) {
@@ -291,7 +300,7 @@ pub trait Bounded: BoundSeal {
                 Coordinate {
                     x: self
                         .x_min_boundary()
-                        .checked_add_unsigned(distance[0])
+                        .checked_add_unsigned(u32::from(distance[0]))
                         .unwrap_or(Coordinate::MAX),
                     y,
                 },
@@ -304,7 +313,7 @@ pub trait Bounded: BoundSeal {
                     x,
                     y: self
                         .y_max_boundary()
-                        .checked_sub_unsigned(distance[1])
+                        .checked_sub_unsigned(u32::from(distance[1]))
                         .unwrap_or(Coordinate::MIN),
                 },
                 AbsoluteDirection::South,
@@ -314,11 +323,11 @@ pub trait Bounded: BoundSeal {
                 Coordinate {
                     x: self
                         .x_min_boundary()
-                        .checked_add_unsigned(distance[0])
+                        .checked_add_unsigned(u32::from(distance[0]))
                         .unwrap_or(Coordinate::MAX),
                     y: self
                         .y_max_boundary()
-                        .checked_sub_unsigned(distance[1])
+                        .checked_sub_unsigned(u32::from(distance[1]))
                         .map(|y| {
                             if y < Coordinate::MIN {
                                 Coordinate::MIN
