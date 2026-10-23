@@ -1382,22 +1382,41 @@ pub mod tests {
         }
     }
 
-    #[test]
-    fn coordinate_to_index() {
-        for n in 1..100 {
-            let grid: Grid<()> = empty_grid(n);
-            check_ok_coordinate_to_index(&grid, grid.northwest_corner(), 0);
-            check_ok_coordinate_to_index(&grid, grid.northeast_corner(), n - 1);
-            check_ok_coordinate_to_index(
-                &grid,
-                grid.southwest_corner(),
-                grid.grid_data.len() as u64 - n,
-            );
-            check_ok_coordinate_to_index(
-                &grid,
-                grid.southeast_corner(),
-                grid.grid_data.len() as u64 - 1,
-            )
+    mod coordinate_to_index {
+        use super::*;
+
+        #[test]
+        fn single_coordinate() {
+            let grid: Grid<()> = empty_grid(1);
+            check_ok_coordinate_to_index(&grid, Coordinate::default(), 0);
+        }
+
+        #[test]
+        fn two_by_two() {
+            let grid: Grid<()> = empty_grid(2);
+            check_ok_coordinate_to_index(&grid, Coordinate { x: 0, y: 1 }, 0);
+            check_ok_coordinate_to_index(&grid, Coordinate { x: 1, y: 1 }, 1);
+            check_ok_coordinate_to_index(&grid, Coordinate { x: 0, y: 0 }, 2);
+            check_ok_coordinate_to_index(&grid, Coordinate { x: 1, y: 0 }, 3);
+        }
+
+        #[test]
+        fn coordinate_to_index() {
+            for n in 1..100 {
+                let grid: Grid<()> = empty_grid(n);
+                check_ok_coordinate_to_index(&grid, grid.northwest_corner(), 0);
+                check_ok_coordinate_to_index(&grid, grid.northeast_corner(), n - 1);
+                check_ok_coordinate_to_index(
+                    &grid,
+                    grid.southwest_corner(),
+                    grid.grid_data.len() as u64 - n,
+                );
+                check_ok_coordinate_to_index(
+                    &grid,
+                    grid.southeast_corner(),
+                    grid.grid_data.len() as u64 - 1,
+                )
+            }
         }
     }
 
