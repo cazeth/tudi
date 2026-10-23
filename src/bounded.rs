@@ -266,7 +266,7 @@ pub trait Bounded: BoundSeal {
         let y: Option<i32> = self
             .y_max_boundary()
             .checked_sub_unsigned(distance[1])
-            .filter(|y| *y > i32::MIN && *y >= self.y_min_boundary());
+            .filter(|y| *y >= Coordinate::MIN && *y >= self.y_min_boundary());
 
         match (x, y) {
             (Some(x), Some(y)) => Ok(Coordinate { x, y }),
@@ -276,7 +276,7 @@ pub trait Bounded: BoundSeal {
                     x: self
                         .x_min_boundary()
                         .checked_add_unsigned(distance[0])
-                        .unwrap_or(i32::MAX),
+                        .unwrap_or(Coordinate::MAX),
                     y,
                 },
                 AbsoluteDirection::East,
@@ -289,7 +289,7 @@ pub trait Bounded: BoundSeal {
                     y: self
                         .y_max_boundary()
                         .checked_sub_unsigned(distance[1])
-                        .unwrap_or(i32::MIN + 1),
+                        .unwrap_or(Coordinate::MIN),
                 },
                 AbsoluteDirection::South,
                 None,
@@ -299,12 +299,18 @@ pub trait Bounded: BoundSeal {
                     x: self
                         .x_min_boundary()
                         .checked_add_unsigned(distance[0])
-                        .unwrap_or(i32::MAX),
+                        .unwrap_or(Coordinate::MAX),
                     y: self
                         .y_max_boundary()
                         .checked_sub_unsigned(distance[1])
-                        .map(|y| if y == i32::MIN { i32::MIN + 1 } else { y })
-                        .unwrap_or(i32::MIN + 1),
+                        .map(|y| {
+                            if y < Coordinate::MIN {
+                                Coordinate::MIN
+                            } else {
+                                y
+                            }
+                        })
+                        .unwrap_or(Coordinate::MIN),
                 },
                 AbsoluteDirection::South,
                 Some(AbsoluteDirection::East),
