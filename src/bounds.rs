@@ -1,14 +1,11 @@
+use crate::AbsoluteDirection;
 use crate::AxisLength;
+use crate::Coordinate;
+use crate::Positioned;
+use crate::bounded::Bounded;
 use crate::bounded::MaybeOriginBounded;
 use crate::bounded::MaybeOriginCentered;
 use crate::bounded::OriginCenteredness;
-//use crate::bounded::UnknownCenteredness;
-use crate::AbsoluteDirection;
-use crate::Coordinate;
-use crate::Positioned;
-#[allow(unused)] // the compiler does not realize that this crate is used because it is used
-// through a blanket implementation
-use crate::bounded::Bounded;
 
 /// A bounded region.
 #[derive(Debug, Clone, Copy, Hash)]
