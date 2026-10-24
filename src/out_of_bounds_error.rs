@@ -15,12 +15,12 @@ use thiserror::Error;
 #[derive(Error, Debug, Clone, PartialEq, Eq)]
 #[error(
     "{} is out of bounds to the {}{}",
-    .position,
+    .position.expect("An OutOfBoundsError cannot be defined without a position"),
     .first_out_of_bounds_direction,
     second_direction_suffix(*.second_out_of_bounds_direction)
 )]
 pub struct OutOfBoundsError {
-    position: Coordinate,
+    position: Option<Coordinate>,
     first_out_of_bounds_direction: AbsoluteDirection,
     second_out_of_bounds_direction: Option<AbsoluteDirection>,
 }
@@ -32,13 +32,13 @@ impl OutOfBoundsError {
         second_out_of_bounds_direction: Option<AbsoluteDirection>,
     ) -> Self {
         Self {
-            position: *position.position(),
+            position: Some(*position.position()),
             first_out_of_bounds_direction,
             second_out_of_bounds_direction,
         }
     }
 
-    pub fn position(&self) -> Coordinate {
+    pub fn position(&self) -> Option<Coordinate> {
         self.position
     }
 

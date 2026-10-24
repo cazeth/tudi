@@ -275,8 +275,8 @@ mod tests {
             let bounds = Bounds::from_boundaries($nw.0, $se.0, $nw.1, $se.1);
             let res = bounds.to_grid_like(lengths);
             if let Err(bounds_err) = res {
-                assert_eq!(bounds_err.position().x, $x_err);
-                assert_eq!(bounds_err.position().y, $y_err);
+                assert_eq!(bounds_err.position().expect("must have position").x, $x_err);
+                assert_eq!(bounds_err.position().expect("must have position").y, $y_err);
             } else {
                 panic!("expected out of bounds but wasn't!");
             }

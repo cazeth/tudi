@@ -1083,7 +1083,9 @@ pub mod tests {
                 Err(GridError::OutOfBoundsError(out_of_bounds_error)),
             ) => {
                 assert_eq!(
-                    out_of_bounds_error.position(),
+                    out_of_bounds_error
+                        .position()
+                        .expect("Should have position"),
                     c.coordinate_in_direction(direction, AxisLength::from(1_u8))
                 );
             }
