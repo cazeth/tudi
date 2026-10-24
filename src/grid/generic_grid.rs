@@ -761,11 +761,12 @@ pub mod tests {
     }
 
     /// # Panics
-    /// This method panics when `count = 0`.
-    fn empty_grid<T>(count: u64) -> Grid<T> {
+    ///
+    /// This method panics when `n = 0`.
+    fn empty_grid<T>(n: u64) -> Grid<T> {
         Grid::<T>::with_count(
-            AxisCount::from_u64_unchecked(count),
-            AxisCount::from_u64_unchecked(count),
+            AxisCount::from_u64_unchecked(n),
+            AxisCount::from_u64_unchecked(n),
         )
     }
 
