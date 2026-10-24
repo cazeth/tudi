@@ -201,16 +201,32 @@ pub trait Bounded: BoundSeal {
         }
     }
 
-    /// Returns the coordinate at an index, counted(started at zero) , counted by row from the
-    /// northwest corner by row.
+    /// The coordinate reached by counting the coordinates in `Bounded` from west to east, north to
+    /// south, up to the provided `u64`.
+    ///
+    /// See also [`Self::coordinate_to_index`]
     ///
     /// # Errors
     ///
-    /// Returns an error if the provided index is out of bounds
+    /// This method returns an error if the provided `index` is out of bounds.
     ///
-    /// See also [`Self::coordinate_to_index`]
+    /// # Examples
+    ///
+    /// ```
+    /// use tudi::Coordinate;
+    /// use tudi::Bounded;
+    /// use tudi::Bounds;
+    ///
+    /// let bounds = Bounds::from_boundaries(0,4,0,4);
+    ///
+    /// assert_eq!(bounds.index_to_coordinate(0), Ok(Coordinate {x: 0, y: 4}));
+    /// assert_eq!(bounds.index_to_coordinate(4), Ok(Coordinate {x: 4, y: 4}));
+    /// assert_eq!(bounds.index_to_coordinate(24), Ok(Coordinate {x: 4, y: 0}));
+    ///
+    /// ```
     fn index_to_coordinate(&self, index: u64) -> Result<Coordinate, OutOfBoundsError> {
         let x_count = u64::from(self.x_count());
+
         let y_matrix_like = index / x_count;
         let x_matrix_like = index - y_matrix_like * x_count;
         self.to_grid_like([x_matrix_like as u32, y_matrix_like as u32])
