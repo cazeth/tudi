@@ -109,6 +109,11 @@ impl OutOfBoundsError {
         }
     }
 
+    /// The out-of-bounds position.
+    ///
+    /// This method returns `None` if the error does not contain an exact position. This typically
+    /// happens when the user has created an error with only a direction and position along a single
+    /// axis (leaving the coordinate along the other axis ambiguous). This method also returns `None` if the x- or y-coordinate is greater or smaller than [`Coordinate::MAX`] or [`Coordinate::MIN`].
     pub fn position(&self) -> Option<Coordinate> {
         if let Some(x) = self.x {
             if let Some(y) = self.y {
