@@ -760,6 +760,8 @@ pub mod tests {
         }
     }
 
+    /// An empty square grid with both dimensions of count `n`
+    ///
     /// # Panics
     ///
     /// This method panics when `n = 0`.
