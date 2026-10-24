@@ -726,6 +726,7 @@ pub mod tests {
     use crate::AbsoluteDirection;
     use crate::BoundedMovingObject;
     use crate::Coordinate;
+    use crate::bounded::test::check_ok_coordinate_to_index;
     use crate::bounded::test::check_out_of_bounds;
     use crate::bounded::test::check_x_count;
     use crate::bounded::test::check_y_count;
@@ -1385,22 +1386,18 @@ pub mod tests {
     fn coordinate_to_index() {
         for n in 1..100 {
             let grid: Grid<()> = empty_grid(n);
-            assert_eq!(
-                grid.coordinate_to_index(&grid.northwest_corner()).unwrap(),
-                0
+            check_ok_coordinate_to_index(&grid, grid.northwest_corner(), 0);
+            check_ok_coordinate_to_index(&grid, grid.northeast_corner(), n - 1);
+            check_ok_coordinate_to_index(
+                &grid,
+                grid.southwest_corner(),
+                grid.grid_data.len() as u64 - n,
             );
-            assert_eq!(
-                grid.coordinate_to_index(&grid.northeast_corner()).unwrap() as usize,
-                (n - 1).try_into().unwrap()
-            );
-            assert_eq!(
-                grid.coordinate_to_index(&grid.southwest_corner()).unwrap() as usize,
-                grid.grid_data.len() - n as usize
-            );
-            assert_eq!(
-                grid.coordinate_to_index(&grid.southeast_corner()).unwrap() as usize,
-                grid.grid_data.len() - 1
-            );
+            check_ok_coordinate_to_index(
+                &grid,
+                grid.southeast_corner(),
+                grid.grid_data.len() as u64 - 1,
+            )
         }
     }
 

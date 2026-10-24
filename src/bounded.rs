@@ -609,6 +609,7 @@ impl<T: BoundSeal> Bounded for T {
 pub mod test {
     use super::Bounded;
     use crate::AxisCount;
+    use crate::Coordinate;
 
     macro_rules! check_out_of_bounds {
         ($bounded:expr, $coordinate:expr => in bounds) => {{
@@ -682,5 +683,14 @@ pub mod test {
     #[track_caller]
     pub fn check_y_len<B: Bounded>(bounded: B, expected: u32) {
         assert_eq!(bounded.y_geometric_len(), expected)
+    }
+
+    #[track_caller]
+    pub fn check_ok_coordinate_to_index<B: Bounded>(
+        bounded: B,
+        coordinate: Coordinate,
+        expected: u64,
+    ) {
+        assert_eq!(bounded.coordinate_to_index(&coordinate), Ok(expected));
     }
 }
