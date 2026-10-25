@@ -166,4 +166,47 @@ mod tests {
             "(1, -2) is out of bounds to the North and East"
         );
     }
+
+    #[test]
+    fn direction_swap() {
+        let mut error = OutOfBoundsError::with_single_direction(10, AbsoluteDirection::East);
+        error.add_second_direction(-5, AbsoluteDirection::South);
+        assert_eq!(
+            error.first_out_of_bounds_direction(),
+            AbsoluteDirection::South
+        );
+        assert_eq!(
+            error.second_out_of_bounds_direction(),
+            Some(AbsoluteDirection::East)
+        );
+        dbg!(&error);
+        assert_eq!(error.position().unwrap().x_coordinate(), 10);
+        assert_eq!(error.position().unwrap().y_coordinate(), -5);
+    }
+
+    #[test]
+    fn single_direction() {
+        let error = OutOfBoundsError::with_single_direction(1, AbsoluteDirection::North);
+        assert_eq!(error.x, None);
+        assert_eq!(error.y, Some(1));
+        assert_eq!(
+            error.first_out_of_bounds_direction(),
+            AbsoluteDirection::North
+        );
+        assert_eq!(error.second_out_of_bounds_direction, None);
+    }
+
+    #[test]
+    #[should_panic]
+    fn inverse_direction() {
+        let mut error = OutOfBoundsError::with_single_direction(1, AbsoluteDirection::East);
+        error.add_second_direction(1, AbsoluteDirection::West);
+    }
+
+    #[test]
+    #[should_panic]
+    fn same_direction() {
+        let mut error = OutOfBoundsError::with_single_direction(1, AbsoluteDirection::North);
+        error.add_second_direction(1, AbsoluteDirection::North);
+    }
 }
