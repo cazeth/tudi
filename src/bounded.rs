@@ -228,7 +228,7 @@ pub trait Bounded: BoundSeal {
         let x_count = u64::from(self.x_count());
 
         let y_matrix_like = index / x_count;
-        let x_matrix_like = index - y_matrix_like * x_count;
+        let x_matrix_like = index % x_count;
         self.to_grid_like([x_matrix_like as u32, y_matrix_like as u32])
     }
 
