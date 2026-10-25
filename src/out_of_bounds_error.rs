@@ -15,7 +15,8 @@ use thiserror::Error;
 #[derive(Error, Debug, Clone, PartialEq, Eq)]
 #[error("{}", self.message())]
 pub struct OutOfBoundsError {
-    position: Option<Coordinate>,
+    x: Option<i128>,
+    y: Option<i128>,
     first_out_of_bounds_direction: AbsoluteDirection,
     second_out_of_bounds_direction: Option<AbsoluteDirection>,
 }
@@ -27,14 +28,26 @@ impl OutOfBoundsError {
         second_out_of_bounds_direction: Option<AbsoluteDirection>,
     ) -> Self {
         Self {
-            position: Some(*position.position()),
+            x: Some(i128::from(position.x_coordinate())),
+            y: Some(i128::from(position.y_coordinate())),
             first_out_of_bounds_direction,
             second_out_of_bounds_direction,
         }
     }
 
     pub fn position(&self) -> Option<Coordinate> {
-        self.position
+        if let Some(x) = self.x {
+            if let Some(y) = self.y {
+                Some(Coordinate {
+                    x: i32::try_from(x).ok()?,
+                    y: i32::try_from(y).ok()?,
+                })
+            } else {
+                None
+            }
+        } else {
+            None
+        }
     }
 
     pub fn first_out_of_bounds_direction(&self) -> AbsoluteDirection {
@@ -46,10 +59,17 @@ impl OutOfBoundsError {
     }
 
     fn message(&self) -> String {
+        let location = match (self.position(), self.x, self.y) {
+            (Some(pos), _, _) => format!("({}, {})", pos.x_coordinate(), pos.y_coordinate()),
+            (None, Some(x), None) => format!("x: {x}"),
+            (None, Some(x), Some(y)) => format!("({}, {})", x, y),
+            (None, None, Some(y)) => format!("y: {y}"),
+            (None, None, None) => unreachable!(),
+        };
+
         format!(
             "{} is out of bounds to the {}{}",
-            self.position
-                .expect("An OutOfBoundsError cannot be defined without a position"),
+            location,
             self.first_out_of_bounds_direction,
             second_direction_suffix(self.second_out_of_bounds_direction)
         )
