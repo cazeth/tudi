@@ -22,6 +22,11 @@ pub struct OutOfBoundsError {
 }
 
 impl OutOfBoundsError {
+    /// A new `OutOfBoundsError`, with a position specifying where the out-of-bounds error
+    /// occurred.
+    ///
+    /// The position must be out of bounds in at least one direction (otherwise it cannot be out of
+    /// bounds). The second direction is optional and intended for use when the position is out of bounds in two directions, for instance when a coordinate is out of bounds to the north east.
     pub fn new<C: Positioned>(
         position: C,
         first_out_of_bounds_direction: AbsoluteDirection,
