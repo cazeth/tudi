@@ -13,12 +13,7 @@ use thiserror::Error;
 /// position larger or smaller than the library's defined capacity. This might happen when a user tries to add a
 /// [`AxisLength`](crate::AxisLength) to a [`Positioned`](crate::Positioned) or add two [`AxisCount`](crate::AxisCount)s to each other that together would exceed the maximum capacity. There may, however, be functions in this library that choose to panic instead of returning an out-of-bounds when an operation would exceed the capacity, because it results in a simpler API.
 #[derive(Error, Debug, Clone, PartialEq, Eq)]
-#[error(
-    "{} is out of bounds to the {}{}",
-    .position.expect("An OutOfBoundsError cannot be defined without a position"),
-    .first_out_of_bounds_direction,
-    second_direction_suffix(*.second_out_of_bounds_direction)
-)]
+#[error("{}", self.message())]
 pub struct OutOfBoundsError {
     position: Option<Coordinate>,
     first_out_of_bounds_direction: AbsoluteDirection,
@@ -48,6 +43,16 @@ impl OutOfBoundsError {
 
     pub fn second_out_of_bounds_direction(&self) -> Option<AbsoluteDirection> {
         self.second_out_of_bounds_direction
+    }
+
+    fn message(&self) -> String {
+        format!(
+            "{} is out of bounds to the {}{}",
+            self.position
+                .expect("An OutOfBoundsError cannot be defined without a position"),
+            self.first_out_of_bounds_direction,
+            second_direction_suffix(self.second_out_of_bounds_direction)
+        )
     }
 }
 
