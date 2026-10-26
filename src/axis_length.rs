@@ -1,4 +1,5 @@
 use crate::AxisCount;
+use crate::Coordinate;
 
 use thiserror::Error;
 /// A length along a single dimension.
@@ -17,6 +18,32 @@ pub struct AxisLength(u32);
 impl AxisLength {
     pub const MAX: Self = Self(u32::MAX - 1);
     pub const MIN: Self = Self(0);
+}
+
+impl AxisLength {
+    /// The position when adding `Self` to a position along an axis.
+    ///
+    /// If the resulting position exceeds capacity, i.e. is greater than [`Coordinate::MAX`] or smaller than
+    /// [`Coordinate::MIN`], this method returns `None`.
+    pub fn checked_add_to_position(self, position: i32) -> Option<i32> {
+        #[allow(
+            clippy::absurd_extreme_comparisons,
+            reason = "The Coordinate::MAX check is useful in case Coordinate::MAX changes in future."
+        )]
+        position
+            .checked_add_unsigned(self.0)
+            .filter(|x| *x <= Coordinate::MAX)
+    }
+
+    /// The position when subtracting `Self` from a position along an axis.
+    ///
+    /// If the resulting position exceeds capacity, i.e. is smaller than [`Coordinate::MIN`], this method
+    /// returns `None`.
+    pub fn checked_sub_from_position(self, position: i32) -> Option<i32> {
+        position
+            .checked_sub_unsigned(self.0)
+            .filter(|x| *x >= Coordinate::MIN)
+    }
 }
 
 impl PartialEq<u32> for AxisLength {
@@ -215,5 +242,36 @@ mod tests {
             AxisLengthError::Negative;
             -1_i8, -1_i16, -1_i32, -1_i64, -1_i128, -1_isize,
         );
+    }
+
+    #[test]
+    fn valid_add() {
+        let length = AxisLength::from(10_u8);
+        assert_eq!(15, length.checked_add_to_position(5).unwrap());
+    }
+
+    #[test]
+    fn out_of_bounds_large_add() {
+        let length = AxisLength::from(1_u8);
+        assert_eq!(None, length.checked_add_to_position(Coordinate::MAX));
+    }
+
+    #[test]
+    fn out_of_bounds_small_add() {
+        let length = AxisLength::from(0_u8);
+        // i32::MIN < Coordinate::MIN, so this should return None.
+        assert_eq!(None, length.checked_sub_from_position(i32::MIN));
+    }
+
+    #[test]
+    fn valid_sub() {
+        let length = AxisLength::from(10_u8);
+        assert_eq!(-5, length.checked_sub_from_position(5).unwrap());
+    }
+
+    #[test]
+    fn out_of_bounds_small_sub() {
+        let length = AxisLength::from(1_u8);
+        assert_eq!(None, length.checked_sub_from_position(Coordinate::MIN));
     }
 }
