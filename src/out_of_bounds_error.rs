@@ -11,7 +11,7 @@ use thiserror::Error;
 /// during moves and other operations. If the user attempts an operation that would result in an
 /// out-of-bounds condition, this error is returned. The other situation is when an operation would result in a
 /// position larger or smaller than the library's defined capacity. This might happen when a user tries to add a
-/// [`AxisLength`](crate::AxisLength) to a [`Positioned`](crate::Positioned) or add two [`AxisCount`](crate::AxisCount)s to each other that together would exceed the maximum capacity. There may, however, be functions in this library that choose to panic instead of returning an out-of-bounds when an operation would exceed the capacity, because it results in a simpler API.
+/// [`AxisLength`](crate::AxisLength) to a [`Positioned`](crate::Positioned) or add two [`AxisCount`](crate::AxisCount)s to each other that together would exceed the maximum capacity. There may, however, be functions in this library that choose to panic instead of returning an out-of-bounds error when an operation would exceed the capacity, because it results in a simpler API.
 #[derive(Error, Debug, Clone, PartialEq, Eq)]
 #[error("{}", self.message())]
 pub struct OutOfBoundsError {
