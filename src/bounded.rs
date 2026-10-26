@@ -608,6 +608,7 @@ impl<T: BoundSeal> Bounded for T {
 #[cfg(test)]
 pub mod test {
     use super::Bounded;
+    use crate::AbsoluteDirection;
     use crate::AxisCount;
     use crate::Coordinate;
 
@@ -692,5 +693,20 @@ pub mod test {
         expected: u64,
     ) {
         assert_eq!(bounded.coordinate_to_index(&coordinate), Ok(expected));
+    }
+
+    #[track_caller]
+    pub fn check_ok_index_to_coordinate<B: Bounded>(bounded: B, index: u64, expected: Coordinate) {
+        assert_eq!(bounded.index_to_coordinate(index).unwrap(), expected)
+    }
+
+    #[track_caller]
+    pub fn check_err_index_to_coordinate<B: Bounded>(bounded: B, index: u64) {
+        let err = bounded.index_to_coordinate(index).err().unwrap();
+        // Only south or east makes sense here.
+        assert!(
+            err.first_out_of_bounds_direction() == AbsoluteDirection::South
+                || err.first_out_of_bounds_direction() == AbsoluteDirection::East
+        );
     }
 }

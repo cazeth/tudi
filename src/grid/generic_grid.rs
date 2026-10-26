@@ -1420,6 +1420,41 @@ pub mod tests {
         }
     }
 
+    mod index_to_coordinate {
+
+        use crate::bounded::test::check_err_index_to_coordinate;
+        use crate::bounded::test::check_ok_index_to_coordinate;
+
+        use super::*;
+
+        #[test]
+        fn single_coordinate() {
+            let grid: Grid<()> = empty_grid(1);
+            check_ok_index_to_coordinate(&grid, 0, Coordinate::default());
+        }
+
+        #[test]
+        fn two_by_two() {
+            let grid: Grid<()> = empty_grid(2);
+            check_ok_index_to_coordinate(&grid, 0, Coordinate { x: 0, y: 1 });
+            check_ok_index_to_coordinate(&grid, 1, Coordinate { x: 1, y: 1 });
+            check_ok_index_to_coordinate(&grid, 2, Coordinate { x: 0, y: 0 });
+            check_ok_index_to_coordinate(&grid, 3, Coordinate { x: 1, y: 0 });
+        }
+
+        #[test]
+        fn single_coordinate_index_out_of_bounds() {
+            let grid: Grid<()> = empty_grid(1);
+            check_err_index_to_coordinate(&grid, 2);
+        }
+
+        #[test]
+        fn two_by_two_out_of_bounds() {
+            let grid: Grid<()> = empty_grid(2);
+            check_err_index_to_coordinate(&grid, 5);
+        }
+    }
+
     mod test_status_string {
 
         use super::*;
