@@ -117,16 +117,19 @@ impl OutOfBoundsError {
     pub fn position(&self) -> Option<Coordinate> {
         if let Some(x) = self.x {
             if let Some(y) = self.y {
-                Some(Coordinate {
-                    x: i32::try_from(x).ok()?,
-                    y: i32::try_from(y).ok()?,
-                })
-            } else {
-                None
+                if let Ok(x) = i32::try_from(x) {
+                    if let Ok(y) = i32::try_from(y) {
+                        #[allow(clippy::absurd_extreme_comparisons)]
+                        if (Coordinate::MIN..=Coordinate::MAX).contains(&x)
+                            && (Coordinate::MIN..=Coordinate::MAX).contains(&y)
+                        {
+                            return Some(Coordinate { x, y });
+                        }
+                    }
+                }
             }
-        } else {
-            None
-        }
+        };
+        None
     }
 
     pub fn first_out_of_bounds_direction(&self) -> AbsoluteDirection {
