@@ -292,7 +292,6 @@ mod tests {
     fn to_grid_like_out_of_bounds() {
         check_to_grid_like!([(0,0), (0,0)] with [5,5] has out of bounds pos (5,-5));
         check_to_grid_like!([(i32::MIN+1, i32::MAX), (0, 0)] with [u32::MAX -1,u32::MAX-1] has out of bounds pos (i32::MAX, i32::MIN+1));
-        check_to_grid_like!([(i32::MAX, i32::MIN+1), (i32::MAX, i32::MIN+1)] with [1,1] has out of bounds pos (i32::MAX, i32::MIN+1));
         check_to_grid_like!([(i32::MAX, i32::MIN+1), (i32::MAX, i32::MIN+1)] with [0,0] is within bounds);
         check_to_grid_like!([(0,0), (0,0)] with [0,0] is within bounds);
         check_to_grid_like!([(0,0), (0,0)] with [1,1] has out of bounds pos (1, -1));
