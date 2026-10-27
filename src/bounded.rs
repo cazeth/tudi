@@ -231,7 +231,20 @@ pub trait Bounded: BoundSeal {
         let x_matrix_like = index % x_count;
 
         self.to_grid_like([
-            AxisLength::try_from(x_matrix_like).expect("cannot be out of bounds"),
+            /*
+             * for a >=0, n > 0,
+             * 0 <= a % n < n.
+             *
+             * Especially:
+             *
+             * x_count > 0.
+             *
+             * x_matrix_like = index % x_count < AxisCount::MAX.
+             *
+             * Therefore, x_matrix_like <= AxisLength::MAX.
+             */
+            AxisLength::try_from(x_matrix_like)
+                .expect("index % x_count < x_count <= AxisCount::MAX"),
             AxisLength::try_from(y_matrix_like).map_err(|_| {
                 OutOfBoundsError::with_single_direction(
                     y_matrix_like.into(),
