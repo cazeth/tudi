@@ -97,6 +97,7 @@ pub trait Bounded: BoundSeal {
         self.y_count().into()
     }
 
+    /// Whether `T` is within the bounds of `self`.
     fn is_within_bounds<T: Positioned>(&self, coordinate: &T) -> bool {
         self.x_min_boundary() <= coordinate.x_coordinate()
             && self.x_max_boundary() >= coordinate.x_coordinate()
@@ -104,7 +105,7 @@ pub trait Bounded: BoundSeal {
             && self.y_max_boundary() >= coordinate.y_coordinate()
     }
 
-    /// The directions in which a coordinate is outside these bounds.
+    /// The directions in which a coordinate is out of bounds.
     ///
     /// Returns `None` when the coordinate is within bounds. Otherwise, returns `Some(first_direction, Option<second_direction>)`, where `first_direction` identifies one boundary crossed. `second_direction` is `Some` only when the coordinate is outside both the horizontal and vertical bounds. When both directions are present, the vertical direction is first and the horizontal direction is second.
     fn out_of_bounds_directions<C: Positioned>(
@@ -133,7 +134,7 @@ pub trait Bounded: BoundSeal {
         }
     }
 
-    /// Checks whether an external [`Positioned`] is on the border of the bounded region.
+    /// Whether `C` is on the border of the bounded region.
     fn other_is_on_border<C: Positioned>(&self, coordinate: &C) -> bool {
         coordinate.x_coordinate() == self.x_min_boundary()
             || coordinate.x_coordinate() == self.x_max_boundary()
@@ -141,6 +142,7 @@ pub trait Bounded: BoundSeal {
             || coordinate.y_coordinate() == self.y_min_boundary()
     }
 
+    /// The within-bounds coordinates from `C` in the provided direction.
     fn coordinates_in_direction_from<C: Positioned>(
         &self,
         coordinate: &C,
@@ -164,12 +166,12 @@ pub trait Bounded: BoundSeal {
         result
     }
 
-    /// The position of a coordinate when all the coordinates in a bounded region are ordered from west to east, north to south.
+    /// The position of `C` when all the coordinates in a bounded region are ordered from west to east, north to south.
     ///
-    /// The maximum result value is [`AxisCount::MAX`]*[`AxisCount::MAX`], as the value lies in a single line with the length of the x- and y-dimensions flattened. Since `AxisCount::MAX = u32::MAX`, the maximum result value is `(u32::MAX)*(u32::Max) < u64`. This method therefore returns a `u64`.
+    /// The maximum result value is <code>[AxisCount::MAX] \* [AxisCount::MAX] - 1</code>. Since `AxisCount::MAX = u32::MAX`, the maximum result value is `(u32::MAX)*(u32::Max) - 1 < u64`. This method therefore returns a `u64`.
     /// # Errors
     ///
-    /// Returns an error if the coordinate is out of bounds.
+    /// This method returns an error if the coordinate is out of bounds.
     ///
     /// # Examples
     ///
@@ -254,7 +256,7 @@ pub trait Bounded: BoundSeal {
         ])
     }
 
-    /// returns true if the object is currently on its border.
+    /// Whether `self` is currently on its border.
     fn is_on_border(&self) -> bool
     where
         Self: Positioned,
@@ -265,11 +267,13 @@ pub trait Bounded: BoundSeal {
             || self.position().y == self.y_min_boundary()
     }
 
-    /// Returns the diff coordinates from the northwest corner to a coordinate. This can be thought of as mapping a coordinate
-    /// symmetric around the origin (like x_min = -2, x_max = 2) to matrix-like (x_min
-    /// = 0, x_max = 4)
-    /// 0,0 means the northwest corner, as with standard matrix indices.
-    /// panics if the coordinate is out of bounds.
+    /// The lengths from the northwest corner of `self` to the provided coordinate.
+    ///
+    /// `result[0]` is the eastward length and `result[1]` is the southward length.
+    ///
+    /// # Panic
+    ///
+    /// This method panics if the provided coordinate is out of bounds.
     ///
     /// # Examples
     ///
@@ -356,8 +360,9 @@ pub trait Bounded: BoundSeal {
         }
     }
 
-    /// Returns the nearest neighbor to a position in a given direction. If the neighbor in that
-    /// direction is out of bounds, the function returns None.
+    /// The nearest coordinate to `self`'s position in the provided `direction`.
+    ///
+    /// If the resulting position is out of bounds, the function returns `None`.
     fn neighbor_in_direction_from<C: Positioned>(
         &self,
         position: &C,
@@ -372,10 +377,9 @@ pub trait Bounded: BoundSeal {
         }
     }
 
-    /// Similar to [`Positioned::euclid_neighbors`], this function returns adjacent
-    /// coordinate (including diagonal neighbors) to the current coordinate. It also considers boundaries and filters out
-    /// coordinates that aren't within or on them.
-    /// See also [Bounded::bounded_neighbors_to]
+    /// The within-bounds neighbor coordinates to `self`s current position, including diagonals.
+    ///
+    /// See also [`Positioned::euclid_neighbors`] and [`Bounded::bounded_neighbors_to`]
     fn bounded_neighbors(&self) -> Vec<Coordinate>
     where
         Self: Positioned,
