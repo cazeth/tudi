@@ -300,63 +300,34 @@ pub trait Bounded: BoundSeal {
     /// Returns an error if the resulting coordinate is out of bounds.
     fn to_grid_like(&self, distance: [AxisLength; 2]) -> Result<Coordinate, OutOfBoundsError> {
         // None : Coordinate is out of bounds along its axis.
-        let x: Option<i32> = self
-            .x_min_boundary()
-            .checked_add_unsigned(u32::from(distance[0]))
+        let x: Option<i32> = distance[0]
+            .checked_add_to_position(self.x_min_boundary())
             .filter(|x| *x <= self.x_max_boundary());
 
-        let y: Option<i32> = self
-            .y_max_boundary()
-            .checked_sub_unsigned(u32::from(distance[1]))
-            .filter(|y| *y >= Coordinate::MIN && *y >= self.y_min_boundary());
+        let y: Option<i32> = distance[1]
+            .checked_sub_from_position(self.y_max_boundary())
+            .filter(|y| *y >= self.y_min_boundary());
 
         match (x, y) {
             (Some(x), Some(y)) => Ok(Coordinate { x, y }),
-
-            (None, Some(y)) => Err(OutOfBoundsError::new(
-                Coordinate {
-                    x: self
-                        .x_min_boundary()
-                        .checked_add_unsigned(u32::from(distance[0]))
-                        .unwrap_or(Coordinate::MAX),
-                    y,
-                },
+            (None, Some(_)) => Err(OutOfBoundsError::with_single_direction(
+                u32::from(distance[0]) as i128 + self.x_min_boundary() as i128,
                 AbsoluteDirection::East,
-                None,
             )),
 
-            (Some(x), None) => Err(OutOfBoundsError::new(
-                Coordinate {
-                    x,
-                    y: self
-                        .y_max_boundary()
-                        .checked_sub_unsigned(u32::from(distance[1]))
-                        .unwrap_or(Coordinate::MIN),
-                },
+            (Some(_), None) => Err(OutOfBoundsError::with_single_direction(
+                self.y_max_boundary() as i128 - u32::from(distance[1]) as i128,
                 AbsoluteDirection::South,
-                None,
             )),
-            (None, None) => Err(OutOfBoundsError::new(
-                Coordinate {
-                    x: self
-                        .x_min_boundary()
-                        .checked_add_unsigned(u32::from(distance[0]))
-                        .unwrap_or(Coordinate::MAX),
-                    y: self
-                        .y_max_boundary()
-                        .checked_sub_unsigned(u32::from(distance[1]))
-                        .map(|y| {
-                            if y < Coordinate::MIN {
-                                Coordinate::MIN
-                            } else {
-                                y
-                            }
-                        })
-                        .unwrap_or(Coordinate::MIN),
-                },
-                AbsoluteDirection::South,
-                Some(AbsoluteDirection::East),
-            )),
+
+            (None, None) => {
+                let x_pos = u32::from(distance[0]) as i128 + self.x_min_boundary() as i128;
+                let mut err =
+                    OutOfBoundsError::with_single_direction(x_pos, AbsoluteDirection::East);
+                let y_pos = self.y_max_boundary() as i128 - u32::from(distance[1]) as i128;
+                err.add_second_direction(y_pos, AbsoluteDirection::South);
+                Err(err)
+            }
         }
     }
 
