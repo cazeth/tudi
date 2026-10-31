@@ -304,4 +304,20 @@ mod tests {
         check_to_grid_like!([(0,0), (10,-10)] with [5,5] is within bounds);
         check_to_grid_like!([(-5,5), (5, -5)] with [100,0] is out of bounds);
     }
+
+    #[test]
+    fn test_to_matrix_like_max_bounds() {
+        let bounds = Bounds::from_boundaries(
+            Coordinate::MIN,
+            Coordinate::MAX,
+            Coordinate::MIN,
+            Coordinate::MAX,
+        );
+        let result = bounds.to_matrix_like(&Coordinate {
+            x: Coordinate::MAX,
+            y: Coordinate::MIN,
+        });
+        assert_eq!(result[0], AxisLength::MAX);
+        assert_eq!(result[1], AxisLength::MAX);
+    }
 }
