@@ -97,8 +97,8 @@ pub trait Bounded: BoundSeal {
         self.y_count().into()
     }
 
-    /// Whether `T` is within the bounds of `self`.
-    fn is_within_bounds<T: Positioned>(&self, coordinate: &T) -> bool {
+    /// Whether `C` is within the bounds of `self`.
+    fn is_within_bounds<C: Positioned>(&self, coordinate: &C) -> bool {
         self.x_min_boundary() <= coordinate.x_coordinate()
             && self.x_max_boundary() >= coordinate.x_coordinate()
             && self.y_min_boundary() <= coordinate.y_coordinate()
