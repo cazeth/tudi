@@ -199,7 +199,7 @@ pub trait Bounded: BoundSeal {
             ))
         } else {
             let [x_matrix_like, y_matrix_like] = self.to_matrix_like(coordinate.position());
-            Ok(y_matrix_like as u64 * u64::from(self.x_count()) + x_matrix_like as u64)
+            Ok(u64::from(y_matrix_like) * u64::from(self.x_count()) + u64::from(x_matrix_like))
         }
     }
 
@@ -285,11 +285,18 @@ pub trait Bounded: BoundSeal {
     /// let origin = Coordinate{x: 0, y : 0};
     /// assert_eq!(bounds.to_matrix_like(&origin), [1,1]);
     /// ```
-    fn to_matrix_like<C: Positioned>(&self, coord: &C) -> [u32; 2] {
+    fn to_matrix_like<C: Positioned>(&self, coord: &C) -> [AxisLength; 2] {
         assert!(self.is_within_bounds(coord));
         [
-            coord.x_coordinate().abs_diff(self.x_min_boundary()),
-            self.y_max_boundary().abs_diff(coord.y_coordinate()),
+            coord
+                .x_coordinate()
+                .abs_diff(self.x_min_boundary())
+                .try_into()
+                .expect("value cannot be greater than AxisLength::MAX"),
+            self.y_max_boundary()
+                .abs_diff(coord.y_coordinate())
+                .try_into()
+                .expect("value cannot be greater than AxisLength::MAX"),
         ]
     }
 

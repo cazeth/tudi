@@ -564,14 +564,7 @@ impl<T> Grid<T> {
         for (coordinate, element) in old_grid {
             let matrix_coordinates = previous_bounds.to_matrix_like(&coordinate);
             let new_coordinate = self
-                .to_grid_like([
-                    matrix_coordinates[1]
-                        .try_into()
-                        .expect("should be valid as its comes from a bounded"),
-                    matrix_coordinates[0]
-                        .try_into()
-                        .expect("should be valid as its comes from a bounded"),
-                ])
+                .to_grid_like([matrix_coordinates[1], matrix_coordinates[0]])
                 .expect("Transposed coordinates cannot be out of bounds");
 
             if let Some(e) = element {
