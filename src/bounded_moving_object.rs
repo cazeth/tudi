@@ -70,7 +70,7 @@ impl BoundedMovingObject {
         &mut self,
         target: &C,
     ) -> Result<AbsoluteDirection, TurnError> {
-        match self.direction_toward(target.position()) {
+        match self.direction_toward(target) {
             (None, _) | (Some(_), Some(_)) => Err(TurnError),
             (Some(first), None) => {
                 self.current_direction = first;

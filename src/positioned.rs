@@ -112,9 +112,9 @@ pub trait Positioned {
     /// The [`AbsoluteDirection`] from self to another coordinate.
     ///
     /// If the direction is an exact absolute direction (for instance, straight north), the method returns `(Some(AbsoluteDirection), None)`. If the direction is a combination of directions, such as northwest, the method returns `(Some(North), Some(West))`. If the target is at the same position as the source, the method returns `(None, None)`.
-    fn direction_toward(
+    fn direction_toward<C: Positioned>(
         &self,
-        target: &Coordinate,
+        target: &C,
     ) -> (Option<AbsoluteDirection>, Option<AbsoluteDirection>) {
         // Handles when there is an exact direction to target (exactly north, south, east, west).
         if self.position() == target.position() {
