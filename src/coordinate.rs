@@ -226,6 +226,23 @@ mod tests {
     }
 
     #[test]
+    pub fn manhattan_distance_max_test() {
+        let first = Coordinate {
+            x: Coordinate::MIN,
+            y: Coordinate::MAX,
+        };
+        let second = Coordinate {
+            x: Coordinate::MAX,
+            y: Coordinate::MIN,
+        };
+        let distance = first.manhattan_distance_to(&second);
+        assert_eq!(
+            distance,
+            u64::from(AxisLength::MAX) + u64::from(AxisLength::MAX)
+        );
+    }
+
+    #[test]
     pub fn should_be_above_row() {
         let c = Coordinate::default();
         assert!(c.is_above_row(-2));
