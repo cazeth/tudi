@@ -28,12 +28,12 @@ pub trait Positioned {
     /// let coord_2 = Coordinate{ x : 2, y : -7};
     /// assert_eq!(coord_1.manhattan_distance_to(&coord_2), 13 );
     /// ```
-    fn manhattan_distance_to<C: Positioned>(&self, cord: &C) -> usize
+    fn manhattan_distance_to<C: Positioned>(&self, cord: &C) -> u64
     where
         Self: Sized,
     {
-        (self.x_coordinate() - cord.x_coordinate()).unsigned_abs() as usize
-            + (self.y_coordinate() - cord.y_coordinate()).unsigned_abs() as usize
+        u64::from(self.x_coordinate().abs_diff(cord.x_coordinate()))
+            + u64::from(self.y_coordinate().abs_diff(cord.y_coordinate()))
     }
 
     /// The immediately surrounding coordinates to self, not including
