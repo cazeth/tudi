@@ -102,7 +102,7 @@ pub trait Positioned {
     /// Subtract a coordinate from self.
     ///
     /// Note that this method returns the signed difference rather than the absolute x/y distances.
-    fn difference(&self, other: &Self) -> Coordinate
+    fn difference<C: Positioned>(&self, other: &C) -> Coordinate
     where
         Self: Sized,
     {
