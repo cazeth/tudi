@@ -146,12 +146,12 @@ pub trait Positioned {
         (first_direction, second_direction)
     }
 
-    fn on_opposite_sides_of_row(&self, cord: &Self, row: &i32) -> bool
+    fn on_opposite_sides_of_row<C: Positioned>(&self, coord: &C, row: i32) -> bool
     where
         Self: Sized,
     {
-        (&self.y_coordinate() > row && row > &cord.y_coordinate())
-            || (&cord.y_coordinate() > row && row > &self.y_coordinate())
+        (self.y_coordinate() > row && row > coord.y_coordinate())
+            || (coord.y_coordinate() > row && row > self.y_coordinate())
     }
 
     fn on_opposite_sides_of_column(&self, cord: &Self, row: &i32) -> bool
