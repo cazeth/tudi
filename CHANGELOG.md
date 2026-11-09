@@ -1,3 +1,76 @@
+## [unreleased]
+
+### 🚀 Features
+
+- *(axis-count)* Add From<AxisCount> for u64
+- *(grid)* Derive clone
+- *(axis)* Create axis as pub type
+- *(Coordinate)* Add const Coordinate::MAX and const Coordinate::MIN
+- [**breaking**] Replace u32 with AxisLength as function arguments in Positioned::coordinate_in_direction and BoundedMovingObject::move_in_current_direction
+- *(out-of-bounds-error)* Add method with_single_direction
+- *(out-of-bounds-error)* Add method add_second_direction
+
+### 🐛 Bug Fixes
+
+- *(out-of-bounds-error)* Fix fn position
+
+### 🚜 Refactor
+
+- Replace AxisCount::as_u64 with u64::from
+- *(grid-coordinate)* Remove unecessary Clone trait bound
+- *(axis-count)* Redo impl Debug
+- *(axis-count)* Refactor x_min and x_max in bounded
+- *(origin-centered-bounds)* Replace as_u64 with as_u32
+- *(grid)* Remove cross.txt and edges_only.txt imports for tests
+- Remove printlns in tests
+- *(bounded)* Make filter more concise
+- *(grid)* Simplify Tryfrom<Vec<Vec<T>>>
+- *(grid)* Rename test fn symmetric_shape_should_transpose_to_itself
+- *(moving-object)* Refactor unit tests
+- *(bounded)* Replace i32::MIN/MAX with Coordinate::MIN/MAX
+- *(grid)* Replace variable count with n inside test helper function
+- *(bounded)* Add test method check_ok_coordinate_to_index
+- *(out-of-bounds-error)* Refactor error message into a separate method
+- *(bounded)* Simplify fn index_to_coordinate
+- *(out-of-bounds-error)* Use i128 internally for x- and y-position
+- *(bounded)* Add comment
+- *(bounds)* Clean up use statements
+- *(bounded)* Rework fn to_grid_like
+- *(bounded)* Replace generic parameter T with C for consistency
+- *(positioned)* Rename cord with coord
+
+### 📚 Documentation
+
+- *(bounded-moving-object)* Add docs for fn turn_toward
+- *(bounded-moving-object)* Add docs for fn turn
+- *(bounded-moving-object)* Add docs for fn move_in_current_direction
+- *(AxisCount)* Add intradoc links
+- *(moving_object)* Document movement panics
+- *(Positioned)* Document movement panics
+- *(out-of-bounds-error)* Add overview docs
+- *(Positioned)* Improve docs for Positioned::coordinate_in_direction
+- *(bounded)* Improve docs for Bounded::coordinate_to_index
+- *(bounded)* Fix doc typo in Bounded::x/y_geometric_len
+- *(bounded)* Improve docs of fn index_to_coordinate
+- *(grid)* Add docs to test helper method empty_grid
+- *(out-of-bounds-error)* Add docs to fn new
+- *(out-of-bounds-error)* Create docs for fn position
+- *(out-of-bounds-error)* Fix overview docs
+- *(bounded)* Improve docs
+
+### 🧪 Testing
+
+- *(grid)* Remove unit tests with imports
+- *(grid)* Add double transpose test
+- *(grid)* Fix assert_centered_around_origin
+- *(coordinate)* Replace move_in_direction with coordinate_in_direction
+- *(grid)* Add unit tests for empty_rows
+- *(grid)* Add unit tests for fn coordinate_to_index
+- *(out-of-bounds-error)* Add unit tests
+- *(grid)* Add unit tests for fn index_to_coordinate
+- *(bounds)* Remove unit test for invalid out-of-bounds error behavior.
+- *(bounds)* Add to_matrix_like unit test
+- *(coordinate)* Add unit test for fn manhattan_distance_to_origin
 ## [0.3.2] - 2026-08-30
 
 ### Features
