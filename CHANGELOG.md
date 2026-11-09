@@ -17,7 +17,7 @@
 ### Refactor
 
 - Replace AxisCount::as_u64 with u64::from
-- *(grid-coordinate)* Remove unecessary Clone trait bound
+- *(grid-coordinate)* Remove unnecessary Clone trait bound
 - *(axis-count)* Redo impl Debug
 - *(axis-count)* Refactor x_min and x_max in bounded
 - *(origin-centered-bounds)* Replace as_u64 with as_u32
